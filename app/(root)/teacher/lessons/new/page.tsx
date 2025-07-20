@@ -22,7 +22,6 @@ export default function NewLessonPage() {
   // Redirect non-teachers back home
   useEffect(() => {
     if (status === "authenticated" && session.user.role !== "TEACHER") {
-      console.log(session.user);
       router.replace("/");
     }
     if (status === "unauthenticated") {
