@@ -14,16 +14,45 @@ datasource db {
 }
 
 model User {
-  id             String    @id @default(cuid())
-  name           String?                // make optional to match NextAuth
-  email          String?   @unique      // optional–NextAuth allows email-less accounts
-  emailVerified  DateTime?              // ← new!
+  id             String   @id @default(cuid())
+  email          String?  @unique
+  name           String?
+  password       String?
   image          String?
-  password       String?                // still keep for credentials
-  createdAt      DateTime  @default(now())
+  emailVerified  DateTime?
+  role           Role     @default(STUDENT)
+
+  // moved profile fields to a separate table
+  profile        Profile?
+  teacherStatus  TeacherStatus? // null unless they choose 'Teacher'
+
   accounts       Account[]
   sessions       Session[]
+  createdAt      DateTime @default(now())
 }
+
+model Profile {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  birthdate DateTime
+  school    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model TeacherStatus {
+  userId      String  @id        // 1-to-1 with User
+  selfieUrl   String             // Supabase Storage path
+  verified    Boolean @default(false)
+  requestedAt DateTime @default(now())
+  verifiedAt  DateTime?
+  user        User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+enum Role {
+  STUDENT
+  TEACHER        // once verified
+}
+
 
 model Account {
   id                 String   @id @default(cuid())
