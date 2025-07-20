@@ -34,7 +34,7 @@ export default function Signup() {
   const handleGoogleSignup = async () => {
     setLoading(true);
     try {
-      await signIn("google", { callbackUrl: "/" });
+      await signIn("google", { callbackUrl: "/onboarding" });
     } catch (error) {
       setError("Google sign-up failed. Please try again.");
       setLoading(false);
@@ -78,7 +78,7 @@ export default function Signup() {
         password,
       });
 
-      if (signInRes?.ok) router.push("/");
+      if (signInRes?.ok) router.push("/onboarding");
       else throw new Error("Account created successfully! Please sign in.");
     } catch (err: any) {
       setError(err.message);
