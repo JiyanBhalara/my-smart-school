@@ -20,7 +20,7 @@ export default function Login() {
         email, 
         password, 
         callbackUrl: "/",
-        redirect: false 
+        redirect: true 
       });
       
       if (result?.error) {

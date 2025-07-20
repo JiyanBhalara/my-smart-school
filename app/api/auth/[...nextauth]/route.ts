@@ -8,18 +8,15 @@ import { compare } from "bcryptjs";
 
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
-
   session: { strategy: "jwt" },
-
   pages: {
     signIn: "/login",
     error:  "/login",
-    newUser: "/onboarding",   // ← send new OAuth users here
+    newUser: "/onboarding",
   },
-
   providers: [
     GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID!,
+      clientId:     process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
     }),
     CredentialsProvider({
@@ -40,23 +37,32 @@ export const authOptions: NextAuthOptions = {
   ],
 
   callbacks: {
-    // 1️⃣ On sign-in, copy user.id into token.id
+    // Always populate token.id, and then fetch role from the database
     async jwt({ token, user }) {
       if (user) {
-        token.id = user.id;
+        token.id = user.id;      // AdapterUser has `id`, so this is safe
       }
+
+      if (token.id) {
+        const dbUser = await prisma.user.findUnique({
+          where: { id: token.id as string },
+          select: { role: true },
+        });
+        token.role = dbUser?.role;  // now token.role is set from your Prisma model
+      }
+
       return token;
     },
-    // 2️⃣ Make token.id available as session.user.id
+
+    // Expose token.id and token.role to session.user
     async session({ session, token }) {
-    if (!session.user) {
-      // this should never happen, but keep TS happy
-      throw new Error("No user in session");
-    }
-    session.user.id = token.id as string;
-    return session;
-  },
-    // 3️⃣ Always redirect back to app root (or override as needed)
+      if (session.user) {
+        session.user.id   = token.id   as string;
+        session.user.role = token.role as string;
+      }
+      return session;
+    },
+
     async redirect({ baseUrl }) {
       return baseUrl;
     },

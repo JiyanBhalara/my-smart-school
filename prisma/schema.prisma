@@ -86,3 +86,32 @@ model VerificationToken {
   token      String   @unique
   expires    DateTime
 }
+
+model Lesson {
+  id        String        @id @default(cuid())
+  title     String
+  subject   String
+  type      String        // e.g. "ppt", "video", "scratch", "canva"
+  fileUrl   String        // will point to Supabase Storage URL
+  authorId  String        // FK → User.id
+  createdAt DateTime      @default(now())
+
+  // many-to-many with tags
+  tags      LessonTag[]
+}
+
+model Tag {
+  id      String        @id @default(cuid())
+  name    String        @unique
+  lessons LessonTag[]
+}
+
+model LessonTag {
+  lesson   Lesson  @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  lessonId String
+
+  tag      Tag     @relation(fields: [tagId], references: [id], onDelete: Cascade)
+  tagId    String
+
+  @@id([lessonId, tagId])
+}
