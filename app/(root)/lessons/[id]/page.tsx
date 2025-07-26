@@ -51,7 +51,7 @@ export default async function LessonDetailPage({
               {/* Content */}
               <div className="p-6">
                 <p className="text-gray-600 mb-6">
-                  This lesson currently doesn't have any downloadable materials available. 
+                  This lesson currently doesn&apos;t have any downloadable materials available. 
                   The instructor may add them later, or you can contact them directly for more information.
                 </p>
 
@@ -211,7 +211,7 @@ export default async function LessonDetailPage({
                     </div>
                     <h3 className="text-xl font-bold text-gray-900 mb-3">No Quizzes Available</h3>
                     <p className="text-gray-600 mb-8 max-w-lg mx-auto leading-relaxed">
-                      Interactive quizzes for this lesson haven't been created yet. Check back later or explore other lessons while you wait.
+                      Interactive quizzes for this lesson haven&apos;t been created yet. Check back later or explore other lessons while you wait.
                     </p>
                     <Link 
                       href="/lessons"

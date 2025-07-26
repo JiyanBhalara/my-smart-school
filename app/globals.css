@@ -1,183 +1,185 @@
-@import "tailwindcss";
+  @import "tailwindcss";
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  @theme inline {
+    --color-background: var(--background);
+    --color-foreground: var(--foreground);
+    --font-sans: var(--font-geist-sans);
+    --font-mono: var(--font-geist-mono);
+  }
 
-/* Custom Color Palette Variables */
-:root {
-  /* Primary Brand Colors */
-  --sky-light: #8ECAE6;
-  --teal: #219EBC;
-  --navy: #023047;
-  --amber: #FFB703;
-  --orange: #FB8500;
-  
-  /* Light theme variables */
-  --background: #ffffff;
-  --foreground: #023047;
-  --muted: #f8fafc;
-  --muted-foreground: #64748b;
-  --border: #e2e8f0;
-}
-
-@media (prefers-color-scheme: dark) {
+  /* Custom Color Palette Variables */
   :root {
-    --background: #023047;
-    --foreground: #8ECAE6;
-    --muted: #0f172a;
-    --muted-foreground: #94a3b8;
-    --border: #1e293b;
+    /* Primary Brand Colors */
+    --sky-light: #8ECAE6;
+    --teal: #219EBC;
+    --navy: #023047;
+    --amber: #FFB703;
+    --orange: #FB8500;
+    
+    /* Light theme variables */
+    --background: #ffffff;
+    --foreground: #023047;
+    --muted: #f8fafc;
+    --muted-foreground: #64748b;
+    --border: #e2e8f0;
   }
-}
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --background: #023047;
+      --foreground: #8ECAE6;
+      --muted: #0f172a;
+      --muted-foreground: #94a3b8;
+      --border: #1e293b;
+    }
+  }
 
 
 
-html {
-  scroll-behavior: smooth;
-}
+  html {
+    scroll-behavior: smooth;
+  }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  line-height: 1.6;
-  transition: background-color 0.3s ease, color 0.3s ease;
-}
+  body {
+    background: var(--background);
+    color: var(--foreground);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    line-height: 1.6;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
 
-/* Custom Fade Animations */
-@keyframes fadeIn {
-  from {
+  /* Custom Fade Animations */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .fade-in {
+    animation: fadeIn 0.6s ease-out forwards;
     opacity: 0;
-    transform: translateY(20px);
   }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
 
-@keyframes fadeInUp {
-  from {
+  .fade-in-up {
+    animation: fadeInUp 0.8s ease-out forwards;
     opacity: 0;
-    transform: translateY(30px);
   }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+
+  .fade-in-delay-200 {
+    animation-delay: 200ms;
   }
-}
 
-.fade-in {
-  animation: fadeIn 0.6s ease-out forwards;
-  opacity: 0;
-}
-
-.fade-in-up {
-  animation: fadeInUp 0.8s ease-out forwards;
-  opacity: 0;
-}
-
-.fade-in-delay-200 {
-  animation-delay: 200ms;
-}
-
-.fade-in-delay-400 {
-  animation-delay: 400ms;
-}
-
-.fade-in-delay-600 {
-  animation-delay: 600ms;
-}
-
-/* Custom Utility Classes */
-.text-sky-light {
-  color: var(--sky-light);
-}
-
-.text-teal {
-  color: var(--teal);
-}
-
-.text-navy {
-  color: var(--navy);
-}
-
-.text-amber {
-  color: var(--amber);
-}
-
-.text-orange {
-  color: var(--orange);
-}
-
-.bg-sky-light {
-  background-color: var(--sky-light);
-}
-
-.bg-teal {
-  background-color: var(--teal);
-}
-
-.bg-navy {
-  background-color: var(--navy);
-}
-
-.bg-amber {
-  background-color: var(--amber);
-}
-
-.bg-orange {
-  background-color: var(--orange);
-}
-
-/* Light shade variants */
-.bg-sky-light-10 {
-  background-color: rgba(142, 202, 230, 0.1);
-}
-
-.bg-teal-10 {
-  background-color: rgba(33, 158, 188, 0.1);
-}
-
-.bg-navy-10 {
-  background-color: rgba(2, 48, 71, 0.1);
-}
-
-.bg-amber-10 {
-  background-color: rgba(255, 183, 3, 0.1);
-}
-
-.bg-orange-10 {
-  background-color: rgba(251, 133, 0, 0.1);
-}
-
-/* Hover effects */
-.hover-lift {
-  transition: all 0.3s ease;
-}
-
-.hover-lift:hover {
-  transform: translateY(-2px);
-}
-
-/* Focus states */
-:focus-visible {
-  outline: 2px solid var(--teal);
-  outline-offset: 2px;
-}
-
-/* Reduced motion support */
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
+  .fade-in-delay-400 {
+    animation-delay: 400ms;
   }
-}
+
+  .fade-in-delay-600 {
+    animation-delay: 600ms;
+  }
+
+  /* Custom Utility Classes */
+  .text-sky-light {
+    color: var(--sky-light);
+  }
+
+  .text-teal {
+    color: var(--teal);
+  }
+
+  .text-navy {
+    color: var(--navy);
+  }
+
+  .text-amber {
+    color: var(--amber);
+  }
+
+  .text-orange {
+    color: var(--orange);
+  }
+
+  .bg-sky-light {
+    background-color: var(--sky-light);
+  }
+
+  .bg-teal {
+    background-color: var(--teal);
+  }
+
+  .bg-navy {
+    background-color: var(--navy);
+  }
+
+  .bg-amber {
+    background-color: var(--amber);
+  }
+
+  .bg-orange {
+    background-color: var(--orange);
+  }
+
+  /* Light shade variants */
+  .bg-sky-light-10 {
+    background-color: rgba(142, 202, 230, 0.1);
+  }
+
+  .bg-teal-10 {
+    background-color: rgba(33, 158, 188, 0.1);
+  }
+
+  .bg-navy-10 {
+    background-color: rgba(2, 48, 71, 0.1);
+  }
+
+  .bg-amber-10 {
+    background-color: rgba(255, 183, 3, 0.1);
+  }
+
+  .bg-orange-10 {
+    background-color: rgba(251, 133, 0, 0.1);
+  }
+
+  /* Hover effects */
+  .hover-lift {
+    transition: all 0.3s ease;
+  }
+
+  .hover-lift:hover {
+    transform: translateY(-2px);
+  }
+
+  /* Focus states */
+  :focus-visible {
+    outline: 2px solid var(--teal);
+    outline-offset: 2px;
+  }
+
+  /* Reduced motion support */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+
+  

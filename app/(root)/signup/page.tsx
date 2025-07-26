@@ -35,7 +35,7 @@ export default function Signup() {
     setLoading(true);
     try {
       await signIn("google", { callbackUrl: "/onboarding" });
-    } catch (error) {
+    } catch {
       setError("Google sign-up failed. Please try again.");
       setLoading(false);
     }
@@ -80,8 +80,9 @@ export default function Signup() {
 
       if (signInRes?.ok) router.push("/onboarding");
       else throw new Error("Account created successfully! Please sign in.");
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : "An unknown error occurred";
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }

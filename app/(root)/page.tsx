@@ -1,7 +1,3 @@
-import Image from "next/image";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
-
 export default function Home() {
   return (
     <div className="min-h-screen bg-white">
@@ -38,7 +34,7 @@ export default function Home() {
               </div>
               <h3 className="text-xl font-bold mb-4 text-navy">AI-Powered Learning</h3>
               <p className="text-gray-600 leading-relaxed">
-                Analyze each student's skill level and recommend the perfect next exercise using cutting-edge AI models.
+                Analyze each student&apos;s skill level and recommend the perfect next exercise using cutting-edge AI models.
               </p>
             </div>
 
@@ -130,7 +126,7 @@ export default function Home() {
       <section id="who-its-for" className="py-20 px-4 bg-gray-50">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-4xl md:text-5xl font-bold text-center mb-16 text-navy fade-in-up">
-            Who It's For
+            Who It&apos;s For
           </h2>
           <div className="grid md:grid-cols-3 gap-8">
             

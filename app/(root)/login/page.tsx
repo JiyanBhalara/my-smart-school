@@ -7,13 +7,14 @@ export default function Login() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const handleCredentialsLogin = async (e: React.FormEvent) => {
+  const handleCredentialsLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
     setError("");
     
-    const email = (e.target as any).email.value;
-    const password = (e.target as any).password.value;
+    const formData = new FormData(e.currentTarget);
+    const email = formData.get("email") as string;
+    const password = formData.get("password") as string;
     
     try {
       const result = await signIn("credentials", { 
@@ -26,7 +27,7 @@ export default function Login() {
       if (result?.error) {
         setError("Invalid email or password. Please try again.");
       }
-    } catch (error) {
+    } catch {
       setError("Something went wrong. Please try again.");
     } finally {
       setIsLoading(false);
@@ -37,7 +38,7 @@ export default function Login() {
     setIsLoading(true);
     try {
       await signIn("google", { callbackUrl: "/" });
-    } catch (error) {
+    } catch {
       setError("Google sign-in failed. Please try again.");
       setIsLoading(false);
     }
@@ -59,7 +60,7 @@ export default function Login() {
       <div className="relative w-full max-w-md">
         {/* Header section */}
         <div className="text-center mb-8 animate-fadeIn">
-          <Link href="/" className="inline-block group">
+          <Link suppressHydrationWarning={true} href="/" className="inline-block group">
             <div className="w-16 h-16 mx-auto mb-4 rounded-2xl flex items-center justify-center shadow-lg transform group-hover:scale-105 transition-transform duration-200"
                  style={{ backgroundColor: '#023047' }}>
               <svg className="w-8 h-8" style={{ color: '#8ECAE6' }} fill="currentColor" viewBox="0 0 20 20">
@@ -174,7 +175,7 @@ export default function Login() {
                     <span>Signing in...</span>
                   </div>
                 ) : (
-                  <div className="flex items-center justify-center space-x-2">
+                  <div suppressHydrationWarning={true} className="flex items-center justify-center space-x-2">
                     <span>Sign in to account</span>
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
@@ -198,6 +199,7 @@ export default function Login() {
 
             {/* Google Sign In */}
             <button
+            suppressHydrationWarning={true}
               onClick={handleGoogleLogin}
               disabled={isLoading}
               className="w-full flex items-center justify-center px-4 py-4 border-2 rounded-xl bg-white font-medium text-sm transition-all duration-200 transform hover:scale-105 hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none focus:outline-none focus:ring-4 focus:ring-opacity-50"
@@ -213,7 +215,7 @@ export default function Login() {
                 <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
               </svg>
               {isLoading && (
-                <div className="w-4 h-4 border-2 border-gray-300 border-t-gray-600 rounded-full animate-spin mr-3"></div>
+                <div suppressHydrationWarning={true} className="w-4 h-4 border-2 border-gray-300 border-t-gray-600 rounded-full animate-spin mr-3"></div>
               )}
               Continue with Google
             </button>
@@ -223,7 +225,7 @@ export default function Login() {
         {/* Sign Up Link */}
         <div className="text-center mt-6 animate-fadeIn delay-300">
           <p style={{ color: '#023047' }} className="opacity-80">
-            Don't have an account?{" "}
+            Don&apos;t have an account?{" "}
             <Link 
               href="/signup" 
               className="font-semibold hover:opacity-80 transition-opacity duration-200"
