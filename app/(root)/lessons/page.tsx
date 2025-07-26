@@ -100,28 +100,6 @@ export default async function LessonsPage() {
                 </button>
               </div>
             </div>
-
-            {/* Subject Filter Tags */}
-            {subjects.length > 0 && (
-              <div className="mt-6 pt-6 border-t border-gray-100">
-                <div className="flex flex-wrap gap-3">
-                  <span className="text-sm font-medium text-gray-700 flex items-center">
-                    Filter by subject:
-                  </span>
-                  <button className="px-3 py-1 rounded-full text-xs font-medium bg-[#023047] text-white">
-                    All
-                  </button>
-                  {subjects.map((subject) => (
-                    <button
-                      key={subject}
-                      className="px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700 hover:bg-[#8ECAE6] hover:text-[#023047] transition-colors"
-                    >
-                      {subject}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
           </div>
         </div>
 

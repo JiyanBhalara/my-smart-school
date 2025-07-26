@@ -96,7 +96,7 @@ export default function Onboarding() {
             <input
               type="date"
               required
-              className="w-full rounded-xl border-2 p-3 text-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-opacity-50 hover:border-opacity-70"
+              className="text-slate-900 w-full rounded-xl border-2 p-3 text-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-opacity-50 hover:border-opacity-70"
               style={{ 
                 borderColor: '#219EBC'
               }}
@@ -116,7 +116,7 @@ export default function Onboarding() {
               type="text"
               required
               placeholder="Enter your school name"
-              className="w-full rounded-xl border-2 p-3 text-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-opacity-50 hover:border-opacity-70 placeholder-gray-400"
+              className="text-slate-900 w-full rounded-xl border-2 p-3 text-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-opacity-50 hover:border-opacity-70 placeholder-gray-400"
               style={{ 
                 borderColor: '#219EBC',
               }}

@@ -14,21 +14,22 @@ datasource db {
 }
 
 model User {
-  id             String   @id @default(cuid())
-  email          String?  @unique
+  id             String            @id @default(cuid())
+  email          String?           @unique
   name           String?
   password       String?
   image          String?
   emailVerified  DateTime?
-  role           Role     @default(STUDENT)
+  role           Role              @default(STUDENT)
 
   // moved profile fields to a separate table
   profile        Profile?
-  teacherStatus  TeacherStatus? // null unless they choose 'Teacher'
+  teacherStatus  TeacherStatus?    // null unless they choose 'Teacher'
 
   accounts       Account[]
   sessions       Session[]
-  createdAt      DateTime @default(now())
+  studentQuizzes StudentQuiz[]     // back-relation for student quizzes
+  createdAt      DateTime          @default(now())
 }
 
 model Profile {
@@ -40,19 +41,18 @@ model Profile {
 }
 
 model TeacherStatus {
-  userId      String  @id        // 1-to-1 with User
-  selfieUrl   String             // Supabase Storage path
-  verified    Boolean @default(false)
+  userId      String   @id        // 1-to-1 with User
+  selfieUrl   String               // Supabase Storage path
+  verified    Boolean  @default(false)
   requestedAt DateTime @default(now())
   verifiedAt  DateTime?
-  user        User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 enum Role {
   STUDENT
   TEACHER        // once verified
 }
-
 
 model Account {
   id                 String   @id @default(cuid())
@@ -98,6 +98,7 @@ model Lesson {
 
   // many-to-many with tags
   tags      LessonTag[]
+  quizzes   Quiz[]        // back-relation for quizzes
 }
 
 model Tag {
@@ -114,4 +115,58 @@ model LessonTag {
   tagId    String
 
   @@id([lessonId, tagId])
+}
+
+model Quiz {
+  id             String         @id @default(cuid())
+  lessonId       String
+  title          String
+  questions      Question[]     
+  studentQuizzes StudentQuiz[]  // back-relation for student quiz instances
+  createdAt      DateTime       @default(now())
+
+  lesson         Lesson         @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+}
+
+model Question {
+  id        String     @id @default(cuid())
+  quizId    String
+  text      String
+  order     Int
+  options   Option[]
+  answers   StudentAnswer[] // back-relation for student answers
+
+  quiz      Quiz       @relation(fields: [quizId], references: [id], onDelete: Cascade)
+}
+
+model Option {
+  id          String     @id @default(cuid())
+  questionId  String
+  text        String
+  isCorrect   Boolean    @default(false)
+
+  question    Question   @relation(fields: [questionId], references: [id], onDelete: Cascade)
+}
+
+model StudentQuiz {
+  id         String         @id @default(cuid())
+  quizId     String
+  userId     String
+  startedAt  DateTime       @default(now())
+  completed  Boolean        @default(false)
+  score      Int?
+
+  answers    StudentAnswer[]
+  quiz       Quiz           @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  user       User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model StudentAnswer {
+  id             String       @id @default(cuid())
+  studentQuizId  String
+  questionId     String
+  selectedOption String
+
+  studentQuiz    StudentQuiz  @relation(fields: [studentQuizId], references: [id], onDelete: Cascade)
+  question       Question     @relation(fields: [questionId], references: [id], onDelete: Cascade)
 }

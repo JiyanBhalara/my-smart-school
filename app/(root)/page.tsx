@@ -5,7 +5,6 @@ import Footer from "@/components/Footer";
 export default function Home() {
   return (
     <div className="min-h-screen bg-white">
-      <Header />
 
       {/* Hero Section */}
       <section className="pt-32 pb-20 px-4 bg-navy text-white">
@@ -182,8 +181,6 @@ export default function Home() {
           </button>
         </div>
       </section>
-
-      <Footer />
     </div>
   );
 }

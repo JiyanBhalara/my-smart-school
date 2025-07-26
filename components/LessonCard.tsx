@@ -15,69 +15,74 @@ export default function LessonCard({
   id,
   title,
   subject,
-  fileUrl,
   createdAt,
   tags,
 }: LessonCardProps) {
   return (
-    <div className="group bg-gray-800 border border-gray-700 rounded-lg shadow-lg hover:shadow-xl hover:border-[#219EBC] transition-all duration-300 overflow-hidden">
-      {/* Header */}
-      <div className="bg-[#219EBC] p-4 border-b border-gray-700">
-        <div className="flex items-start justify-between">
-          <div className="flex-1">
-            <h3 className="text-lg font-bold text-white mb-2 line-clamp-2">
-              {title}
-            </h3>
-            <div className="flex items-center gap-2 text-gray-100">
-              <BookOpen size={16} />
-              <span className="text-sm font-medium">{subject}</span>
-            </div>
-          </div>
+    <div className="group relative bg-white border border-gray-200 rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+      {/* ---------- Header ---------- */}
+      <div className="bg-gradient-to-r from-[#219EBC] to-[#0077B6] p-5 rounded-t-xl">
+        <h3 className="text-lg sm:text-xl font-bold text-white mb-2 line-clamp-2">
+          {title}
+        </h3>
+
+        <div className="flex items-center gap-2 text-white/90">
+          <BookOpen size={16} />
+          <span className="text-sm font-medium">{subject}</span>
         </div>
       </div>
 
-      {/* Content */}
-      <div className="p-4 bg-gray-800">
-        {/* Tags */}
+      {/* ---------- Content ---------- */}
+      <div className="p-5 sm:p-6">
         {tags.length > 0 && (
           <div className="mb-4">
             <div className="flex items-center gap-2 mb-3">
               <Tag size={14} className="text-[#FB8500]" />
-              <span className="text-sm font-medium text-gray-300">Tags</span>
+              <span className="text-sm font-semibold text-gray-700">Tags</span>
             </div>
+
             <div className="flex flex-wrap gap-2">
-              {tags.map(({ tag }) => (
-                <span
+              {tags.slice(0, 3).map(({ tag }) => (
+                <Link
                   key={tag.name}
-                  className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-[#FFB703] text-gray-900"
+                  href="#"
+                  className="cursor-pointer inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold text-white bg-gradient-to-r from-[#FFB703] to-[#FB8500] transition-transform duration-200 hover:scale-105"
                 >
                   {tag.name}
-                </span>
+                </Link>
               ))}
+
+              {tags.length > 3 && (
+                <span className="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-medium bg-gray-100 text-gray-600 border border-gray-200">
+                  +{tags.length - 3} more
+                </span>
+              )}
             </div>
           </div>
         )}
 
-        {/* Footer */}
-        <div className="flex items-center justify-between pt-4 border-t border-gray-700">
-          <div className="flex items-center gap-2 text-gray-400">
-            <Calendar size={16} />
+        {/* ---------- Footer ---------- */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pt-4 border-t border-gray-100">
+          {/* Date */}
+          <div className="flex items-center gap-2 text-gray-600">
+            <Calendar size={16} className="text-[#219EBC]" />
             <span className="text-sm">
-              {new Date(createdAt).toLocaleDateString('en-US', {
-                month: 'short',
-                day: 'numeric',
-                year: 'numeric'
+              {new Date(createdAt).toLocaleDateString("en-US", {
+                month: "short",
+                day: "numeric",
+                year: "numeric",
               })}
             </span>
           </div>
-          
+
+          {/* View Lesson */}
           <Link
-            href={fileUrl}
-            target="_blank"
-            className="inline-flex items-center gap-2 px-4 py-2 bg-[#023047] text-white text-sm font-medium rounded-lg hover:bg-[#219EBC] transition-colors group/link border border-gray-600"
+            href={`/lessons/${id}`}
+            className="cursor-pointer inline-flex items-center gap-2 px-5 py-2 bg-gradient-to-r from-[#023047] to-[#0077B6] text-white text-sm font-semibold rounded-lg transition-all duration-300 hover:from-[#219EBC] hover:to-[#0077B6] focus:outline-none focus:ring-2 focus:ring-[#219EBC]/50"
+            aria-label={`View lesson: ${title}`}
           >
-            <span>View</span>
-            <ExternalLink size={14} className="group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5 transition-transform" />
+            <span>View Lesson</span>
+            <ExternalLink size={14} className="transition-transform duration-300 group-hover:translate-x-1" />
           </Link>
         </div>
       </div>
