@@ -4,7 +4,7 @@ import "./globals.css";
 import { Providers } from "@/lib/provider";
 import { getServerSession } from 'next-auth';
 import type { Session } from 'next-auth';
-import { authOptions } from "./api/auth/[...nextauth]/route";
+import { authOptions } from "@/app/utils/authOptions";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
