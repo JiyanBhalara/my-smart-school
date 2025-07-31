@@ -5,14 +5,14 @@ import prisma from "@/lib/prisma";
 
 export async function POST(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   // 1️⃣ Authenticate + role check
   const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
   if (!token?.id || token.role !== "TEACHER") {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
-  const lessonId = params.id;
+  const { id: lessonId } = await params;
 
   // 2️⃣ Parse & validate payload
   const { title, questions } = await req.json() as {
