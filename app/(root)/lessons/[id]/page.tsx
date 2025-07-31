@@ -6,7 +6,7 @@ import { Calendar, ExternalLink, FileText, BookOpen, Tag, Play, X, AlertTriangle
 
 type Props = {
   params: Promise<{ id: string }>;
-  searchParams: { noMaterial?: string };
+  searchParams: Promise<{ noMaterial?: string }>;
 };
 
 export default async function LessonDetailPage({
@@ -14,6 +14,7 @@ export default async function LessonDetailPage({
   searchParams,
 }: Props) {
   const { id } = await params;
+  const { noMaterial } = await searchParams;
   
   const lesson = await prisma.lesson.findUnique({
     where: { id },
@@ -28,7 +29,7 @@ export default async function LessonDetailPage({
   return (
     <main className="min-h-screen bg-gradient-to-br from-gray-50 to-white relative">
       {/* No Material Popup Modal */}
-      {searchParams.noMaterial === "1" && (
+      {noMaterial === "1" && (
         <>
           {/* Backdrop */}
           <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
