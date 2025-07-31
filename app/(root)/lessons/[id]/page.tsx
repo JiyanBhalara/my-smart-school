@@ -5,7 +5,7 @@ import { notFound } from "next/navigation";
 import { Calendar, ExternalLink, FileText, BookOpen, Tag, Play, X, AlertTriangle } from "lucide-react";
 
 type Props = {
-  params: { id: string };
+  params: Promise<{ id: string }>;
   searchParams: { noMaterial?: string };
 };
 
@@ -13,8 +13,10 @@ export default async function LessonDetailPage({
   params,
   searchParams,
 }: Props) {
+  const { id } = await params;
+  
   const lesson = await prisma.lesson.findUnique({
-    where: { id: params.id },
+    where: { id },
     include: {
       quizzes: { orderBy: { createdAt: "desc" } },
       tags:    { include: { tag: true } },
