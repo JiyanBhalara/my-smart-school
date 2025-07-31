@@ -5,9 +5,9 @@ import { supabaseAdmin } from "@/lib/supabaseAdmin";
 
 export async function GET(
   req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
-  const { id } = params;
+  const { id } = await params;
 
   // 1️⃣ fetch the lesson to get its file key
   const lesson = await prisma.lesson.findUnique({
