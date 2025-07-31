@@ -4,12 +4,14 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 type LessonDetailProps = {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 };
 
 export default async function LessonDetail({ params }: LessonDetailProps) {
+  const { id } = await params;
+
   const lesson = await prisma.lesson.findUnique({
-    where: { id: params.id },
+    where: { id },
     include: {
       tags: { include: { tag: true } },
       quizzes: { orderBy: { createdAt: "desc" } },
@@ -25,7 +27,9 @@ export default async function LessonDetail({ params }: LessonDetailProps) {
     <main className="p-6">
       <header className="mb-8">
         <h1 className="text-3xl font-bold">{lesson.title}</h1>
-        <p className="text-gray-600">{lesson.subject} — {lesson.type.toUpperCase()}</p>
+        <p className="text-gray-600">
+          {lesson.subject} — {lesson.type.toUpperCase()}
+        </p>
         <div className="flex flex-wrap gap-2 mt-2">
           {lesson.tags.map(({ tag }) => (
             <span
@@ -57,7 +61,9 @@ export default async function LessonDetail({ params }: LessonDetailProps) {
         </div>
 
         {lesson.quizzes.length === 0 ? (
-          <p className="mt-4 text-gray-500">No quizzes created for this lesson.</p>
+          <p className="mt-4 text-gray-500">
+            No quizzes created for this lesson.
+          </p>
         ) : (
           <ul className="mt-4 space-y-4">
             {lesson.quizzes.map((quiz) => (
