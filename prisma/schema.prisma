@@ -28,8 +28,13 @@ model User {
 
   accounts       Account[]
   sessions       Session[]
-  studentQuizzes StudentQuiz[]     // back-relation for student quizzes
   createdAt      DateTime          @default(now())
+  
+  // Quiz relations - CORRECTED
+  createdQuizzes Quiz[]            @relation("TeacherQuizzes")
+  quizAttempts   QuizAttempt[]     @relation("StudentAttempts")
+
+  @@map("users")
 }
 
 model Profile {
@@ -38,6 +43,8 @@ model Profile {
   birthdate DateTime
   school    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("profiles")
 }
 
 model TeacherStatus {
@@ -47,6 +54,8 @@ model TeacherStatus {
   requestedAt DateTime @default(now())
   verifiedAt  DateTime?
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("teacher_status")
 }
 
 enum Role {
@@ -70,6 +79,7 @@ model Account {
   user               User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
+  @@map("accounts")
 }
 
 model Session {
@@ -78,6 +88,8 @@ model Session {
   userId       String
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
 }
 
 model VerificationToken {
@@ -85,6 +97,8 @@ model VerificationToken {
   identifier String
   token      String   @unique
   expires    DateTime
+
+  @@map("verification_tokens")
 }
 
 model Lesson {
@@ -94,17 +108,23 @@ model Lesson {
   type      String        // e.g. "ppt", "video", "scratch", "canva"
   fileUrl   String        // will point to Supabase Storage URL
   authorId  String        // FK → User.id
+  published Boolean       @default(false) // Added for controlling lesson visibility
   createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt // Added for tracking updates
 
   // many-to-many with tags
   tags      LessonTag[]
   quizzes   Quiz[]        // back-relation for quizzes
+
+  @@map("lessons")
 }
 
 model Tag {
   id      String        @id @default(cuid())
   name    String        @unique
   lessons LessonTag[]
+
+  @@map("tags")
 }
 
 model LessonTag {
@@ -115,58 +135,100 @@ model LessonTag {
   tagId    String
 
   @@id([lessonId, tagId])
+  @@map("lesson_tags")
 }
 
 model Quiz {
-  id             String         @id @default(cuid())
-  lessonId       String
-  title          String
-  questions      Question[]     
-  studentQuizzes StudentQuiz[]  // back-relation for student quiz instances
-  createdAt      DateTime       @default(now())
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  lessonId    String
+  authorId    String   // Teacher who created the quiz
+  isActive    Boolean  @default(true)
+  published   Boolean  @default(false) // Added for controlling quiz visibility
+  timeLimit   Int?     // Time limit in minutes (optional)
+  maxAttempts Int?     @default(1) // Maximum attempts allowed per student
+  passingScore Int?    // Minimum score required to pass (optional)
+  showResults Boolean  @default(true) // Whether to show results to students
+  randomizeQuestions Boolean @default(false) // Randomize question order
+  randomizeOptions Boolean @default(false) // Randomize option order
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
-  lesson         Lesson         @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  lesson      Lesson     @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  author      User       @relation("TeacherQuizzes", fields: [authorId], references: [id])
+  questions   Question[]
+  attempts    QuizAttempt[]
+
+  @@map("quizzes")
 }
 
 model Question {
-  id        String     @id @default(cuid())
-  quizId    String
-  text      String
-  order     Int
-  options   Option[]
-  answers   StudentAnswer[] // back-relation for student answers
+  id          String   @id @default(cuid())
+  quizId      String
+  questionText String  @db.Text // Changed to Text for longer questions
+  questionImage String? // URL for question image
+  order       Int      // Order of question in quiz
+  points      Int      @default(1)
+  explanation String?  @db.Text // Optional explanation for the correct answer
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
-  quiz      Quiz       @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  quiz        Quiz      @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  options     Option[]
+  answers     Answer[]
+
+  @@map("questions")
 }
 
 model Option {
-  id          String     @id @default(cuid())
+  id          String   @id @default(cuid())
   questionId  String
-  text        String
-  isCorrect   Boolean    @default(false)
+  optionText  String   @db.Text // Changed to Text for longer options
+  optionImage String?  // URL for option image
+  isCorrect   Boolean  @default(false)
+  order       Int      // Order of option
+  createdAt   DateTime @default(now())
 
-  question    Question   @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  question    Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  answers     Answer[]
+
+  @@map("options")
 }
 
-model StudentQuiz {
-  id         String         @id @default(cuid())
-  quizId     String
-  userId     String
-  startedAt  DateTime       @default(now())
-  completed  Boolean        @default(false)
-  score      Int?
+model QuizAttempt {
+  id          String   @id @default(cuid())
+  quizId      String
+  studentId   String
+  score       Int      // Total points earned
+  totalPoints Int      // Total possible points
+  percentage  Float    // Calculated percentage score
+  passed      Boolean? // Whether the attempt passed (if passingScore is set)
+  startedAt   DateTime @default(now()) // When the attempt was started
+  completedAt DateTime? // When the attempt was completed (null if not completed)
+  timeSpent   Int?     // Time spent in seconds
+  isCompleted Boolean  @default(false) // Whether the attempt is completed
 
-  answers    StudentAnswer[]
-  quiz       Quiz           @relation(fields: [quizId], references: [id], onDelete: Cascade)
-  user       User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  quiz        Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  student     User     @relation("StudentAttempts", fields: [studentId], references: [id])
+  answers     Answer[]
+
+  // Allow multiple attempts per student per quiz (removed unique constraint)
+  @@map("quiz_attempts")
 }
 
-model StudentAnswer {
-  id             String       @id @default(cuid())
-  studentQuizId  String
-  questionId     String
-  selectedOption String
+model Answer {
+  id            String @id @default(cuid())
+  attemptId     String
+  questionId    String
+  selectedOptionId String?
+  isCorrect     Boolean @default(false) // Whether the selected answer is correct
+  pointsEarned  Int     @default(0) // Points earned for this answer
 
-  studentQuiz    StudentQuiz  @relation(fields: [studentQuizId], references: [id], onDelete: Cascade)
-  question       Question     @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  attempt       QuizAttempt @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+  question      Question    @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  selectedOption Option?    @relation(fields: [selectedOptionId], references: [id])
+
+  @@unique([attemptId, questionId]) // One answer per question per attempt
+  @@map("answers")
 }
