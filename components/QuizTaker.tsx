@@ -1,11 +1,12 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Clock, CheckCircle, AlertCircle, ArrowLeft, ArrowRight, Trophy } from 'lucide-react';
+import toast, { Toaster } from 'react-hot-toast';
 
 interface QuizTakerProps {
   lessonId: string;
@@ -20,25 +21,145 @@ export default function QuizTaker({ lessonId, quizId, quiz }: QuizTakerProps) {
   const [timeLeft, setTimeLeft] = useState<number | null>(
     quiz.timeLimit ? quiz.timeLimit * 60 : null
   );
+  const [startTime] = useState<Date>(new Date());
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [results, setResults] = useState<any>(null);
+  const [timeExpired, setTimeExpired] = useState(false);
+  
+  // Use refs to track notification states to prevent duplicates
+  const notifiedAt75Ref = useRef(false);
+  const notifiedAt50Ref = useRef(false);
+
+  // Calculate initial time limit for percentage calculations
+  const initialTimeLimit = quiz.timeLimit ? quiz.timeLimit * 60 : null;
+
+  // Calculate time spent
+  const getTimeSpent = () => {
+    const now = new Date();
+    return Math.floor((now.getTime() - startTime.getTime()) / 1000);
+  };
+
+  // Use useCallback to memoize handleSubmit to prevent dependency issues
+  const handleSubmit = useCallback(async (isAutoSubmit = false) => {
+    if (loading || submitted) return;
+    
+    setLoading(true);
+    
+    try {
+      const submissionAnswers = Object.entries(answers).map(([questionId, optionId]) => ({
+        questionId,
+        optionId
+      }));
+
+      const timeSpent = getTimeSpent();
+
+      const response = await fetch(`/api/lessons/${lessonId}/quizzes/${quizId}/submit`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          answers: submissionAnswers,
+          timeSpent: timeSpent,
+          isAutoSubmit: isAutoSubmit
+        })
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        setResults({ ...result, timeSpent });
+        setSubmitted(true);
+      } else {
+        const error = await response.json();
+        alert(error.error || 'Failed to submit quiz');
+      }
+    } catch (error) {
+      console.error('Error submitting quiz:', error);
+      alert('Failed to submit quiz');
+    } finally {
+      setLoading(false);
+    }
+  }, [loading, submitted, answers, lessonId, quizId, getTimeSpent]);
 
   useEffect(() => {
-    if (timeLeft === null) return;
+    if (timeLeft === null || submitted || !initialTimeLimit) return;
 
     const timer = setInterval(() => {
       setTimeLeft(prev => {
         if (prev && prev <= 1) {
-          handleSubmit();
+          setTimeExpired(true);
+          setTimeout(() => {
+            if (!submitted) {
+              handleSubmit(true);
+            }
+          }, 100);
           return 0;
         }
+
+        // Calculate percentage of time remaining
+        if (prev && initialTimeLimit) {
+          const timeUsedPercentage = ((initialTimeLimit - prev) / initialTimeLimit) * 100;
+          
+          // Show notification at 50% time used (50% remaining) - using ref to prevent duplicates
+          if (timeUsedPercentage >= 50 && !notifiedAt50Ref.current) {
+            notifiedAt50Ref.current = true;
+            const minutesLeft = Math.floor(prev / 60);
+            const secondsLeft = prev % 60;
+            
+            // Dismiss any existing toasts first
+            toast.dismiss();
+            
+            toast.error(
+              `⏰ 50% Time Used! ${minutesLeft}:${secondsLeft.toString().padStart(2, '0')} remaining`,
+              {
+                id: 'time-warning-50', // Add unique ID to prevent duplicates
+                duration: 5000,
+                position: 'top-center',
+                style: {
+                  background: '#FEF3C7',
+                  color: '#92400E',
+                  border: '2px solid #F59E0B',
+                  borderRadius: '12px',
+                  fontWeight: '600',
+                },
+                icon: '⚠️',
+              }
+            );
+          }
+          
+          // Show notification at 75% time used (25% remaining) - using ref to prevent duplicates
+          if (timeUsedPercentage >= 75 && !notifiedAt75Ref.current) {
+            notifiedAt75Ref.current = true;
+            const minutesLeft = Math.floor(prev / 60);
+            const secondsLeft = prev % 60;
+            
+            // Dismiss any existing toasts first
+            toast.dismiss();
+            
+            toast.error(
+              `🚨 Only 25% Time Left! ${minutesLeft}:${secondsLeft.toString().padStart(2, '0')} remaining`,
+              {
+                id: 'time-warning-75', // Add unique ID to prevent duplicates
+                duration: 6000,
+                position: 'top-center',
+                style: {
+                  background: '#FEE2E2',
+                  color: '#991B1B',
+                  border: '2px solid #EF4444',
+                  borderRadius: '12px',
+                  fontWeight: '600',
+                },
+                icon: '🚨',
+              }
+            );
+          }
+        }
+
         return prev ? prev - 1 : null;
       });
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [timeLeft]);
+  }, [timeLeft, submitted, initialTimeLimit, handleSubmit]); // Removed notification states from dependencies
 
   const formatTime = (seconds: number) => {
     const hours = Math.floor(seconds / 3600);
@@ -51,41 +172,18 @@ export default function QuizTaker({ lessonId, quizId, quiz }: QuizTakerProps) {
     return `${minutes}:${secs.toString().padStart(2, '0')}`;
   };
 
-  const handleAnswerSelect = (questionId: string, optionId: string) => {
-    setAnswers(prev => ({ ...prev, [questionId]: optionId }));
+  const formatTimeSpent = (seconds: number) => {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    
+    if (minutes > 0) {
+      return `${minutes} minute${minutes !== 1 ? 's' : ''} ${remainingSeconds} second${remainingSeconds !== 1 ? 's' : ''}`;
+    }
+    return `${remainingSeconds} second${remainingSeconds !== 1 ? 's' : ''}`;
   };
 
-  const handleSubmit = async () => {
-    if (loading || submitted) return;
-    
-    setLoading(true);
-    
-    try {
-      const submissionAnswers = Object.entries(answers).map(([questionId, optionId]) => ({
-        questionId,
-        optionId
-      }));
-
-      const response = await fetch(`/api/lessons/${lessonId}/quizzes/${quizId}/submit`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ answers: submissionAnswers })
-      });
-
-      if (response.ok) {
-        const result = await response.json();
-        setResults(result);
-        setSubmitted(true);
-      } else {
-        const error = await response.json();
-        alert(error.error || 'Failed to submit quiz');
-      }
-    } catch (error) {
-      console.error('Error submitting quiz:', error);
-      alert('Failed to submit quiz');
-    } finally {
-      setLoading(false);
-    }
+  const handleAnswerSelect = (questionId: string, optionId: string) => {
+    setAnswers(prev => ({ ...prev, [questionId]: optionId }));
   };
 
   const progress = ((currentQuestion + 1) / quiz.questions.length) * 100;
@@ -95,6 +193,13 @@ export default function QuizTaker({ lessonId, quizId, quiz }: QuizTakerProps) {
   if (submitted && results) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 py-4 sm:py-8 lg:py-12">
+        {/* Single Toaster component */}
+        <Toaster 
+          toastOptions={{
+            duration: 4000,
+          }}
+        />
+        
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <Card className="shadow-xl border-0 bg-white/80 backdrop-blur-sm">
             <CardHeader className="text-center pb-6 pt-6 sm:pb-8 sm:pt-8 lg:pt-12">
@@ -114,7 +219,8 @@ export default function QuizTaker({ lessonId, quizId, quiz }: QuizTakerProps) {
                 Quiz Completed!
               </CardTitle>
               <p className="text-gray-600 text-sm sm:text-base">
-                {results.percentage >= 80 ? 'Excellent work!' : 
+                {timeExpired ? 'Time expired - Quiz auto-submitted' : 
+                 results.percentage >= 80 ? 'Excellent work!' : 
                  results.percentage >= 60 ? 'Good job!' : 'Keep practicing!'}
               </p>
             </CardHeader>
@@ -124,54 +230,76 @@ export default function QuizTaker({ lessonId, quizId, quiz }: QuizTakerProps) {
               <div className="text-center mb-6 sm:mb-8">
                 <div className="inline-flex items-center justify-center w-20 h-20 sm:w-24 sm:h-24 lg:w-32 lg:h-32 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 text-white mb-4">
                   <div className="text-center">
-                    <div className="text-lg sm:text-xl lg:text-3xl font-bold">{results.score}</div>
-                    <div className="text-xs sm:text-xs lg:text-sm opacity-90">/ {results.maxScore}</div>
+                    <div className="text-lg sm:text-xl lg:text-3xl font-bold">{results.score || 0}</div>
+                    <div className="text-xs sm:text-xs lg:text-sm opacity-90">/ {results.maxScore || results.totalQuestions || quiz.questions.length}</div>
                   </div>
                 </div>
                 <div className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-2">
-                  {results.percentage}%
+                  {results.percentage || 0}%
                 </div>
                 <div className="text-gray-600 text-sm sm:text-base">Overall Score</div>
               </div>
 
-              {/* Results Breakdown */}
+              {/* Time Spent Display */}
+              <div className="text-center mb-6 sm:mb-8 p-4 bg-blue-50 rounded-xl border border-blue-200">
+                <div className="flex items-center justify-center gap-2 text-blue-700 mb-2">
+                  <Clock className="w-5 h-5" />
+                  <span className="font-semibold">Time Spent</span>
+                </div>
+                <div className="text-lg sm:text-xl font-bold text-blue-900">
+                  {formatTimeSpent(results.timeSpent || 0)}
+                </div>
+                {quiz.timeLimit && (
+                  <div className="text-sm text-blue-600 mt-1">
+                    Time Limit: {quiz.timeLimit} minutes
+                  </div>
+                )}
+              </div>
+
+              {/* Results Breakdown - Fixed to show proper scores */}
               <div className="space-y-3 sm:space-y-4 mb-6 sm:mb-8">
                 <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-4">Question Results</h3>
                 <div className="max-h-64 sm:max-h-80 overflow-y-auto space-y-3">
-                  {results.results.map((result: any, index: number) => (
-                    <div
-                      key={result.questionId}
-                      className={`p-3 sm:p-4 rounded-xl border-2 transition-all ${
-                        result.isCorrect 
-                          ? 'bg-green-50 border-green-200 shadow-sm' 
-                          : 'bg-red-50 border-red-200 shadow-sm'
-                      }`}
-                    >
-                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-                        <div className="flex items-center gap-3">
-                          <div className={`w-6 h-6 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-white font-semibold text-sm ${
-                            result.isCorrect ? 'bg-green-500' : 'bg-red-500'
-                          }`}>
-                            {result.isCorrect ? '✓' : '✗'}
-                          </div>
-                          <div className="flex-1">
-                            <div className="font-medium text-gray-900 text-sm sm:text-base">
-                              Question {index + 1}
+                  {(results.results || []).map((result: any, index: number) => {
+                    const question = quiz.questions[index];
+                    const maxPoints = question?.points || 1;
+                    const earnedPoints = result.isCorrect ? maxPoints : 0;
+                    
+                    return (
+                      <div
+                        key={result.questionId || index}
+                        className={`p-3 sm:p-4 rounded-xl border-2 transition-all ${
+                          result.isCorrect 
+                            ? 'bg-green-50 border-green-200 shadow-sm' 
+                            : 'bg-red-50 border-red-200 shadow-sm'
+                        }`}
+                      >
+                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                          <div className="flex items-center gap-3">
+                            <div className={`w-6 h-6 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-white font-semibold text-sm ${
+                              result.isCorrect ? 'bg-green-500' : 'bg-red-500'
+                            }`}>
+                              {result.isCorrect ? '✓' : '✗'}
                             </div>
-                            <div className="text-xs sm:text-sm text-gray-600 line-clamp-1">
-                              {quiz.questions[index]?.questionText?.substring(0, 50)}...
+                            <div className="flex-1">
+                              <div className="font-medium text-gray-900 text-sm sm:text-base">
+                                Question {index + 1}
+                              </div>
+                              <div className="text-xs sm:text-sm text-gray-600 line-clamp-1">
+                                {question?.questionText?.substring(0, 50)}...
+                              </div>
                             </div>
                           </div>
-                        </div>
-                        <div className="text-right">
-                          <div className="font-semibold text-gray-900 text-sm sm:text-base">
-                            {result.points} / {quiz.questions[index]?.points || 1}
+                          <div className="text-right">
+                            <div className="font-semibold text-gray-900 text-sm sm:text-base">
+                              {earnedPoints} / {maxPoints}
+                            </div>
+                            <div className="text-xs sm:text-sm text-gray-600">points</div>
                           </div>
-                          <div className="text-xs sm:text-sm text-gray-600">points</div>
                         </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
 
@@ -183,7 +311,7 @@ export default function QuizTaker({ lessonId, quizId, quiz }: QuizTakerProps) {
                 >
                   Back to Lessons
                 </Button>
-                {results.percentage < 80 && (
+                {(results.percentage || 0) < 80 && (
                   <Button 
                     variant="outline"
                     onClick={() => window.location.reload()}
@@ -203,6 +331,13 @@ export default function QuizTaker({ lessonId, quizId, quiz }: QuizTakerProps) {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+      {/* Single Toaster component with configuration */}
+      <Toaster 
+        toastOptions={{
+          duration: 4000,
+        }}
+      />
+      
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
         {/* Header */}
         <Card className="mb-4 sm:mb-6 lg:mb-8 shadow-lg border-0 bg-white/80 backdrop-blur-sm">
@@ -219,10 +354,15 @@ export default function QuizTaker({ lessonId, quizId, quiz }: QuizTakerProps) {
               
               {timeLeft !== null && (
                 <div className={`flex items-center space-x-2 px-3 py-2 sm:px-4 sm:py-2 rounded-xl font-semibold text-sm sm:text-base ${
-                  timeLeft < 300 ? 'bg-red-100 text-red-700' : 'bg-orange-100 text-orange-700'
+                  timeLeft < 300 ? 'bg-red-100 text-red-700 animate-pulse' : 
+                  timeLeft < 600 ? 'bg-orange-100 text-orange-700' : 
+                  'bg-blue-100 text-blue-700'
                 }`}>
                   <Clock className="w-4 h-4 sm:w-5 sm:h-5" />
                   <span className="font-mono">{formatTime(timeLeft)}</span>
+                  {timeLeft < 300 && (
+                    <AlertCircle className="w-4 h-4 sm:w-5 sm:h-5" />
+                  )}
                 </div>
               )}
             </div>
@@ -352,7 +492,7 @@ export default function QuizTaker({ lessonId, quizId, quiz }: QuizTakerProps) {
                   </Button>
                 ) : (
                   <Button
-                    onClick={handleSubmit}
+                    onClick={() => handleSubmit(false)}
                     disabled={loading || answeredQuestions === 0}
                     className="flex items-center justify-center gap-2 px-4 sm:px-6 py-2 sm:py-3 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50 text-sm sm:text-base"
                     size="lg"
