@@ -6,6 +6,12 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 
+interface UnreadData {
+  totalUnread: number;
+  conversationsWithUnread: any[];
+  usersWithUnread: string[];
+}
+
 export default function Header() {
   const { data: session, status } = useSession();
   const isLoggedIn = status === 'authenticated';
@@ -14,11 +20,39 @@ export default function Header() {
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [unreadData, setUnreadData] = useState<UnreadData>({
+    totalUnread: 0,
+    conversationsWithUnread: [],
+    usersWithUnread: []
+  });
 
   // Only flip after client mount
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  // Fetch unread messages data
+  useEffect(() => {
+    const fetchUnreadData = async () => {
+      if (!isLoggedIn) return;
+      
+      try {
+        const response = await fetch('/api/chat/unread');
+        if (response.ok) {
+          const data = await response.json();
+          setUnreadData(data);
+        }
+      } catch (error) {
+        console.error('Error fetching unread data:', error);
+      }
+    };
+
+    fetchUnreadData();
+    
+    // Poll for updates every 10 seconds
+    const interval = setInterval(fetchUnreadData, 10000);
+    return () => clearInterval(interval);
+  }, [isLoggedIn]);
 
   const router = useRouter();
   const handleProtectedAction = (href: string) => {
@@ -27,6 +61,17 @@ export default function Header() {
       return;
     }
     router.push(href);
+  };
+
+  // Notification Badge Component
+  const NotificationBadge = ({ count }: { count: number }) => {
+    if (count === 0) return null;
+    
+    return (
+      <div className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
+        {count > 9 ? '9+' : count}
+      </div>
+    );
   };
 
   return (
@@ -62,38 +107,44 @@ export default function Header() {
 
               {/* Chat Navigation - Teachers see Student List */}
               {isLoggedIn && isTeacher && (
-                <button
-                  onClick={() => handleProtectedAction('/chat/students')}
-                  className="cursor-pointer flex items-center space-x-2 bg-purple-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-opacity-90 transition-all duration-300 shadow-sm hover:shadow-md transform hover:scale-105"
-                >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a2 2 0 01-2-2v-6a2 2 0 012-2h8z"
-                    />
-                  </svg>
-                  <span>Student List</span>
-                </button>
+                <div className="relative">
+                  <button
+                    onClick={() => handleProtectedAction('/chat/students')}
+                    className="cursor-pointer flex items-center space-x-2 bg-purple-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-opacity-90 transition-all duration-300 shadow-sm hover:shadow-md transform hover:scale-105"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a2 2 0 01-2-2v-6a2 2 0 012-2h8z"
+                      />
+                    </svg>
+                    <span>Student List</span>
+                  </button>
+                  <NotificationBadge count={unreadData.totalUnread} />
+                </div>
               )}
 
               {/* Chat Navigation - Students see Teacher List */}
               {isLoggedIn && isStudent && (
-                <button
-                  onClick={() => handleProtectedAction('/chat/teachers')}
-                  className="cursor-pointer flex items-center space-x-2 bg-purple-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-opacity-90 transition-all duration-300 shadow-sm hover:shadow-md transform hover:scale-105"
-                >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a2 2 0 01-2-2v-6a2 2 0 012-2h8z"
-                    />
-                  </svg>
-                  <span>Teacher List</span>
-                </button>
+                <div className="relative">
+                  <button
+                    onClick={() => handleProtectedAction('/chat/teachers')}
+                    className="cursor-pointer flex items-center space-x-2 bg-purple-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-opacity-90 transition-all duration-300 shadow-sm hover:shadow-md transform hover:scale-105"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a2 2 0 01-2-2v-6a2 2 0 012-2h8z"
+                      />
+                    </svg>
+                    <span>Teacher List</span>
+                  </button>
+                  <NotificationBadge count={unreadData.totalUnread} />
+                </div>
               )}
 
               {isLoggedIn && isTeacher && (
@@ -227,43 +278,57 @@ export default function Header() {
 
                   {/* Mobile Chat Navigation */}
                   {isLoggedIn && isTeacher && (
-                    <button
-                      onClick={() => {
-                        handleProtectedAction('/chat/students');
-                        setIsMobileMenuOpen(false);
-                      }}
-                      className="flex items-center justify-center space-x-3 bg-purple-600 text-white px-4 py-3 rounded-lg font-medium hover:bg-opacity-90 transition-all duration-300 w-full"
-                    >
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a2 2 0 01-2-2v-6a2 2 0 012-2h8z"
-                        />
-                      </svg>
-                      Student List & Chat
-                    </button>
+                    <div className="relative">
+                      <button
+                        onClick={() => {
+                          handleProtectedAction('/chat/students');
+                          setIsMobileMenuOpen(false);
+                        }}
+                        className="flex items-center justify-center space-x-3 bg-purple-600 text-white px-4 py-3 rounded-lg font-medium hover:bg-opacity-90 transition-all duration-300 w-full"
+                      >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a2 2 0 01-2-2v-6a2 2 0 012-2h8z"
+                          />
+                        </svg>
+                        Student List & Chat
+                        {unreadData.totalUnread > 0 && (
+                          <span className="bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
+                            {unreadData.totalUnread > 9 ? '9+' : unreadData.totalUnread}
+                          </span>
+                        )}
+                      </button>
+                    </div>
                   )}
 
                   {isLoggedIn && isStudent && (
-                    <button
-                      onClick={() => {
-                        handleProtectedAction('/chat/teachers');
-                        setIsMobileMenuOpen(false);
-                      }}
-                      className="flex items-center justify-center space-x-3 bg-purple-600 text-white px-4 py-3 rounded-lg font-medium hover:bg-opacity-90 transition-all duration-300 w-full"
-                    >
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a2 2 0 01-2-2v-6a2 2 0 012-2h8z"
-                        />
-                      </svg>
-                      Teacher List & Chat
-                    </button>
+                    <div className="relative">
+                      <button
+                        onClick={() => {
+                          handleProtectedAction('/chat/teachers');
+                          setIsMobileMenuOpen(false);
+                        }}
+                        className="flex items-center justify-center space-x-3 bg-purple-600 text-white px-4 py-3 rounded-lg font-medium hover:bg-opacity-90 transition-all duration-300 w-full"
+                      >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a2 2 0 01-2-2v-6a2 2 0 012-2h8z"
+                          />
+                        </svg>
+                        Teacher List & Chat
+                        {unreadData.totalUnread > 0 && (
+                          <span className="bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
+                            {unreadData.totalUnread > 9 ? '9+' : unreadData.totalUnread}
+                          </span>
+                        )}
+                      </button>
+                    </div>
                   )}
 
                   {isLoggedIn && isTeacher && (
@@ -279,7 +344,7 @@ export default function Header() {
                   )}
                 </div>
 
-                {/* Mobile Navigation Links */}
+                {/* Rest of mobile menu - unchanged */}
                 <Link href="#features" onClick={() => setIsMobileMenuOpen(false)} className="px-4 py-2 font-medium hover:text-teal">
                   Features
                 </Link>
@@ -290,7 +355,7 @@ export default function Header() {
                   Who It&apos;s For
                 </Link>
 
-                {/* Mobile Auth Section */}
+                {/* Mobile Auth Section - unchanged */}
                 <div className="border-t border-gray-100 pt-4 space-y-3">
                   {!isLoggedIn ? (
                     <>

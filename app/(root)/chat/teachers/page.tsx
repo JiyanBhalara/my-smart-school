@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
+import { useUnreadMessages } from '@/hooks/useUnreadMessages';
 
 interface User {
   id: string;
@@ -24,7 +25,21 @@ export default function TeacherListPage() {
   const [showSearchResults, setShowSearchResults] = useState(false);
   const [searchLoading, setSearchLoading] = useState(false);
   const [conversationsMap, setConversationsMap] = useState<Record<string, string>>({});
+  const { unreadData } = useUnreadMessages();
 
+  // Unread Badge Component
+  const UnreadBadge = ({ userId }: { userId: string }) => {
+    const hasUnread = unreadData.usersWithUnread.includes(userId);
+    
+    if (!hasUnread) return null;
+    
+    return (
+      <div className="absolute -top-1 -right-1 bg-red-500 rounded-full h-4 w-4 animate-pulse flex items-center justify-center">
+        <div className="bg-red-500 rounded-full h-3 w-3"></div>
+      </div>
+    );
+  };
+  
   // Redirect if not authenticated or not a student
   useEffect(() => {
     if (status === 'loading') return;
@@ -249,8 +264,10 @@ export default function TeacherListPage() {
               return (
                 <div
                   key={teacher.id}
-                  className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-lg transition-all duration-200 hover:border-teal-200"
+                  className="relative bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-lg transition-all duration-200 hover:border-teal-200"
                 >
+                  <UnreadBadge userId={teacher.id} />
+                  
                   {/* Teacher Avatar */}
                   <div className="flex items-center mb-4">
                     {teacher.image ? (
@@ -307,7 +324,6 @@ export default function TeacherListPage() {
                         }
                       />
                     </svg>
-
                     <span>{existingConversation ? 'Continue Chat' : 'Start Chat'}</span>
                   </button>
                 </div>
