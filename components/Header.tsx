@@ -10,6 +10,7 @@ export default function Header() {
   const { data: session, status } = useSession();
   const isLoggedIn = status === 'authenticated';
   const isTeacher = session?.user?.role === 'TEACHER';
+  const isStudent = session?.user?.role === 'STUDENT';
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -58,6 +59,42 @@ export default function Header() {
                 </svg>
                 <span>All Courses</span>
               </button>
+
+              {/* Chat Navigation - Teachers see Student List */}
+              {isLoggedIn && isTeacher && (
+                <button
+                  onClick={() => handleProtectedAction('/chat/students')}
+                  className="cursor-pointer flex items-center space-x-2 bg-purple-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-opacity-90 transition-all duration-300 shadow-sm hover:shadow-md transform hover:scale-105"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a2 2 0 01-2-2v-6a2 2 0 012-2h8z"
+                    />
+                  </svg>
+                  <span>Student List</span>
+                </button>
+              )}
+
+              {/* Chat Navigation - Students see Teacher List */}
+              {isLoggedIn && isStudent && (
+                <button
+                  onClick={() => handleProtectedAction('/chat/teachers')}
+                  className="cursor-pointer flex items-center space-x-2 bg-purple-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-opacity-90 transition-all duration-300 shadow-sm hover:shadow-md transform hover:scale-105"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a2 2 0 01-2-2v-6a2 2 0 012-2h8z"
+                    />
+                  </svg>
+                  <span>Teacher List</span>
+                </button>
+              )}
 
               {isLoggedIn && isTeacher && (
                 <button
@@ -187,6 +224,48 @@ export default function Header() {
                   >
                     All Courses Dashboard
                   </button>
+
+                  {/* Mobile Chat Navigation */}
+                  {isLoggedIn && isTeacher && (
+                    <button
+                      onClick={() => {
+                        handleProtectedAction('/chat/students');
+                        setIsMobileMenuOpen(false);
+                      }}
+                      className="flex items-center justify-center space-x-3 bg-purple-600 text-white px-4 py-3 rounded-lg font-medium hover:bg-opacity-90 transition-all duration-300 w-full"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a2 2 0 01-2-2v-6a2 2 0 012-2h8z"
+                        />
+                      </svg>
+                      Student List & Chat
+                    </button>
+                  )}
+
+                  {isLoggedIn && isStudent && (
+                    <button
+                      onClick={() => {
+                        handleProtectedAction('/chat/teachers');
+                        setIsMobileMenuOpen(false);
+                      }}
+                      className="flex items-center justify-center space-x-3 bg-purple-600 text-white px-4 py-3 rounded-lg font-medium hover:bg-opacity-90 transition-all duration-300 w-full"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a2 2 0 01-2-2v-6a2 2 0 012-2h8z"
+                        />
+                      </svg>
+                      Teacher List & Chat
+                    </button>
+                  )}
+
                   {isLoggedIn && isTeacher && (
                     <button
                       onClick={() => {

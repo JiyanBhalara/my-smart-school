@@ -34,6 +34,11 @@ model User {
   createdQuizzes Quiz[]            @relation("TeacherQuizzes")
   quizAttempts   QuizAttempt[]     @relation("StudentAttempts")
 
+  //chat
+  teacherConversations Conversation[] @relation("TeacherConversations")
+  studentConversations Conversation[] @relation("StudentConversations")
+  sentMessages         Message[]      @relation("SentMessages")
+
   @@map("users")
 }
 
@@ -231,4 +236,37 @@ model Answer {
 
   @@unique([attemptId, questionId]) // One answer per question per attempt
   @@map("answers")
+}
+
+model Conversation {
+  id        String   @id @default(cuid())
+  teacherId String
+  studentId String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  teacher  User      @relation("TeacherConversations", fields: [teacherId], references: [id], onDelete: Cascade)
+  student  User      @relation("StudentConversations", fields: [studentId], references: [id], onDelete: Cascade)
+  messages Message[]
+
+  @@unique([teacherId, studentId])
+  @@map("conversations")
+}
+
+model Message {
+  id             String   @id @default(cuid())
+  conversationId String
+  senderId       String
+  content        String?  @db.Text
+  fileUrl        String?
+  fileName       String?
+  fileType       String?
+  fileSize       Int?
+  isRead         Boolean  @default(false)
+  createdAt      DateTime @default(now())
+
+  conversation Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  sender       User         @relation("SentMessages", fields: [senderId], references: [id], onDelete: Cascade)
+
+  @@map("messages")
 }
