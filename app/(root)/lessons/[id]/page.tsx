@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import { Calendar, ExternalLink, FileText, BookOpen, Tag, Play, X, AlertTriangle, Plus } from "lucide-react";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/app/utils/authOptions";
+import QuizCard from "@/components/QuizCard";
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -19,12 +20,21 @@ export default async function LessonDetailPage({ params, searchParams }: Props) 
   // Get the session (server-side) to check role
   const session = await getServerSession(authOptions);
   const isTeacher = !!session && session.user?.role === "TEACHER";
+  const userId = session?.user?.id;
 
-  // Fetch lesson
+  // Fetch lesson with quiz attempts for the current user
   const lesson = await prisma.lesson.findUnique({
     where: { id },
     include: {
-      quizzes: { orderBy: { createdAt: "desc" } },
+      quizzes: {
+        orderBy: { createdAt: "desc" },
+        include: {
+          attempts: userId ? {
+            where: { studentId: userId },
+            orderBy: { completedAt: "desc" }
+          } : false
+        }
+      },
       tags: { include: { tag: true } },
     },
   });
@@ -238,45 +248,15 @@ export default async function LessonDetailPage({ params, searchParams }: Props) 
                     </Link>
                   </div>
                 ) : (
-                  <div className="grid gap-6">
+                  <div className="grid gap-8">
                     {lesson.quizzes.map((quiz, index) => (
-                      <div
+                      <QuizCard
                         key={quiz.id}
-                        className="group relative bg-gradient-to-r from-white via-gray-50/50 to-white border border-gray-200 rounded-xl p-8 hover:shadow-lg hover:border-[#219EBC]/40 transition-all duration-300 transform hover:-translate-y-1"
-                      >
-                        <div className="absolute top-6 left-6 w-10 h-10 bg-gradient-to-r from-[#219EBC] to-[#0077B6] text-white rounded-xl flex items-center justify-center text-lg font-bold shadow-md">
-                          {index + 1}
-                        </div>
-
-                        <div className="ml-16 flex flex-col xl:flex-row xl:items-center xl:justify-between gap-6">
-                          <div className="flex-1 space-y-3">
-                            <h3 className="text-xl font-bold text-gray-900 group-hover:text-[#023047] transition-colors leading-tight">
-                              {quiz.title}
-                            </h3>
-                            <div className="flex items-center gap-3 text-gray-600">
-                              <div className="p-1.5 bg-gray-100 rounded-lg">
-                                <Calendar size={16} />
-                              </div>
-                              <span className="text-sm font-medium">
-                                Created{" "}
-                                {quiz.createdAt.toLocaleDateString("en-US", {
-                                  month: "long",
-                                  day: "numeric",
-                                  year: "numeric",
-                                })}
-                              </span>
-                            </div>
-                          </div>
-
-                          <Link
-                            href={`/lessons/${lesson.id}/quizzes/${quiz.id}`}
-                            className="cursor-pointer inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-[#023047] to-[#0077B6] text-white font-semibold rounded-xl hover:from-[#219EBC] hover:to-[#0077B6] transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-[#219EBC]/50"
-                          >
-                            <Play size={18} />
-                            <span>Start Quiz</span>
-                          </Link>
-                        </div>
-                      </div>
+                        quiz={quiz}
+                        lessonId={lesson.id}
+                        index={index}
+                        userId={userId}
+                      />
                     ))}
                   </div>
                 )}
