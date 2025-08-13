@@ -2,12 +2,12 @@
 
 import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
+import { use } from 'react'; // Import React's use hook
 import QuizTaker from '@/components/QuizTaker';
 import { Card, CardContent } from '@/components/ui/card';
 
 interface PageProps {
-  params: Promise<{ id: string; quizId: string }>;
-
+  params: Promise<{ id: string; quizId: string }>; // params is now a Promise
 }
 
 export default function TakeQuizPage({ params }: PageProps) {
@@ -15,23 +15,14 @@ export default function TakeQuizPage({ params }: PageProps) {
   const [quiz, setQuiz] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [lessonId, setLessonId] = useState<string>('');
-  const [quizId, setQuizId] = useState<string>('');
 
+  // Unwrap the params Promise using React.use()
+  const { id, quizId } = use(params);
+  const lessonId = id;
+  
   useEffect(() => {
-    const getParams = async () => {
-      const resolvedParams = await params;
-      setLessonId(resolvedParams.id);
-      setQuizId(resolvedParams.quizId);
-    };
-    getParams();
-  }, [params]);
-
-  useEffect(() => {
-    if (lessonId && quizId) {
-      fetchQuiz();
-    }
-  }, [lessonId, quizId]);
+    fetchQuiz();
+  }, [quizId]); // Now we can safely use quizId in dependency array
 
   const fetchQuiz = async () => {
     try {

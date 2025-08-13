@@ -32,14 +32,14 @@ export async function GET(
     .storage
     .from("lessons")
     .createSignedUrl(lesson.fileUrl, 60);
-
+    console.log(data);
   if (error || !data?.signedUrl) {
     // treat storage errors (e.g. bucket or file missing) as “no material”
     return NextResponse.redirect(
       new URL(`/lessons/${id}?noMaterial=1`, req.url)
     );
   }
-
+  console.log(data)
   // 4️⃣ redirect the browser to the signed URL
   return NextResponse.redirect(data.signedUrl);
 }

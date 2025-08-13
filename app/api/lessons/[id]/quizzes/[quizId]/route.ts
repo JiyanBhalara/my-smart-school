@@ -5,7 +5,7 @@ import prisma from '@/lib/prisma';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { lessonId: string; quizId: string } }
+  { params }: { params: Promise<{ lessonId: string; quizId: string }> } // params is now a Promise
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -14,17 +14,20 @@ export async function GET(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    // Await the params Promise before accessing its properties
+    const { lessonId, quizId } = await params;
+
     // Check if user has already reached max attempts
     const completedAttempts = await prisma.quizAttempt.count({
       where: {
-        quizId: params.quizId,
+        quizId: quizId, // Now using the awaited quizId
         studentId: session.user.id,
         isCompleted: true
       }
     });
 
     const quiz = await prisma.quiz.findUnique({
-      where: { id: params.quizId },
+      where: { id: quizId }, // Now using the awaited quizId
       include: {
         questions: {
           include: {

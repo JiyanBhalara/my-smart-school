@@ -18,6 +18,8 @@ import {
   HelpCircle,
   LayoutList,
   FileText,
+  Upload,
+  ExternalLink,
 } from 'lucide-react';
 
 interface QuizFormProps {
@@ -46,7 +48,7 @@ interface Option {
   isCorrect: boolean;
 }
 
-interface FormData {
+interface QuizFormData  {
   title: string;
   description: string;
   timeLimit: string;
@@ -57,7 +59,9 @@ interface FormData {
 export default function QuizForm({ lessonId, initialData, isEdit = false }: QuizFormProps) {
   const router = useRouter();
   const [loading, setLoading] = useState<boolean>(false);
-  const [formData, setFormData] = useState<FormData>({
+  const [uploading, setUploading] = useState<boolean>(false);
+
+  const [formData, setFormData] = useState<QuizFormData>({
     title: initialData?.title || '',
     description: initialData?.description || '',
     timeLimit: initialData?.timeLimit?.toString() || '',
@@ -76,6 +80,35 @@ export default function QuizForm({ lessonId, initialData, isEdit = false }: Quiz
       },
     ],
   });
+
+  // Upload helper: posts file to /api/uploads/quiz-image and returns a public URL
+  async function uploadImage(file: File, params: { lessonId: string; scope: 'question' | 'option' }) {
+    const form = new FormData();
+    form.append('file', file);
+    form.append('lessonId', params.lessonId);
+    form.append('scope', params.scope);
+
+    const res = await fetch('/api/uploads/quiz-image', {
+      method: 'POST',
+      body: form,
+    });
+
+    const text = await res.text();
+    let json: any = null;
+    try {
+      json = text ? JSON.parse(text) : null;
+    } catch {
+      // ignore
+    }
+
+    if (!res.ok) {
+      throw new Error(json?.error || `Upload failed (${res.status}).`);
+    }
+    if (!json?.url) {
+      throw new Error('Upload succeeded but no URL returned.');
+    }
+    return json.url as string;
+  }
 
   const addQuestion = (): void => {
     setFormData((prev) => ({
@@ -166,7 +199,7 @@ export default function QuizForm({ lessonId, initialData, isEdit = false }: Quiz
       });
 
       if (response.ok) {
-        router.push(`/lessons/${lessonId}/quizzes`);
+        router.push(`/lessons/${lessonId}`);
       } else {
         const text = await response.text();
         try {
@@ -203,7 +236,7 @@ export default function QuizForm({ lessonId, initialData, isEdit = false }: Quiz
 
   return (
     <div className="mx-auto max-w-5xl p-4 sm:p-6">
-      {/* Header banner with cohesive cyan/teal gradient */}
+      {/* Header banner */}
       <div className="mb-6 rounded-2xl border border-cyan-100 bg-gradient-to-r from-cyan-50 via-teal-50 to-cyan-50 p-5 sm:p-6">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-start gap-3">
@@ -312,7 +345,7 @@ export default function QuizForm({ lessonId, initialData, isEdit = false }: Quiz
           </CardContent>
         </Card>
 
-        {/* Questions header (no add button at top) */}
+        {/* Questions header */}
         <h2 className="text-lg font-semibold text-slate-900">Questions</h2>
 
         {/* Questions list */}
@@ -366,18 +399,64 @@ export default function QuizForm({ lessonId, initialData, isEdit = false }: Quiz
                     />
                   </div>
 
-                  <div>
-                    <Label className="mb-1.5 block">Question Image URL</Label>
-                    <div className="relative">
-                      <Input
-                        value={question.imageUrl || ''}
-                        onChange={(e) => updateQuestion(questionIndex, 'imageUrl', e.target.value)}
-                        placeholder="https://example.com/image.png"
-                        className="pr-10 focus-visible:ring-teal-500"
-                      />
-                      <ImageIcon className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                  {/* Question Image: URL + Upload + Preview */}
+                  <div className="sm:col-span-2">
+                    <Label className="mb-1.5 block">Question Image (optional)</Label>
+
+                    <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+                      <div className="relative sm:flex-1">
+                        <Input
+                          value={question.imageUrl || ''}
+                          onChange={(e) => updateQuestion(questionIndex, 'imageUrl', e.target.value)}
+                          placeholder="https://example.com/image.png"
+                          className="pr-10 focus-visible:ring-teal-500"
+                        />
+                        <ImageIcon className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                      </div>
+
+                      <div className="flex items-center gap-2">
+                        <label className="inline-flex cursor-pointer items-center rounded-md border border-slate-300 px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50">
+                          <Upload className="mr-2 h-4 w-4" />
+                          Upload
+                          <input
+                            type="file"
+                            accept="image/png,image/jpeg,image/webp"
+                            className="hidden"
+                            onChange={async (e) => {
+                              const file = e.target.files?.[0];
+                              if (!file) return;
+                              try {
+                                setUploading(true);
+                                const url = await uploadImage(file, { lessonId, scope: 'question' });
+                                updateQuestion(questionIndex, 'imageUrl', url);
+                              } catch (err: any) {
+                                alert(err.message || 'Upload failed');
+                              } finally {
+                                setUploading(false);
+                                // Fix: Check if the element exists and has a value property
+                                if (e.target) {
+                                  e.target.value = '';
+                                }
+                              }
+                            }}
+                          />
+                        </label>
+
+                        {question.imageUrl ? (
+                          <a
+                            href={question.imageUrl}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="inline-flex items-center rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-700 hover:bg-slate-50"
+                          >
+                            <ExternalLink className="mr-2 h-4 w-4" />
+                            Preview
+                          </a>
+                        ) : null}
+                      </div>
                     </div>
-                    <p className="mt-1 text-xs text-slate-500">Optional image to illustrate the question.</p>
+
+                    <p className="mt-1 text-xs text-slate-500">PNG, JPG, or WEBP up to 5MB.</p>
                   </div>
 
                   <div>
@@ -437,14 +516,57 @@ export default function QuizForm({ lessonId, initialData, isEdit = false }: Quiz
                               />
                             </div>
 
+                            {/* Option Image: URL + Upload + Preview */}
                             <div className="sm:col-span-2">
-                              <Label className="mb-1 block text-xs text-slate-500">Option Image URL (optional)</Label>
-                              <Input
-                                value={option.imageUrl || ''}
-                                onChange={(e) => updateOption(questionIndex, optionIndex, 'imageUrl', e.target.value)}
-                                placeholder="https://example.com/option.png"
-                                className="focus-visible:ring-teal-500"
-                              />
+                              <Label className="mb-1 block text-xs text-slate-500">Option Image (optional)</Label>
+
+                              <div className="flex items-center gap-2">
+                                <Input
+                                  value={option.imageUrl || ''}
+                                  onChange={(e) => updateOption(questionIndex, optionIndex, 'imageUrl', e.target.value)}
+                                  placeholder="https://example.com/option.png"
+                                  className="focus-visible:ring-teal-500"
+                                />
+
+                                <label className="inline-flex cursor-pointer items-center rounded-md border border-slate-300 px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50">
+                                  <Upload className="mr-2 h-4 w-4" />
+                                  Upload
+                                  <input
+                                    type="file"
+                                    accept="image/png,image/jpeg,image/webp"
+                                    className="hidden"
+                                    onChange={async (e) => {
+                                      const file = e.target.files?.[0];
+                                      if (!file) return;
+                                      try {
+                                        setUploading(true);
+                                        const url = await uploadImage(file, { lessonId, scope: 'option' });
+                                        updateOption(questionIndex, optionIndex, 'imageUrl', url);
+                                      } catch (err: any) {
+                                        alert(err.message || 'Upload failed');
+                                      } finally {
+                                        setUploading(false);
+                                        // Fix: Check if the element exists and has a value property
+                                        if (e.target) {
+                                          e.target.value = '';
+                                        }
+                                      }
+                                    }}
+                                  />
+                                </label>
+
+                                {option.imageUrl ? (
+                                  <a
+                                    href={option.imageUrl}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    className="inline-flex items-center rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-700 hover:bg-slate-50"
+                                  >
+                                    <ExternalLink className="mr-2 h-4 w-4" />
+                                    Preview
+                                  </a>
+                                ) : null}
+                              </div>
                             </div>
                           </div>
                         </div>
@@ -490,6 +612,7 @@ export default function QuizForm({ lessonId, initialData, isEdit = false }: Quiz
               <span className="font-medium text-slate-800">{formData.questions.length}</span> question
               {formData.questions.length === 1 ? '' : 's'} •{' '}
               <span className="font-medium text-slate-800">{totalPoints}</span> total points
+              {uploading ? <span className="ml-2 text-teal-700">• Uploading...</span> : null}
             </div>
 
             <div className="flex w-full items-center justify-end gap-2 sm:w-auto">
@@ -498,12 +621,13 @@ export default function QuizForm({ lessonId, initialData, isEdit = false }: Quiz
                 variant="outline"
                 onClick={() => router.back()}
                 className="border-slate-300 hover:bg-slate-50"
+                disabled={uploading}
               >
                 Cancel
               </Button>
               <Button
                 type="submit"
-                disabled={loading}
+                disabled={loading || uploading}
                 className="bg-teal-600 hover:bg-teal-700 focus-visible:ring-teal-500"
               >
                 {loading ? 'Saving...' : isEdit ? 'Update Quiz' : 'Create Quiz'}
