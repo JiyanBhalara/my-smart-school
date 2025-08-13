@@ -32,7 +32,6 @@ export async function GET(
     .storage
     .from("lessons")
     .createSignedUrl(lesson.fileUrl, 60);
-    console.log(data);
   if (error || !data?.signedUrl) {
     // treat storage errors (e.g. bucket or file missing) as “no material”
     return NextResponse.redirect(

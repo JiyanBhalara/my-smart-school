@@ -1,12 +1,13 @@
 'use client';
 
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Clock, CheckCircle, AlertCircle, ArrowLeft, ArrowRight, Trophy } from 'lucide-react';
 import toast, { Toaster } from 'react-hot-toast';
+import SupabaseImage from '@/components/SupabaseImage';
 
 interface QuizTakerProps {
   lessonId: string;
@@ -21,26 +22,24 @@ export default function QuizTaker({ lessonId, quizId, quiz }: QuizTakerProps) {
   const [timeLeft, setTimeLeft] = useState<number | null>(
     quiz.timeLimit ? quiz.timeLimit * 60 : null
   );
-  const [startTime] = useState<Date>(new Date());
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [results, setResults] = useState<any>(null);
   const [timeExpired, setTimeExpired] = useState(false);
   
-  // Use refs to track notification states to prevent duplicates
   const notifiedAt75Ref = useRef(false);
   const notifiedAt50Ref = useRef(false);
+  const startTimeRef = useRef<Date>(new Date());
 
-  // Calculate initial time limit for percentage calculations
-  const initialTimeLimit = quiz.timeLimit ? quiz.timeLimit * 60 : null;
+  const initialTimeLimit = useMemo(() => {
+    return quiz.timeLimit ? quiz.timeLimit * 60 : null;
+  }, [quiz.timeLimit]);
 
-  // Calculate time spent
-  const getTimeSpent = () => {
+  const getTimeSpent = useCallback(() => {
     const now = new Date();
-    return Math.floor((now.getTime() - startTime.getTime()) / 1000);
-  };
+    return Math.floor((now.getTime() - startTimeRef.current.getTime()) / 1000);
+  }, []);
 
-  // Use useCallback to memoize handleSubmit to prevent dependency issues
   const handleSubmit = useCallback(async (isAutoSubmit = false) => {
     if (loading || submitted) return;
     
@@ -87,70 +86,68 @@ export default function QuizTaker({ lessonId, quizId, quiz }: QuizTakerProps) {
       setTimeLeft(prev => {
         if (prev && prev <= 1) {
           setTimeExpired(true);
+          // Use setTimeout to avoid setState during render
           setTimeout(() => {
-            if (!submitted) {
-              handleSubmit(true);
-            }
-          }, 100);
+            handleSubmit(true);
+          }, 0);
           return 0;
         }
 
-        // Calculate percentage of time remaining
         if (prev && initialTimeLimit) {
           const timeUsedPercentage = ((initialTimeLimit - prev) / initialTimeLimit) * 100;
           
-          // Show notification at 50% time used (50% remaining) - using ref to prevent duplicates
           if (timeUsedPercentage >= 50 && !notifiedAt50Ref.current) {
             notifiedAt50Ref.current = true;
             const minutesLeft = Math.floor(prev / 60);
             const secondsLeft = prev % 60;
             
-            // Dismiss any existing toasts first
-            toast.dismiss();
-            
-            toast.error(
-              `⏰ 50% Time Used! ${minutesLeft}:${secondsLeft.toString().padStart(2, '0')} remaining`,
-              {
-                id: 'time-warning-50', // Add unique ID to prevent duplicates
-                duration: 5000,
-                position: 'top-center',
-                style: {
-                  background: '#FEF3C7',
-                  color: '#92400E',
-                  border: '2px solid #F59E0B',
-                  borderRadius: '12px',
-                  fontWeight: '600',
-                },
-                icon: '⚠️',
-              }
-            );
+            // Use setTimeout to avoid setState during render
+            setTimeout(() => {
+              toast.dismiss();
+              toast.error(
+                `⏰ 50% Time Used! ${minutesLeft}:${secondsLeft.toString().padStart(2, '0')} remaining`,
+                {
+                  id: 'time-warning-50',
+                  duration: 5000,
+                  position: 'top-center',
+                  style: {
+                    background: '#FEF3C7',
+                    color: '#92400E',
+                    border: '2px solid #F59E0B',
+                    borderRadius: '12px',
+                    fontWeight: '600',
+                  },
+                  icon: '⚠️',
+                }
+              );
+            }, 0);
           }
           
-          // Show notification at 75% time used (25% remaining) - using ref to prevent duplicates
           if (timeUsedPercentage >= 75 && !notifiedAt75Ref.current) {
             notifiedAt75Ref.current = true;
             const minutesLeft = Math.floor(prev / 60);
             const secondsLeft = prev % 60;
             
-            // Dismiss any existing toasts first
-            toast.dismiss();
-            
-            toast.error(
-              `🚨 Only 25% Time Left! ${minutesLeft}:${secondsLeft.toString().padStart(2, '0')} remaining`,
-              {
-                id: 'time-warning-75', // Add unique ID to prevent duplicates
-                duration: 6000,
-                position: 'top-center',
-                style: {
-                  background: '#FEE2E2',
-                  color: '#991B1B',
-                  border: '2px solid #EF4444',
-                  borderRadius: '12px',
-                  fontWeight: '600',
-                },
-                icon: '🚨',
-              }
-            );
+            // Use setTimeout to avoid setState during render
+            setTimeout(() => {
+              toast.dismiss();
+              toast.error(
+                `🚨 Only 25% Time Left! ${minutesLeft}:${secondsLeft.toString().padStart(2, '0')} remaining`,
+                {
+                  id: 'time-warning-75',
+                  duration: 6000,
+                  position: 'top-center',
+                  style: {
+                    background: '#FEE2E2',
+                    color: '#991B1B',
+                    border: '2px solid #EF4444',
+                    borderRadius: '12px',
+                    fontWeight: '600',
+                  },
+                  icon: '🚨',
+                }
+              );
+            }, 0);
           }
         }
 
@@ -159,9 +156,9 @@ export default function QuizTaker({ lessonId, quizId, quiz }: QuizTakerProps) {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [timeLeft, submitted, initialTimeLimit, handleSubmit]); // Removed notification states from dependencies
+  }, [timeLeft, submitted, initialTimeLimit, handleSubmit]);
 
-  const formatTime = (seconds: number) => {
+  const formatTime = useCallback((seconds: number) => {
     const hours = Math.floor(seconds / 3600);
     const minutes = Math.floor((seconds % 3600) / 60);
     const secs = seconds % 60;
@@ -170,9 +167,9 @@ export default function QuizTaker({ lessonId, quizId, quiz }: QuizTakerProps) {
       return `${hours}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
     }
     return `${minutes}:${secs.toString().padStart(2, '0')}`;
-  };
+  }, []);
 
-  const formatTimeSpent = (seconds: number) => {
+  const formatTimeSpent = useCallback((seconds: number) => {
     const minutes = Math.floor(seconds / 60);
     const remainingSeconds = seconds % 60;
     
@@ -180,25 +177,20 @@ export default function QuizTaker({ lessonId, quizId, quiz }: QuizTakerProps) {
       return `${minutes} minute${minutes !== 1 ? 's' : ''} ${remainingSeconds} second${remainingSeconds !== 1 ? 's' : ''}`;
     }
     return `${remainingSeconds} second${remainingSeconds !== 1 ? 's' : ''}`;
-  };
+  }, []);
 
-  const handleAnswerSelect = (questionId: string, optionId: string) => {
+  const handleAnswerSelect = useCallback((questionId: string, optionId: string) => {
     setAnswers(prev => ({ ...prev, [questionId]: optionId }));
-  };
+  }, []);
 
-  const progress = ((currentQuestion + 1) / quiz.questions.length) * 100;
-  const answeredQuestions = Object.keys(answers).length;
-  const completionRate = (answeredQuestions / quiz.questions.length) * 100;
+  const progress = useMemo(() => ((currentQuestion + 1) / quiz.questions.length) * 100, [currentQuestion, quiz.questions.length]);
+  const answeredQuestions = useMemo(() => Object.keys(answers).length, [answers]);
+  const completionRate = useMemo(() => (answeredQuestions / quiz.questions.length) * 100, [answeredQuestions, quiz.questions.length]);
 
   if (submitted && results) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 py-4 sm:py-8 lg:py-12">
-        {/* Single Toaster component */}
-        <Toaster 
-          toastOptions={{
-            duration: 4000,
-          }}
-        />
+        <Toaster toastOptions={{ duration: 4000 }} />
         
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <Card className="shadow-xl border-0 bg-white/80 backdrop-blur-sm">
@@ -226,7 +218,6 @@ export default function QuizTaker({ lessonId, quizId, quiz }: QuizTakerProps) {
             </CardHeader>
             
             <CardContent className="px-4 sm:px-6 lg:px-8 pb-6 sm:pb-8 lg:pb-12">
-              {/* Score Display */}
               <div className="text-center mb-6 sm:mb-8">
                 <div className="inline-flex items-center justify-center w-20 h-20 sm:w-24 sm:h-24 lg:w-32 lg:h-32 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 text-white mb-4">
                   <div className="text-center">
@@ -240,7 +231,6 @@ export default function QuizTaker({ lessonId, quizId, quiz }: QuizTakerProps) {
                 <div className="text-gray-600 text-sm sm:text-base">Overall Score</div>
               </div>
 
-              {/* Time Spent Display */}
               <div className="text-center mb-6 sm:mb-8 p-4 bg-blue-50 rounded-xl border border-blue-200">
                 <div className="flex items-center justify-center gap-2 text-blue-700 mb-2">
                   <Clock className="w-5 h-5" />
@@ -256,7 +246,6 @@ export default function QuizTaker({ lessonId, quizId, quiz }: QuizTakerProps) {
                 )}
               </div>
 
-              {/* Results Breakdown - Fixed to show proper scores */}
               <div className="space-y-3 sm:space-y-4 mb-6 sm:mb-8">
                 <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-4">Question Results</h3>
                 <div className="max-h-64 sm:max-h-80 overflow-y-auto space-y-3">
@@ -331,15 +320,9 @@ export default function QuizTaker({ lessonId, quizId, quiz }: QuizTakerProps) {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
-      {/* Single Toaster component with configuration */}
-      <Toaster 
-        toastOptions={{
-          duration: 4000,
-        }}
-      />
+      <Toaster toastOptions={{ duration: 4000 }} />
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
-        {/* Header */}
         <Card className="mb-4 sm:mb-6 lg:mb-8 shadow-lg border-0 bg-white/80 backdrop-blur-sm">
           <CardContent className="p-4 sm:p-6">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4 sm:mb-6">
@@ -393,7 +376,6 @@ export default function QuizTaker({ lessonId, quizId, quiz }: QuizTakerProps) {
         </Card>
 
         <div className="grid lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
-          {/* Main Question Area */}
           <div className="lg:col-span-3">
             <Card className="shadow-lg border-0 bg-white/80 backdrop-blur-sm">
               <CardContent className="p-4 sm:p-6 lg:p-8">
@@ -413,10 +395,12 @@ export default function QuizTaker({ lessonId, quizId, quiz }: QuizTakerProps) {
                   
                   {quiz.questions[currentQuestion]?.questionImage && (
                     <div className="mb-4 sm:mb-6">
-                      <img
+                      <SupabaseImage
                         src={quiz.questions[currentQuestion].questionImage}
                         alt="Question"
                         className="max-w-full h-auto rounded-xl shadow-md"
+                        width={600}
+                        height={400}
                       />
                     </div>
                   )}
@@ -453,10 +437,12 @@ export default function QuizTaker({ lessonId, quizId, quiz }: QuizTakerProps) {
                             </div>
                           </div>
                           {option.optionImage && (
-                            <img
+                            <SupabaseImage
                               src={option.optionImage}
                               alt={`Option ${String.fromCharCode(65 + optionIndex)}`}
                               className="mt-2 sm:mt-3 max-w-full sm:max-w-xs h-auto rounded-lg shadow-sm"
+                              width={300}
+                              height={200}
                             />
                           )}
                         </div>
@@ -467,7 +453,6 @@ export default function QuizTaker({ lessonId, quizId, quiz }: QuizTakerProps) {
               </CardContent>
             </Card>
 
-            {/* Navigation */}
             <div className="flex flex-col sm:flex-row justify-between gap-3 sm:gap-4 mt-4 sm:mt-6 lg:mt-8">
               <Button
                 variant="outline"
@@ -514,7 +499,6 @@ export default function QuizTaker({ lessonId, quizId, quiz }: QuizTakerProps) {
             </div>
           </div>
 
-          {/* Question Navigation Sidebar */}
           <div className="lg:col-span-1 order-first lg:order-last">
             <Card className="shadow-lg border-0 bg-white/80 backdrop-blur-sm sticky top-4 sm:top-6">
               <CardContent className="p-3 sm:p-4 lg:p-6">
@@ -541,7 +525,6 @@ export default function QuizTaker({ lessonId, quizId, quiz }: QuizTakerProps) {
                   ))}
                 </div>
 
-                {/* Legend */}
                 <div className="space-y-1.5 sm:space-y-2 text-xs mb-3 sm:mb-4">
                   <div className="flex items-center gap-2">
                     <div className="w-3 h-3 sm:w-4 sm:h-4 bg-gradient-to-br from-blue-500 to-purple-600 rounded"></div>
@@ -557,7 +540,6 @@ export default function QuizTaker({ lessonId, quizId, quiz }: QuizTakerProps) {
                   </div>
                 </div>
 
-                {/* Progress Stats */}
                 <div className="pt-3 sm:pt-4 border-t border-gray-200">
                   <div className="space-y-2 sm:space-y-3">
                     <div className="flex justify-between items-center">
