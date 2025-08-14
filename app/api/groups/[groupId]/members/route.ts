@@ -6,14 +6,15 @@ import { authOptions } from '@/app/utils/authOptions';
 import { prisma } from '@/lib/prisma';
 
 export async function GET(
-  request: NextRequest,
-  { params }: { params: { groupId: string } }
+  { params }: { params: Promise<{ groupId: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user?.email) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+
+    const { groupId } = await params;
 
     const user = await prisma.user.findUnique({
       where: { email: session.user.email },
@@ -27,7 +28,7 @@ export async function GET(
     const membership = await prisma.groupMember.findUnique({
       where: {
         groupId_userId: {
-          groupId: params.groupId,
+          groupId: groupId,
           userId: user.id
         }
       }
@@ -37,7 +38,7 @@ export async function GET(
     }
 
     const members = await prisma.groupMember.findMany({
-      where: { groupId: params.groupId },
+      where: { groupId: groupId },
       include: {
         user: {
           select: { id: true, name: true, image: true, role: true, email: true }
@@ -58,13 +59,15 @@ export async function GET(
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { groupId: string } }
+  { params }: { params: Promise<{ groupId: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user?.email) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+
+    const { groupId } = await params;
 
     const user = await prisma.user.findUnique({
       where: { email: session.user.email },
@@ -78,7 +81,7 @@ export async function POST(
     const membership = await prisma.groupMember.findUnique({
       where: {
         groupId_userId: {
-          groupId: params.groupId,
+          groupId: groupId,
           userId: user.id
         }
       }
@@ -105,7 +108,7 @@ export async function POST(
     // Check for existing memberships
     const existingMembers = await prisma.groupMember.findMany({
       where: {
-        groupId: params.groupId,
+        groupId: groupId,
         userId: { in: userIds }
       }
     });
@@ -120,7 +123,7 @@ export async function POST(
     // Add new members
     const newMembers = await prisma.groupMember.createMany({
       data: newUserIds.map(userId => ({
-        groupId: params.groupId,
+        groupId: groupId,
         userId,
         role: 'MEMBER'
       }))
@@ -128,7 +131,7 @@ export async function POST(
 
     // Update group timestamp
     await prisma.group.update({
-      where: { id: params.groupId },
+      where: { id: groupId },
       data: { updatedAt: new Date() }
     });
 
@@ -145,13 +148,15 @@ export async function POST(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { groupId: string } }
+  { params }: { params: Promise<{ groupId: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user?.email) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+
+    const { groupId } = await params;
 
     const user = await prisma.user.findUnique({
       where: { email: session.user.email },
@@ -165,7 +170,7 @@ export async function PUT(
     const membership = await prisma.groupMember.findUnique({
       where: {
         groupId_userId: {
-          groupId: params.groupId,
+          groupId: groupId,
           userId: user.id
         }
       }
@@ -180,7 +185,7 @@ export async function PUT(
     }
 
     // Cannot change creator's role or your own role
-    const group = await prisma.group.findUnique({ where: { id: params.groupId } });
+    const group = await prisma.group.findUnique({ where: { id: groupId } });
     if (group?.createdById === userId) {
       return NextResponse.json({ error: 'Cannot change group creator role' }, { status: 400 });
     }
@@ -191,7 +196,7 @@ export async function PUT(
     const updatedMember = await prisma.groupMember.update({
       where: {
         groupId_userId: {
-          groupId: params.groupId,
+          groupId: groupId,
           userId
         }
       },
@@ -212,13 +217,15 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { groupId: string } }
+  { params }: { params: Promise<{ groupId: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user?.email) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+
+    const { groupId } = await params;
 
     const user = await prisma.user.findUnique({
       where: { email: session.user.email },
@@ -239,13 +246,13 @@ export async function DELETE(
     const membership = await prisma.groupMember.findUnique({
       where: {
         groupId_userId: {
-          groupId: params.groupId,
+          groupId: groupId,
           userId: user.id
         }
       }
     });
 
-    const group = await prisma.group.findUnique({ where: { id: params.groupId } });
+    const group = await prisma.group.findUnique({ where: { id: groupId } });
     
     // Users can remove themselves, or admins can remove others (but not the creator)
     const canRemove = userIdToRemove === user.id || 
@@ -263,7 +270,7 @@ export async function DELETE(
     await prisma.groupMember.delete({
       where: {
         groupId_userId: {
-          groupId: params.groupId,
+          groupId: groupId,
           userId: userIdToRemove
         }
       }
