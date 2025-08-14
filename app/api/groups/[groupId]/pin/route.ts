@@ -3,17 +3,19 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/utils/authOptions';
-import { prisma } from '@/lib/prisma';
+import prisma from '@/lib/prisma'; // Fixed import - remove destructuring
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { groupId: string } }
+  { params }: { params: Promise<{ groupId: string }> } // Fixed: params should be Promise
 ) {
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user?.email) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+
+    const { groupId } = await params; // Await params
 
     const user = await prisma.user.findUnique({
       where: { email: session.user.email },
@@ -26,8 +28,8 @@ export async function POST(
     // Only admins can pin messages
     const membership = await prisma.groupMember.findUnique({
       where: {
-        groupId_userId: {
-          groupId: params.groupId,
+        groupId_userId: { // Fixed: single underscore
+          groupId: groupId,
           userId: user.id
         }
       }
@@ -45,7 +47,7 @@ export async function POST(
     const message = await prisma.groupMessage.findFirst({
       where: {
         id: messageId,
-        groupId: params.groupId
+        groupId: groupId
       },
       include: {
         sender: {
@@ -60,7 +62,7 @@ export async function POST(
 
     // Pin the message (this will automatically unpin any previously pinned message)
     const updatedGroup = await prisma.group.update({
-      where: { id: params.groupId },
+      where: { id: groupId },
       data: { pinnedMessageId: messageId },
       include: {
         pinnedMessage: {
@@ -86,13 +88,15 @@ export async function POST(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { groupId: string } }
+  { params }: { params: Promise<{ groupId: string }> } // Fixed: params should be Promise
 ) {
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user?.email) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+
+    const { groupId } = await params; // Await params
 
     const user = await prisma.user.findUnique({
       where: { email: session.user.email },
@@ -105,8 +109,8 @@ export async function DELETE(
     // Only admins can unpin messages
     const membership = await prisma.groupMember.findUnique({
       where: {
-        groupId_userId: {
-          groupId: params.groupId,
+        groupId_userId: { // Fixed: single underscore
+          groupId: groupId,
           userId: user.id
         }
       }
@@ -117,7 +121,7 @@ export async function DELETE(
 
     // Unpin the current pinned message
     await prisma.group.update({
-      where: { id: params.groupId },
+      where: { id: groupId },
       data: { pinnedMessageId: null }
     });
 
@@ -131,13 +135,15 @@ export async function DELETE(
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { groupId: string } }
+  { params }: { params: Promise<{ groupId: string }> } // Fixed: params should be Promise
 ) {
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user?.email) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+
+    const { groupId } = await params; // Await params
 
     const user = await prisma.user.findUnique({
       where: { email: session.user.email },
@@ -150,8 +156,8 @@ export async function GET(
     // Check if user is a member of the group
     const membership = await prisma.groupMember.findUnique({
       where: {
-        groupId_userId: {
-          groupId: params.groupId,
+        groupId_userId: { // Fixed: single underscore
+          groupId: groupId,
           userId: user.id
         }
       }
@@ -162,7 +168,7 @@ export async function GET(
 
     // Get the pinned message
     const group = await prisma.group.findUnique({
-      where: { id: params.groupId },
+      where: { id: groupId },
       select: {
         pinnedMessage: {
           include: {
