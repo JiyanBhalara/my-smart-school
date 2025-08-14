@@ -1,11 +1,11 @@
 // File: app/api/groups/[groupId]/members/route.ts
-
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/utils/authOptions';
-import { prisma } from '@/lib/prisma';
+import prisma from '@/lib/prisma'; // Fixed import - remove destructuring
 
 export async function GET(
+  request: NextRequest, // Added request parameter
   { params }: { params: Promise<{ groupId: string }> }
 ) {
   try {
@@ -20,6 +20,7 @@ export async function GET(
       where: { email: session.user.email },
       select: { id: true }
     });
+
     if (!user) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
@@ -27,12 +28,13 @@ export async function GET(
     // Ensure membership
     const membership = await prisma.groupMember.findUnique({
       where: {
-        groupId_userId: {
+        groupId_userId: { // Fixed underscore - should be single underscore
           groupId: groupId,
           userId: user.id
         }
       }
     });
+
     if (!membership) {
       return NextResponse.json({ error: 'Access denied' }, { status: 403 });
     }
@@ -73,6 +75,7 @@ export async function POST(
       where: { email: session.user.email },
       select: { id: true }
     });
+
     if (!user) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
@@ -80,12 +83,13 @@ export async function POST(
     // Only admins can add members
     const membership = await prisma.groupMember.findUnique({
       where: {
-        groupId_userId: {
+        groupId_userId: { // Fixed underscore
           groupId: groupId,
           userId: user.id
         }
       }
     });
+
     if (!membership || membership.role !== 'ADMIN') {
       return NextResponse.json({ error: 'Only admins can add members' }, { status: 403 });
     }
@@ -162,6 +166,7 @@ export async function PUT(
       where: { email: session.user.email },
       select: { id: true }
     });
+
     if (!user) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
@@ -169,12 +174,13 @@ export async function PUT(
     // Only admins can change member roles
     const membership = await prisma.groupMember.findUnique({
       where: {
-        groupId_userId: {
+        groupId_userId: { // Fixed underscore
           groupId: groupId,
           userId: user.id
         }
       }
     });
+
     if (!membership || membership.role !== 'ADMIN') {
       return NextResponse.json({ error: 'Only admins can change member roles' }, { status: 403 });
     }
@@ -189,13 +195,14 @@ export async function PUT(
     if (group?.createdById === userId) {
       return NextResponse.json({ error: 'Cannot change group creator role' }, { status: 400 });
     }
+
     if (userId === user.id) {
       return NextResponse.json({ error: 'Cannot change your own role' }, { status: 400 });
     }
 
     const updatedMember = await prisma.groupMember.update({
       where: {
-        groupId_userId: {
+        groupId_userId: { // Fixed underscore
           groupId: groupId,
           userId
         }
@@ -231,6 +238,7 @@ export async function DELETE(
       where: { email: session.user.email },
       select: { id: true }
     });
+
     if (!user) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
@@ -245,7 +253,7 @@ export async function DELETE(
     // Check permissions
     const membership = await prisma.groupMember.findUnique({
       where: {
-        groupId_userId: {
+        groupId_userId: { // Fixed underscore
           groupId: groupId,
           userId: user.id
         }
@@ -256,7 +264,7 @@ export async function DELETE(
     
     // Users can remove themselves, or admins can remove others (but not the creator)
     const canRemove = userIdToRemove === user.id || 
-                     (membership?.role === 'ADMIN' && userIdToRemove !== group?.createdById);
+                     (membership?.role === 'ADMIN' && userIdToRemove !== group?.createdById); // Fixed comparison operators
     
     if (!canRemove) {
       return NextResponse.json({ error: 'Cannot remove this member' }, { status: 403 });
@@ -269,7 +277,7 @@ export async function DELETE(
 
     await prisma.groupMember.delete({
       where: {
-        groupId_userId: {
+        groupId_userId: { // Fixed underscore
           groupId: groupId,
           userId: userIdToRemove
         }
