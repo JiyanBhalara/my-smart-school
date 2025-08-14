@@ -17,7 +17,7 @@ interface AnswerResult {
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { lessonId: string; quizId: string } }
+  { params }: { params: Promise<{ lessonId: string; quizId: string }> } // Fixed: params should be Promise
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -26,11 +26,12 @@ export async function POST(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    const { lessonId, quizId } = await params; // Await params
     const { answers }: { answers: SubmissionAnswer[] } = await request.json();
 
     // Get quiz with questions and correct answers
     const quiz = await prisma.quiz.findUnique({
-      where: { id: params.quizId },
+      where: { id: quizId }, // Use awaited quizId
       include: {
         questions: {
           include: {
@@ -47,7 +48,7 @@ export async function POST(
     // Check if student has exceeded max attempts
     const completedAttempts = await prisma.quizAttempt.count({
       where: {
-        quizId: params.quizId,
+        quizId: quizId, // Use awaited quizId
         studentId: session.user.id,
         isCompleted: true
       }
@@ -86,7 +87,7 @@ export async function POST(
     const quizAttempt = await prisma.quizAttempt.create({
       data: {
         studentId: session.user.id,
-        quizId: params.quizId,
+        quizId: quizId, // Use awaited quizId
         score: totalScore,
         totalPoints: totalPossible,
         percentage,

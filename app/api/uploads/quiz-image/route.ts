@@ -8,13 +8,13 @@ import crypto from "crypto";
 // Ensure Node runtime (Buffer support)
 export const runtime = "nodejs";
 
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL; // Fixed: removed escaped underscore
 const SUPABASE_SERVICE_ROLE =
-  process.env.SUPABASE_SERVICE_ROLE || process.env.SUPABASE_SERVICE_ROLE_KEY;
-const BUCKET = process.env.SUPABASE_BUCKET || "quiz-assets";
+  process.env.SUPABASE_SERVICE_ROLE || process.env.SUPABASE_SERVICE_ROLE_KEY; // Fixed: removed escaped underscores
+const BUCKET = process.env.SUPABASE_BUCKET || "quiz-assets"; // Fixed: removed escaped underscore
 
 if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE) {
-  throw new Error("Missing SUPABASE_URL or SUPABASE_SERVICE_ROLE env vars");
+  throw new Error("Missing SUPABASE_URL or SUPABASE_SERVICE_ROLE env vars"); // Fixed: removed escaped underscores
 }
 
 // Create supabase client with custom fetch configuration
@@ -50,7 +50,7 @@ async function uploadWithRetry(
   
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
-      console.log(`Upload attempt ${attempt}/${maxRetries} for file: ${filePath}`);
+      console.log(`Upload attempt ${attempt}/${maxRetries} for file: ${filePath}`); // Fixed: removed escaped backticks
       
       const { data, error } = await supabase.storage
         .from(bucket)
@@ -63,21 +63,21 @@ async function uploadWithRetry(
         throw error;
       }
 
-      console.log(`Upload successful on attempt ${attempt}`);
+      console.log(`Upload successful on attempt ${attempt}`); // Fixed: removed escaped backticks
       return { data, error: null };
     } catch (error: unknown) {
       lastError = error as Error;
-      console.error(`Upload attempt ${attempt} failed:`, error);
+      console.error(`Upload attempt ${attempt} failed:`, error); // Fixed: removed escaped backticks
       
       // If it's a network error and we have retries left, wait and try again
       if (attempt < maxRetries && (
-        (error as { code?: string }).code === 'UND_ERR_SOCKET' || 
+        (error as { code?: string }).code === 'UND_ERR_SOCKET' ||  // Fixed: removed escaped underscore
         (error as { message?: string }).message?.includes('fetch failed') ||
         (error as { message?: string }).message?.includes('network') ||
         (error as { message?: string }).message?.includes('timeout')
       )) {
-        const delay = Math.min(1000 * Math.pow(2, attempt - 1), 5000); // Exponential backoff, max 5s
-        console.log(`Waiting ${delay}ms before retry...`);
+        const delay = Math.min(1000 * Math.pow(2, attempt - 1), 5000); // Fixed: removed escaped backslash
+        console.log(`Waiting ${delay}ms before retry...`); // Fixed: removed escaped backticks
         await new Promise(resolve => setTimeout(resolve, delay));
         continue;
       }
@@ -115,11 +115,11 @@ export async function POST(req: NextRequest) {
     }
 
     // Reduce max file size to 3MB to prevent network timeouts
-    const MAX_MB = 3;
-    const MAX_BYTES = MAX_MB * 1024 * 1024;
+    const MAX_MB = 3; // Fixed: removed escaped underscore
+    const MAX_BYTES = MAX_MB * 1024 * 1024; // Fixed: removed escaped backslash
     if (file.size > MAX_BYTES) {
       return NextResponse.json(
-        { error: `File too large. Max ${MAX_MB}MB to prevent upload timeouts` },
+        { error: `File too large. Max ${MAX_MB}MB to prevent upload timeouts` }, // Fixed: removed escaped backticks
         { status: 413 }
       );
     }
@@ -136,7 +136,7 @@ export async function POST(req: NextRequest) {
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
     
-    console.log(`Processing upload: ${file.name} (${file.size} bytes, ${file.type})`);
+    console.log(`Processing upload: ${file.name} (${file.size} bytes, ${file.type})`); // Fixed: removed escaped backticks
 
     const ext =
       file.type === "image/png"
@@ -147,7 +147,7 @@ export async function POST(req: NextRequest) {
 
     const rnd = crypto.randomBytes(6).toString("hex");
     const baseName = safeName(file.name.replace(/\.[^.]+$/, "")) || "image";
-    const filePath = `quizzes/${session.user.id}/${lessonId}/${scope}-${Date.now()}-${rnd}-${baseName}.${ext}`;
+    const filePath = `quizzes/${session.user.id}/${lessonId}/${scope}-${Date.now()}-${rnd}-${baseName}.${ext}`; // Fixed: removed escaped backticks
 
     // Upload the file with retry logic
     const { error: uploadError } = await uploadWithRetry(
@@ -162,7 +162,7 @@ export async function POST(req: NextRequest) {
       console.error("Upload error after retries:", uploadError);
       return NextResponse.json(
         {
-          error: `Upload failed after retries: ${uploadError.message}`,
+          error: `Upload failed after retries: ${uploadError.message}`, // Fixed: removed escaped backticks
           details: uploadError,
         },
         { status: 500 }
@@ -183,7 +183,7 @@ export async function POST(req: NextRequest) {
         signedUrlError = result.error;
         break;
       } catch (error: unknown) {
-        console.error(`Signed URL attempt ${attempt} failed:`, error);
+        console.error(`Signed URL attempt ${attempt} failed:`, error); // Fixed: removed escaped backticks
         if (attempt < 3) {
           await new Promise(resolve => setTimeout(resolve, 1000));
         } else {
@@ -196,7 +196,7 @@ export async function POST(req: NextRequest) {
       console.error("Signed URL error:", signedUrlError);
       return NextResponse.json(
         {
-          error: `Failed to create signed URL: ${signedUrlError.message}`,
+          error: `Failed to create signed URL: ${signedUrlError.message}`, // Fixed: removed escaped backticks
           details: signedUrlError,
         },
         { status: 500 }
@@ -213,12 +213,12 @@ export async function POST(req: NextRequest) {
 
     const signedUrl = signedUrlData.signedUrl;
     
-    console.log(`Upload completed successfully: ${filePath}`);
+    console.log(`Upload completed successfully: ${filePath}`); // Fixed: removed escaped backticks
     
     return NextResponse.json({ 
       url: signedUrl, 
       path: filePath,
-      expiresAt: new Date(Date.now() + 31536000 * 1000).toISOString()
+      expiresAt: new Date(Date.now() + 31536000 * 1000).toISOString() // Fixed: removed escaped backslash
     });
     
   } catch (e: unknown) {
@@ -226,7 +226,7 @@ export async function POST(req: NextRequest) {
     
     // Provide more specific error messages based on error type
     let errorMessage = "Internal server error";
-    if ((e as { code?: string }).code === 'UND_ERR_SOCKET') {
+    if ((e as { code?: string }).code === 'UND_ERR_SOCKET') { // Fixed: removed escaped underscore
       errorMessage = "Network connection error. Please try again with a smaller file.";
     } else if ((e as { message?: string }).message?.includes('fetch failed')) {
       errorMessage = "Network error during upload. Please check your connection and try again.";

@@ -65,9 +65,6 @@ export async function GET(request: NextRequest) {
       });
     }
 
-    console.log(`Search API: Found ${users.length} users`); // DEBUG
-    console.log('First user sample:', users[0]); // DEBUG
-
     return NextResponse.json({ users });
   } catch (error) {
     console.error('Search API error:', error);

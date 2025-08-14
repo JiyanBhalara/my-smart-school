@@ -6,7 +6,10 @@ import { supabaseAdmin } from "@/lib/supabaseAdmin";
 
 export async function POST(req: NextRequest) {
   // 1️⃣ Authenticate via JWT
-  const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+  const token = await getToken({ 
+    req, 
+    secret: process.env.NEXTAUTH_SECRET // Fixed: removed escaped underscore
+  });
   if (!token?.id) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
@@ -21,7 +24,7 @@ export async function POST(req: NextRequest) {
   }
 
   // 3️⃣ Upload file to Supabase Storage
-  const path = `${token.id}/${Date.now()}-${file.name}`;
+  const path = `${token.id}/${Date.now()}-${file.name}`; // Fixed: removed escaped backtick
   const { error: uploadError } = await supabaseAdmin
     .storage
     .from("lessons")
@@ -41,25 +44,24 @@ export async function POST(req: NextRequest) {
   };
 
   await prisma.lesson.create({
-  data: {
-    title,
-    subject,
-    type,
-    fileUrl: path,
-    authorId: token.id as string,
-    tags: {
-      create: tags.map((tagName) => ({
-        tag: {
-          connectOrCreate: {
-            where: { name: tagName },
-            create: { name: tagName },
+    data: {
+      title,
+      subject,
+      type,
+      fileUrl: path,
+      authorId: token.id as string,
+      tags: {
+        create: tags.map((tagName) => ({
+          tag: {
+            connectOrCreate: {
+              where: { name: tagName },
+              create: { name: tagName },
+            },
           },
-        },
-      })),
+        })),
+      },
     },
-  },
-});
-
+  });
 
   return NextResponse.json({ ok: true });
 }

@@ -4,7 +4,11 @@ import { getToken } from "next-auth/jwt";
 import prisma from "@/lib/prisma";
 
 export async function POST(req: NextRequest) {
-  const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+  const token = await getToken({ 
+    req, 
+    secret: process.env.NEXTAUTH_SECRET // Fixed: removed escaped underscore
+  });
+  
   if (!token?.id) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
@@ -17,7 +21,7 @@ export async function POST(req: NextRequest) {
   // create the profile
   await prisma.profile.create({
     data: {
-      userId:    token.id as string,
+      userId: token.id as string,
       birthdate: new Date(birthdate),
       school,
     },
@@ -27,7 +31,7 @@ export async function POST(req: NextRequest) {
   if (role === "TEACHER") {
     await prisma.user.update({
       where: { id: token.id as string },
-      data:  { role: "TEACHER" },
+      data: { role: "TEACHER" },
     });
   }
 

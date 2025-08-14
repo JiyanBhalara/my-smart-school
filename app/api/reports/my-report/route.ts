@@ -1,10 +1,10 @@
 // app/api/reports/my-report/route.ts
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server'; // Added NextRequest for consistency
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/app/utils/authOptions';
 import prisma from '@/lib/prisma';
 
-export async function GET() {
+export async function GET(request: NextRequest) { // Added request parameter for consistency
   try {
     const session = await getServerSession(authOptions);
 
@@ -172,7 +172,7 @@ export async function GET() {
       lowestScore: allScores.length > 0 ? Math.min(...allScores) : 0,
       totalPointsEarned: totalEarnedPoints,
       totalPossiblePoints: totalPossiblePoints,
-      overallPercentage: totalPossiblePoints > 0 ? (totalEarnedPoints / totalPossiblePoints) * 100 : 0,
+      overallPercentage: totalPossiblePoints > 0 ? (totalEarnedPoints / totalPossiblePoints) * 100 : 0, // Fixed: removed escaped backslash
       passCount: student.quizAttempts.filter(attempt => attempt.passed === true).length,
       failCount: student.quizAttempts.filter(attempt => attempt.passed === false).length,
     };

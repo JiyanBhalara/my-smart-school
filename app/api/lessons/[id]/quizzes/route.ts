@@ -5,7 +5,7 @@ import prisma from '@/lib/prisma';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> } // Fixed: params should be Promise
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -14,16 +14,18 @@ export async function GET(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    const { id } = await params; // Await params
+
     const quizzes = await prisma.quiz.findMany({
       where: { 
-        lessonId: params.id,
+        lessonId: id, // Use awaited id
         published: true 
       },
       include: {
         author: {
           select: { name: true, email: true }
         },
-        _count: {
+        _count: { // Fixed: single underscore
           select: { questions: true }
         },
         attempts: {

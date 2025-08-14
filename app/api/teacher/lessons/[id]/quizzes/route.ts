@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth/next';
-import {authOptions} from '@/app/utils/authOptions';
+import { authOptions } from '@/app/utils/authOptions';
 import prisma from '@/lib/prisma';
 
 interface QuizOption {
@@ -18,7 +18,7 @@ interface QuizQuestion {
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> } // Fixed: params should be Promise
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -26,6 +26,8 @@ export async function POST(
     if (!session || session.user.role !== 'TEACHER') {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+
+    const { id } = await params; // Await params
 
     const { 
       title, 
@@ -47,7 +49,7 @@ export async function POST(
         description,
         timeLimit,
         maxAttempts,
-        lessonId: params.id,
+        lessonId: id, // Use awaited id
         authorId: session.user.id,
         questions: {
           create: questions.map((q: QuizQuestion, index: number) => ({

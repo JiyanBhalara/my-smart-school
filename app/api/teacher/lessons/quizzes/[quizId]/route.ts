@@ -18,7 +18,7 @@ interface QuizQuestion {
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> } // Fixed: params should be Promise
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -27,9 +27,11 @@ export async function PUT(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    const { id } = await params; // Await params
+
     // Check if the teacher owns this quiz
     const existingQuiz = await prisma.quiz.findUnique({
-      where: { id: params.id },
+      where: { id: id }, // Use awaited id
       select: { authorId: true }
     });
 
@@ -49,12 +51,12 @@ export async function PUT(
 
     // Delete existing questions and options
     await prisma.question.deleteMany({
-      where: { quizId: params.id }
+      where: { quizId: id } // Use awaited id
     });
 
     // Update quiz with new data
     const updatedQuiz = await prisma.quiz.update({
-      where: { id: params.id },
+      where: { id: id }, // Use awaited id
       data: {
         title,
         description,
@@ -94,7 +96,8 @@ export async function PUT(
 }
 
 export async function DELETE(
-  { params }: { params: { id: string } }
+  request: NextRequest, // Added request parameter
+  { params }: { params: Promise<{ id: string }> } // Fixed: params should be Promise
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -103,9 +106,11 @@ export async function DELETE(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    const { id } = await params; // Await params
+
     // Check if the teacher owns this quiz
     const existingQuiz = await prisma.quiz.findUnique({
-      where: { id: params.id },
+      where: { id: id }, // Use awaited id
       select: { authorId: true }
     });
 
@@ -116,7 +121,7 @@ export async function DELETE(
     }
 
     await prisma.quiz.delete({
-      where: { id: params.id }
+      where: { id: id } // Use awaited id
     });
 
     return NextResponse.json({ message: 'Quiz deleted successfully' });

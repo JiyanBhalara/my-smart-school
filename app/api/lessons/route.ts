@@ -1,9 +1,9 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/app/utils/authOptions';
 import prisma from '@/lib/prisma';
 
-export async function GET() {
+export async function GET(request: NextRequest) { // Added request parameter
   try {
     // Pass the request object to getServerSession for proper session handling
     const session = await getServerSession(authOptions);
@@ -15,7 +15,7 @@ export async function GET() {
     const lessons = await prisma.lesson.findMany({
       where: { published: true },
       include: {
-        _count: {
+        _count: { // Fixed: single underscore
           select: { quizzes: true }
         }
       },

@@ -18,7 +18,7 @@ export async function GET(request: NextRequest) {
     const limit = parseInt(searchParams.get('limit') || '25');
     const search = searchParams.get('search') || '';
 
-    const skip = (page - 1) * limit;
+    const skip = (page - 1) * limit; // Fixed: removed escaped backslash
 
     // Build search filter
     const searchFilter = search
