@@ -39,6 +39,11 @@ model User {
   studentConversations Conversation[] @relation("StudentConversations")
   sentMessages         Message[]      @relation("SentMessages")
 
+  // GROUP CHAT - NEW RELATIONS
+  createdGroups    Group[]         @relation("CreatedGroups")
+  groupMemberships GroupMember[]   @relation("GroupMembers")
+  sentGroupMessages GroupMessage[] @relation("SentGroupMessages")
+
   @@map("users")
 }
 
@@ -269,4 +274,64 @@ model Message {
   sender       User         @relation("SentMessages", fields: [senderId], references: [id], onDelete: Cascade)
 
   @@map("messages")
+}
+
+// ================================
+// GROUP CHAT MODELS - NEW
+// ================================
+
+model Group {
+  id          String   @id @default(cuid())
+  name        String
+  description String?  @db.Text
+  imageUrl    String?  // Group avatar/image
+  createdById String   // Teacher who created the group
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  createdBy      User           @relation("CreatedGroups", fields: [createdById], references: [id], onDelete: Cascade)
+  members        GroupMember[]
+  messages       GroupMessage[]
+  pinnedMessage  GroupMessage?  @relation("PinnedMessage", fields: [pinnedMessageId], references: [id])
+  pinnedMessageId String?       @unique
+
+  @@map("groups")
+}
+
+model GroupMember {
+  id       String        @id @default(cuid())
+  groupId  String
+  userId   String
+  role     GroupMemberRole @default(MEMBER)
+  joinedAt DateTime      @default(now())
+
+  group    Group         @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  user     User          @relation("GroupMembers", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([groupId, userId]) // One membership per user per group
+  @@map("group_members")
+}
+
+model GroupMessage {
+  id        String   @id @default(cuid())
+  groupId   String
+  senderId  String
+  content   String?  @db.Text
+  fileUrl   String?
+  fileName  String?
+  fileType  String?
+  fileSize  Int?
+  isRead    Boolean  @default(false) // For message read status
+  createdAt DateTime @default(now())
+
+  group     Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  sender    User     @relation("SentGroupMessages", fields: [senderId], references: [id], onDelete: Cascade)
+  pinnedIn  Group?   @relation("PinnedMessage")
+  
+  @@map("group_messages")
+}
+
+enum GroupMemberRole {
+  ADMIN    // Can manage group (add/remove members, change name, etc.)
+  MEMBER   // Can only send messages
 }

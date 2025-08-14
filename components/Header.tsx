@@ -105,6 +105,27 @@ export default function Header() {
                 <span>All Courses</span>
               </button>
 
+              {/* Groups Navigation - Available to all logged-in users */}
+              {isLoggedIn && (
+                <div className="relative">
+                  <button
+                    onClick={() => handleProtectedAction('/groups')}
+                    className="cursor-pointer flex items-center space-x-2 bg-emerald-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-opacity-90 transition-all duration-300 shadow-sm hover:shadow-md transform hover:scale-105"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+                      />
+                    </svg>
+                    <span>Groups</span>
+                  </button>
+                  {/* TODO: Add notification badge for group messages later */}
+                </div>
+              )}
+
               {/* Chat Navigation - Teachers see Student List */}
               {isLoggedIn && isTeacher && (
                 <div className="relative">
@@ -275,6 +296,27 @@ export default function Header() {
                   >
                     All Courses Dashboard
                   </button>
+
+                  {/* Mobile Groups Navigation */}
+                  {isLoggedIn && (
+                    <button
+                      onClick={() => {
+                        handleProtectedAction('/groups');
+                        setIsMobileMenuOpen(false);
+                      }}
+                      className="flex items-center justify-center space-x-3 bg-emerald-600 text-white px-4 py-3 rounded-lg font-medium hover:bg-opacity-90 transition-all duration-300 w-full"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+                        />
+                      </svg>
+                      Groups & Communities
+                    </button>
+                  )}
 
                   {/* Mobile Chat Navigation */}
                   {isLoggedIn && isTeacher && (

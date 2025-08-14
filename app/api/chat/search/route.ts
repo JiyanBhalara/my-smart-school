@@ -1,61 +1,76 @@
+// File: app/api/chat/search/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
-import { prisma } from '@/lib/prisma';
 import { authOptions } from '@/app/utils/authOptions';
+import { prisma } from '@/lib/prisma';
 
-export async function GET(req: NextRequest) {
-  const session = await getServerSession(authOptions);
+export async function GET(request: NextRequest) {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.email) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
 
-  if (!session?.user?.email) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
+    const { searchParams } = new URL(request.url);
+    const query = searchParams.get('query') || '';
 
-  const { searchParams } = new URL(req.url);
-  const query = searchParams.get('query') || '';
-
-  if (query.length < 2) {
-    return NextResponse.json({ users: [] });
-  }
-
-  // Get current user to exclude from results
-  const currentUser = await prisma.user.findUnique({
-    where: { email: session.user.email },
-    select: { id: true }
-  });
-
-  if (!currentUser) {
-    return NextResponse.json({ error: 'User not found' }, { status: 404 });
-  }
-
-  // Search users case-insensitive, name contains query
-  const users = await prisma.user.findMany({
-    where: {
-      AND: [
-        {
-          name: {
-            contains: query,
-            mode: 'insensitive'
-          }
+    let users;
+    
+    if (query.trim() === '') {
+      // Return all users when no query (for group creation)
+      users = await prisma.user.findMany({
+        select: {
+          id: true,
+          name: true,
+          email: true, // FIXED: Added email field
+          image: true,
+          role: true,
         },
-        {
-          id: {
-            not: currentUser.id // Exclude current user
-          }
-        }
-      ]
-    },
-    select: {
-      id: true,
-      name: true,
-      email: true,
-      image: true,
-      role: true
-    },
-    orderBy: {
-      name: 'asc'
-    },
-    take: 10
-  });
+        orderBy: [
+          { role: 'desc' }, // Teachers first
+          { name: 'asc' }
+        ]
+      });
+    } else {
+      // Search users by name or email
+      users = await prisma.user.findMany({
+        where: {
+          OR: [
+            {
+              name: {
+                contains: query,
+                mode: 'insensitive'
+              }
+            },
+            {
+              email: {
+                contains: query,
+                mode: 'insensitive'
+              }
+            }
+          ]
+        },
+        select: {
+          id: true,
+          name: true,
+          email: true, // FIXED: Added email field
+          image: true,
+          role: true,
+        },
+        take: 20,
+        orderBy: [
+          { role: 'desc' }, // Teachers first
+          { name: 'asc' }
+        ]
+      });
+    }
 
-  return NextResponse.json({ users });
+    console.log(`Search API: Found ${users.length} users`); // DEBUG
+    console.log('First user sample:', users[0]); // DEBUG
+
+    return NextResponse.json({ users });
+  } catch (error) {
+    console.error('Search API error:', error);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+  }
 }
