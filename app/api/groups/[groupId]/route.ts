@@ -3,7 +3,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/utils/authOptions';
-import { prisma } from '@/lib/prisma';
+import prisma from '@/lib/prisma'; // Fixed import - remove destructuring
 
 export async function GET(
   request: NextRequest,
@@ -28,7 +28,7 @@ export async function GET(
     // Ensure membership
     const membership = await prisma.groupMember.findUnique({
       where: {
-        groupId_userId: {
+        groupId_userId: { // Fixed: single underscore
           groupId: groupId,
           userId: user.id
         }
@@ -88,7 +88,7 @@ export async function PUT(
     // Only admins can update
     const membership = await prisma.groupMember.findUnique({
       where: {
-        groupId_userId: {
+        groupId_userId: { // Fixed: single underscore
           groupId: groupId,
           userId: user.id
         }

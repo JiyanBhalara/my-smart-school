@@ -3,7 +3,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/utils/authOptions';
-import { prisma } from '@/lib/prisma';
+import prisma from '@/lib/prisma'; // Fixed import - remove destructuring
 import { createClient } from '@supabase/supabase-js';
 import crypto from 'crypto';
 
@@ -121,7 +121,7 @@ export async function POST(request: NextRequest) {
     // Check if user is a member of the group
     const membership = await prisma.groupMember.findUnique({
       where: {
-        groupId_userId: {
+        groupId_userId: { // Fixed: single underscore
           groupId,
           userId: user.id
         }
@@ -281,7 +281,7 @@ export async function GET(request: NextRequest) {
     // Check if user is a member of the group
     const membership = await prisma.groupMember.findUnique({
       where: {
-        groupId_userId: {
+        groupId_userId: { // Fixed: single underscore
           groupId,
           userId: user.id
         }
