@@ -10,6 +10,7 @@ import {
 } from "chart.js";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
+
 interface TooltipContext {
   label: string;
   raw: number;
@@ -59,10 +60,11 @@ export default function ScoreDistributionChart({ data }: ScoreDistributionChartP
       },
       tooltip: {
         callbacks: {
-          label: function(context: any) {
+          label: function(context: import("chart.js").TooltipItem<"doughnut">) {
             const total = context.dataset.data.reduce((a: number, b: number) => a + b, 0);
-            const percentage = total > 0 ? ((context.raw / total) * 100).toFixed(1) : '0.0';
-            return `${context.label}: ${context.raw} students (${percentage}%)`;
+            const rawValue = typeof context.raw === "number" ? context.raw : Number(context.raw);
+            const percentage = total > 0 ? ((rawValue / total) * 100).toFixed(1) : '0.0';
+            return `${context.label}: ${rawValue} students (${percentage}%)`;
           }
         }
       }
