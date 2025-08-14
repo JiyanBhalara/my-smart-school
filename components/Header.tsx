@@ -1,3 +1,4 @@
+// File: components/Header.tsx or your header component file
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -10,6 +11,17 @@ interface UnreadData {
   totalUnread: number;
   conversationsWithUnread: any[];
   usersWithUnread: string[];
+}
+
+interface GroupUnreadData {
+  totalUnread: number;
+  groupsWithUnread: Array<{
+    groupId: string;
+    groupName: string;
+    groupImage: string | null;
+    unreadCount: number;
+  }>;
+  groupIds: string[];
 }
 
 export default function Header() {
@@ -25,13 +37,18 @@ export default function Header() {
     conversationsWithUnread: [],
     usersWithUnread: []
   });
+  const [groupUnreadData, setGroupUnreadData] = useState<GroupUnreadData>({
+    totalUnread: 0,
+    groupsWithUnread: [],
+    groupIds: []
+  });
 
   // Only flip after client mount
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  // Fetch unread messages data
+  // Fetch unread messages data (individual chat)
   useEffect(() => {
     const fetchUnreadData = async () => {
       if (!isLoggedIn) return;
@@ -51,6 +68,29 @@ export default function Header() {
     
     // Poll for updates every 10 seconds
     const interval = setInterval(fetchUnreadData, 10000);
+    return () => clearInterval(interval);
+  }, [isLoggedIn]);
+
+  // Fetch group unread messages data
+  useEffect(() => {
+    const fetchGroupUnreadData = async () => {
+      if (!isLoggedIn) return;
+      
+      try {
+        const response = await fetch('/api/groups/unread');
+        if (response.ok) {
+          const data = await response.json();
+          setGroupUnreadData(data);
+        }
+      } catch (error) {
+        console.error('Error fetching group unread data:', error);
+      }
+    };
+
+    fetchGroupUnreadData();
+    
+    // Poll for updates every 10 seconds
+    const interval = setInterval(fetchGroupUnreadData, 10000);
     return () => clearInterval(interval);
   }, [isLoggedIn]);
 
@@ -122,7 +162,8 @@ export default function Header() {
                     </svg>
                     <span>Groups</span>
                   </button>
-                  {/* TODO: Add notification badge for group messages later */}
+                  {/* Add notification badge for group messages */}
+                  <NotificationBadge count={groupUnreadData.totalUnread} />
                 </div>
               )}
 
@@ -279,7 +320,7 @@ export default function Header() {
         </button>
       </div>
 
-      {/* Mobile menu (session/window-dependent) */}
+      {/* Mobile menu */}
       {!mounted
         ? null
         : isMobileMenuOpen && (
@@ -315,6 +356,11 @@ export default function Header() {
                         />
                       </svg>
                       Groups & Communities
+                      {groupUnreadData.totalUnread > 0 && (
+                        <span className="bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
+                          {groupUnreadData.totalUnread > 9 ? '9+' : groupUnreadData.totalUnread}
+                        </span>
+                      )}
                     </button>
                   )}
 
@@ -386,7 +432,7 @@ export default function Header() {
                   )}
                 </div>
 
-                {/* Rest of mobile menu - unchanged */}
+                {/* Rest of mobile menu */}
                 <Link href="#features" onClick={() => setIsMobileMenuOpen(false)} className="px-4 py-2 font-medium hover:text-teal">
                   Features
                 </Link>
@@ -397,7 +443,7 @@ export default function Header() {
                   Who It&apos;s For
                 </Link>
 
-                {/* Mobile Auth Section - unchanged */}
+                {/* Mobile Auth Section */}
                 <div className="border-t border-gray-100 pt-4 space-y-3">
                   {!isLoggedIn ? (
                     <>

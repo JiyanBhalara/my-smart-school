@@ -106,37 +106,67 @@ export default function GroupChatPage() {
     }
   }, [groupId, session]);
 
+  // Add this useEffect to your group chat page after fetching messages:
+
+useEffect(() => {
+  // Mark messages as read when user enters the group
+  const markAsRead = async () => {
+    if (groupId) {
+      try {
+        await fetch(`/api/groups/${groupId}/read`, {
+          method: 'POST'
+        });
+      } catch (error) {
+        console.error('Error marking messages as read:', error);
+      }
+    }
+  };
+
+  markAsRead();
+}, [groupId]);
+
+// Also add this to mark as read when user sends a message
+// Update your handleSendMessage function:
+const handleSendMessage = async (e: React.FormEvent) => {
+  e.preventDefault();
+  if (!newMessage.trim() || sending) return;
+
+  setSending(true);
+  try {
+    const response = await fetch(`/api/groups/${groupId}/messages`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        content: newMessage.trim(),
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to send message');
+    }
+
+    const data = await response.json();
+    setMessages(prev => [...prev, data.message]);
+    setNewMessage('');
+    
+    // Mark messages as read after sending
+    try {
+      await fetch(`/api/groups/${groupId}/read`, {
+        method: 'POST'
+      });
+    } catch (error) {
+      console.error('Error marking messages as read:', error);
+    }
+  } catch {
+    alert('Failed to send message. Please try again.');
+  } finally {
+    setSending(false);
+  }
+};
+
   const currentUserMembership = group?.members.find(m => m.user.id === session?.user?.id);
   const isAdmin = currentUserMembership?.role === 'ADMIN';
   const isCreator = group?.createdBy.id === session?.user?.id;
-
-  const handleSendMessage = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newMessage.trim() || sending) return;
-
-    setSending(true);
-    try {
-      const response = await fetch(`/api/groups/${groupId}/messages`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          content: newMessage.trim(),
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to send message');
-      }
-
-      const data = await response.json();
-      setMessages(prev => [...prev, data.message]);
-      setNewMessage('');
-    } catch {
-      alert('Failed to send message. Please try again.');
-    } finally {
-      setSending(false);
-    }
-  };
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];

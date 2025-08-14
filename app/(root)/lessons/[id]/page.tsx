@@ -8,20 +8,19 @@ import { authOptions } from "@/app/utils/authOptions";
 import QuizCard from "@/components/QuizCard";
 
 type Props = {
-  params: Promise<{ id: string }>;
-  searchParams: Promise<{ noMaterial?: string }>;
+  params: Promise<{ id: string }>; // Keep as Promise
+  searchParams: Promise<{ noMaterial?: string }>; // Keep as Promise
 };
 
 export default async function LessonDetailPage({ params, searchParams }: Props) {
-  // Resolve route params
+  // FIXED: Await the params and searchParams
   const { id } = await params;
   const { noMaterial } = await searchParams;
 
-  // Get the session (server-side) to check role
   const session = await getServerSession(authOptions);
   const isTeacher = !!session && session.user?.role === "TEACHER";
   const userId = session?.user?.id;
-
+  const userRole = session?.user?.role;
   // Fetch lesson with quiz attempts for the current user
   const lesson = await prisma.lesson.findUnique({
     where: { id },
@@ -41,8 +40,13 @@ export default async function LessonDetailPage({ params, searchParams }: Props) 
 
   if (!lesson) notFound();
 
+  // Show only 2 most recent quizzes
+  const recentQuizzes = lesson.quizzes.slice(0, 2);
+  const hasMoreQuizzes = lesson.quizzes.length > 2;
+
   return (
     <main className="min-h-screen bg-gradient-to-br from-gray-50 to-white relative">
+      {/* Keep your existing modal code */}
       {noMaterial === "1" && (
         <>
           <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
@@ -89,7 +93,7 @@ export default async function LessonDetailPage({ params, searchParams }: Props) 
         </>
       )}
 
-      {/* Hero Section */}
+      {/* Keep your existing hero section */}
       <div className="bg-gradient-to-r from-[#219EBC] via-[#0077B6] to-[#023047] text-white relative overflow-hidden">
         <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -translate-y-32 translate-x-32"></div>
         <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/5 rounded-full translate-y-24 -translate-x-24"></div>
@@ -192,7 +196,7 @@ export default async function LessonDetailPage({ params, searchParams }: Props) 
         </div>
       </div>
 
-      {/* Content Section */}
+      {/* Content Section - FIXED: Only show 2 recent quizzes */}
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="grid lg:grid-cols-4 gap-8">
           {/* Main Content - Quizzes */}
@@ -210,7 +214,7 @@ export default async function LessonDetailPage({ params, searchParams }: Props) 
                       <p className="text-gray-600 mt-1">
                         {lesson.quizzes.length === 0
                           ? "No quizzes available yet"
-                          : `${lesson.quizzes.length} quiz${lesson.quizzes.length === 1 ? "" : "es"} ready to take`}
+                          : `${lesson.quizzes.length} quiz${lesson.quizzes.length === 1 ? "" : "es"} available`}
                       </p>
                     </div>
                   </div>
@@ -227,9 +231,9 @@ export default async function LessonDetailPage({ params, searchParams }: Props) 
                 </div>
               </div>
 
-              {/* Quiz Content */}
+              {/* Quiz Content - FIXED: Show only recent quizzes */}
               <div className="p-8">
-                {lesson.quizzes.length === 0 ? (
+                {recentQuizzes.length === 0 ? (
                   <div className="text-center py-16">
                     <div className="w-24 h-24 mx-auto mb-6 bg-gradient-to-br from-gray-100 to-gray-200 rounded-2xl flex items-center justify-center">
                       <Play size={36} className="text-gray-400" />
@@ -249,22 +253,38 @@ export default async function LessonDetailPage({ params, searchParams }: Props) 
                   </div>
                 ) : (
                   <div className="grid gap-8">
-                    {lesson.quizzes.map((quiz, index) => (
-                      <QuizCard
-                        key={quiz.id}
-                        quiz={quiz}
-                        lessonId={lesson.id}
-                        index={index}
-                        userId={userId}
-                      />
+                    {recentQuizzes.map((quiz, index) => (
+                      <div key={quiz.id} className="relative">
+                        <QuizCard
+                          quiz={quiz}
+                          lessonId={lesson.id}
+                          index={index}
+                          userId={userId}
+                          userRole={userRole}
+                        />
+                      </div>
                     ))}
+                    
+                    {/* FIXED: Add "View All Quizzes" button when there are more */}
+                    {hasMoreQuizzes && (
+                      <div className="text-center pt-4">
+                        <Link
+                          href={`/lessons/${lesson.id}/quizzes`}
+                          className="inline-flex items-center gap-2 px-6 py-3 bg-[#219EBC] text-white font-semibold rounded-xl hover:bg-[#0077B6] transition-all duration-300 shadow-md hover:shadow-lg"
+                        >
+                          <BookOpen size={18} />
+                          View All Quizzes ({lesson.quizzes.length})
+                          <ExternalLink size={16} />
+                        </Link>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
             </section>
           </div>
 
-          {/* Sidebar */}
+          {/* Keep your existing sidebar */}
           <div className="lg:col-span-1">
             <div className="sticky top-8 space-y-6">
               <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">

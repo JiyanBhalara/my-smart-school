@@ -75,6 +75,11 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Group name is required' }, { status: 400 });
     }
 
+    // Filter out duplicates and ensure creator is not in memberIds
+    const uniqueMemberIds = Array.isArray(memberIds) 
+      ? [...new Set(memberIds)].filter(id => id !== user.id)
+      : [];
+
     const group = await prisma.group.create({
       data: {
         name: name.trim(),
@@ -83,9 +88,7 @@ export async function POST(request: NextRequest) {
         members: {
           create: [
             { userId: user.id, role: 'ADMIN' },
-            ...(Array.isArray(memberIds)
-              ? memberIds.map((id: string) => ({ userId: id, role: 'MEMBER' as const }))
-              : [])
+            ...uniqueMemberIds.map((id: string) => ({ userId: id, role: 'MEMBER' as const }))
           ]
         }
       },

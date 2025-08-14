@@ -298,12 +298,15 @@ model Group {
   @@map("groups")
 }
 
+// Update your GroupMember model in schema.prisma to include lastReadAt:
+
 model GroupMember {
   id       String        @id @default(cuid())
   groupId  String
   userId   String
   role     GroupMemberRole @default(MEMBER)
   joinedAt DateTime      @default(now())
+  lastReadAt DateTime?   // Add this field to track when user last read messages
 
   group    Group         @relation(fields: [groupId], references: [id], onDelete: Cascade)
   user     User          @relation("GroupMembers", fields: [userId], references: [id], onDelete: Cascade)
@@ -311,6 +314,7 @@ model GroupMember {
   @@unique([groupId, userId]) // One membership per user per group
   @@map("group_members")
 }
+
 
 model GroupMessage {
   id        String   @id @default(cuid())
