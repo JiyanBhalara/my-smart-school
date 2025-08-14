@@ -37,7 +37,7 @@ export default async function AllQuizzesPage({ params }: { params: Promise<{ id:
           <h1 className="text-3xl font-bold">All Quizzes for “{lesson.title}”</h1>
           <Link
             href={`/lessons/${id}`}
-            className="text-blue-600 hover:underline"
+            className="cursor-pointer text-blue-600 hover:underline"
           >
             Back to Lesson
           </Link>

@@ -1,7 +1,7 @@
-// File: components/Header.tsx or your header component file
+// components/Header.tsx
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useSession, signOut } from 'next-auth/react';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -32,6 +32,8 @@ export default function Header() {
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [showChatDropdown, setShowChatDropdown] = useState(false);
+  const [showCoursesDropdown, setShowCoursesDropdown] = useState(false);
   const [unreadData, setUnreadData] = useState<UnreadData>({
     totalUnread: 0,
     conversationsWithUnread: [],
@@ -42,6 +44,10 @@ export default function Header() {
     groupsWithUnread: [],
     groupIds: []
   });
+
+  // Refs for dropdown containers
+  const chatDropdownRef = useRef<HTMLDivElement>(null);
+  const coursesDropdownRef = useRef<HTMLDivElement>(null);
 
   // Only flip after client mount
   useEffect(() => {
@@ -108,404 +114,537 @@ export default function Header() {
     if (count === 0) return null;
     
     return (
-      <div className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
+      <div className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold shadow-sm z-10">
         {count > 9 ? '9+' : count}
       </div>
     );
   };
 
+  // Close dropdowns when clicking outside - FIXED
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (chatDropdownRef.current && !chatDropdownRef.current.contains(event.target as Node)) {
+        setShowChatDropdown(false);
+      }
+      if (coursesDropdownRef.current && !coursesDropdownRef.current.contains(event.target as Node)) {
+        setShowCoursesDropdown(false);
+      }
+    };
+
+    if (showChatDropdown || showCoursesDropdown) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showChatDropdown, showCoursesDropdown]);
+
+  // Close mobile menu on route change
+  useEffect(() => {
+    setIsMobileMenuOpen(false);
+  }, [router]);
+
+  const totalChatNotifications = unreadData.totalUnread + groupUnreadData.totalUnread;
+
   return (
     <nav
       suppressHydrationWarning={true}
-      className="fixed w-full top-0 z-50 px-4 py-4 bg-white/95 backdrop-blur-sm border-b border-gray-100"
+      className="fixed w-full top-0 z-50 bg-white/98 backdrop-blur-lg border-b border-gray-200/60 shadow-lg"
     >
-      <div className="max-w-7xl mx-auto flex justify-between items-center">
-        {/* Logo (static) */}
-        <Link href="/" className="cursor-pointer text-2xl font-bold text-navy">
-          My Smart Digital School
-        </Link>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-center h-16">
+          
+          {/* Logo */}
+          <Link href="/" className="cursor-pointer flex items-center space-x-2 flex-shrink-0">
+            <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
+              <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 3L1 9l4 2.18v6L12 21l7-3.82v-6l2-1.09V17h2V9L12 3zm6.82 6L12 12.72 5.18 9 12 5.28 18.82 9zM17 16l-5 2.72L7 16v-3.73L12 15l5-2.73V16z"/>
+              </svg>
+            </div>
+            <span className="hidden sm:block text-xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
+              My Smart Digital School
+            </span>
+          </Link>
 
-        {/* Desktop UI (session/window-dependent) */}
-        {!mounted ? null : (
-          <div className="hidden lg:flex items-center space-x-6">
-            {/* Action Buttons */}
-            <div className="flex items-center space-x-3 border-l border-gray-200 pl-6">
-              <button
-                onClick={() => handleProtectedAction('/lessons')}
-                className="cursor-pointer flex items-center space-x-2 bg-teal text-white px-4 py-2 rounded-lg font-medium hover:bg-opacity-90 transition-all duration-300 shadow-sm hover:shadow-md transform hover:scale-105"
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
-                  />
-                </svg>
-                <span>All Courses</span>
-              </button>
-
-              {/* Groups Navigation - Available to all logged-in users */}
-              {isLoggedIn && (
-                <div className="relative">
-                  <button
-                    onClick={() => handleProtectedAction('/groups')}
-                    className="cursor-pointer flex items-center space-x-2 bg-emerald-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-opacity-90 transition-all duration-300 shadow-sm hover:shadow-md transform hover:scale-105"
-                  >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
-                      />
-                    </svg>
-                    <span>Groups</span>
-                  </button>
-                  {/* Add notification badge for group messages */}
-                  <NotificationBadge count={groupUnreadData.totalUnread} />
-                </div>
-              )}
-
-              {/* Chat Navigation - Teachers see Student List */}
-              {isLoggedIn && isTeacher && (
-                <div className="relative">
-                  <button
-                    onClick={() => handleProtectedAction('/chat/students')}
-                    className="cursor-pointer flex items-center space-x-2 bg-purple-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-opacity-90 transition-all duration-300 shadow-sm hover:shadow-md transform hover:scale-105"
-                  >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a2 2 0 01-2-2v-6a2 2 0 012-2h8z"
-                      />
-                    </svg>
-                    <span>Student List</span>
-                  </button>
-                  <NotificationBadge count={unreadData.totalUnread} />
-                </div>
-              )}
-
-              {/* Chat Navigation - Students see Teacher List */}
-              {isLoggedIn && isStudent && (
-                <div className="relative">
-                  <button
-                    onClick={() => handleProtectedAction('/chat/teachers')}
-                    className="cursor-pointer flex items-center space-x-2 bg-purple-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-opacity-90 transition-all duration-300 shadow-sm hover:shadow-md transform hover:scale-105"
-                  >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a2 2 0 01-2-2v-6a2 2 0 012-2h8z"
-                      />
-                    </svg>
-                    <span>Teacher List</span>
-                  </button>
-                  <NotificationBadge count={unreadData.totalUnread} />
-                </div>
-              )}
-
-              {isLoggedIn && isTeacher && (
+          {/* Center Navigation */}
+          {!mounted ? null : isLoggedIn && (
+            <div className="hidden lg:flex items-center space-x-3">
+              
+              {/* Chat Dropdown - FIXED */}
+              <div className="relative" ref={chatDropdownRef}>
                 <button
-                  onClick={() => handleProtectedAction('/teacher/lessons/new')}
-                  className="cursor-pointer flex items-center space-x-2 bg-navy text-white px-4 py-2 rounded-lg font-medium hover:bg-opacity-90 transition-all duration-300 shadow-sm hover:shadow-md transform hover:scale-105"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setShowChatDropdown(!showChatDropdown);
+                    setShowCoursesDropdown(false);
+                  }}
+                  className="cursor-pointer relative flex items-center space-x-2 px-4 py-2.5 bg-gradient-to-r from-purple-600 to-purple-700 text-white rounded-lg font-medium hover:from-purple-700 hover:to-purple-800 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2"
+                  type="button"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
                   </svg>
-                  <span>Create Lesson</span>
+                  <span>Chat</span>
+                  <svg 
+                    className={`w-4 h-4 transition-transform duration-200 ${showChatDropdown ? 'rotate-180' : ''}`} 
+                    fill="none" 
+                    stroke="currentColor" 
+                    viewBox="0 0 24 24"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                  <NotificationBadge count={totalChatNotifications} />
                 </button>
-              )}
-            </div>
 
-            {/* Auth Buttons */}
-            <div className="flex items-center space-x-4 border-l border-gray-200 pl-6">
-              {!isLoggedIn ? (
-                <>
-                  <Link
-                    href="/login"
-                    className="cursor-pointer flex items-center space-x-2 text-gray-600 hover:text-teal transition-colors duration-300 font-medium px-4 py-2 rounded-lg hover:bg-teal-50"
+                {/* Chat Dropdown Menu - FIXED positioning and z-index */}
+                {showChatDropdown && (
+                  <div className="absolute top-full left-0 mt-2 w-64 bg-white rounded-xl shadow-2xl border border-gray-100 py-2 z-[60] animate-in slide-in-from-top-5 duration-200">
+                    <div className="px-4 py-3 border-b border-gray-100">
+                      <h3 className="text-sm font-semibold text-gray-900">Communication</h3>
+                      <p className="text-xs text-gray-500">Stay connected with your peers</p>
+                    </div>
+                    
+                    {isTeacher && (
+                      <Link
+                        href="/chat/students"
+                        onClick={() => setShowChatDropdown(false)}
+                        className="cursor-pointer relative flex items-center space-x-3 px-4 py-3 hover:bg-purple-50 transition-colors duration-200 group"
+                      >
+                        <div className="p-1.5 bg-purple-100 rounded-lg group-hover:bg-purple-200 transition-colors">
+                          <svg className="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
+                          </svg>
+                        </div>
+                        <div className="flex-1">
+                          <p className="text-sm font-medium text-gray-900">Student List</p>
+                          <p className="text-xs text-gray-500">Chat with students</p>
+                        </div>
+                        {unreadData.totalUnread > 0 && (
+                          <div className="flex-shrink-0">
+                            <div className="bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
+                              {unreadData.totalUnread > 9 ? '9+' : unreadData.totalUnread}
+                            </div>
+                          </div>
+                        )}
+                      </Link>
+                    )}
+
+                    {isStudent && (
+                      <Link
+                        href="/chat/teachers"
+                        onClick={() => setShowChatDropdown(false)}
+                        className="cursor-pointer relative flex items-center space-x-3 px-4 py-3 hover:bg-purple-50 transition-colors duration-200 group"
+                      >
+                        <div className="p-1.5 bg-purple-100 rounded-lg group-hover:bg-purple-200 transition-colors">
+                          <svg className="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
+                          </svg>
+                        </div>
+                        <div className="flex-1">
+                          <p className="text-sm font-medium text-gray-900">Teacher List</p>
+                          <p className="text-xs text-gray-500">Chat with teachers</p>
+                        </div>
+                        {unreadData.totalUnread > 0 && (
+                          <div className="flex-shrink-0">
+                            <div className="bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
+                              {unreadData.totalUnread > 9 ? '9+' : unreadData.totalUnread}
+                            </div>
+                          </div>
+                        )}
+                      </Link>
+                    )}
+
+                    <Link
+                      href="/groups"
+                      onClick={() => setShowChatDropdown(false)}
+                      className="cursor-pointer relative flex items-center space-x-3 px-4 py-3 hover:bg-emerald-50 transition-colors duration-200 group"
+                    >
+                      <div className="p-1.5 bg-emerald-100 rounded-lg group-hover:bg-emerald-200 transition-colors">
+                        <svg className="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                        </svg>
+                      </div>
+                      <div className="flex-1">
+                        <p className="text-sm font-medium text-gray-900">Groups</p>
+                        <p className="text-xs text-gray-500">Join group discussions</p>
+                      </div>
+                      {groupUnreadData.totalUnread > 0 && (
+                        <div className="flex-shrink-0">
+                          <div className="bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
+                            {groupUnreadData.totalUnread > 9 ? '9+' : groupUnreadData.totalUnread}
+                          </div>
+                        </div>
+                      )}
+                    </Link>
+                  </div>
+                )}
+              </div>
+
+              {/* Courses Dropdown - FIXED */}
+              <div className="relative" ref={coursesDropdownRef}>
+                <button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setShowCoursesDropdown(!showCoursesDropdown);
+                    setShowChatDropdown(false);
+                  }}
+                  className="cursor-pointer flex items-center space-x-2 px-4 py-2.5 bg-gradient-to-r from-emerald-600 to-emerald-700 text-white rounded-lg font-medium hover:from-emerald-700 hover:to-emerald-800 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
+                  type="button"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                  </svg>
+                  <span>Courses</span>
+                  <svg 
+                    className={`w-4 h-4 transition-transform duration-200 ${showCoursesDropdown ? 'rotate-180' : ''}`} 
+                    fill="none" 
+                    stroke="currentColor" 
+                    viewBox="0 0 24 24"
                   >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"
-                      />
-                    </svg>
-                    <span>Login</span>
-                  </Link>
-                  <Link
-                    href="/signup"
-                    className="cursor-pointer flex items-center space-x-2 bg-teal text-white px-6 py-2 rounded-lg font-medium hover:bg-opacity-90 transition-all duration-300"
-                  >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"
-                      />
-                    </svg>
-                    <span>Sign Up</span>
-                  </Link>
-                </>
-              ) : (
-                <div className="flex items-center space-x-4">
-                  {/* Profile */}
-                  <div className="flex items-center space-x-3">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+
+                {/* Courses Dropdown Menu - FIXED */}
+                {showCoursesDropdown && (
+                  <div className="absolute top-full left-0 mt-2 w-64 bg-white rounded-xl shadow-2xl border border-gray-100 py-2 z-[60] animate-in slide-in-from-top-5 duration-200">
+                    <div className="px-4 py-3 border-b border-gray-100">
+                      <h3 className="text-sm font-semibold text-gray-900">Learning</h3>
+                      <p className="text-xs text-gray-500">Explore and manage courses</p>
+                    </div>
+                    
+                    <Link
+                      href="/lessons"
+                      onClick={() => setShowCoursesDropdown(false)}
+                      className="cursor-pointer flex items-center space-x-3 px-4 py-3 hover:bg-emerald-50 transition-colors duration-200 group"
+                    >
+                      <div className="p-1.5 bg-emerald-100 rounded-lg group-hover:bg-emerald-200 transition-colors">
+                        <svg className="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                        </svg>
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-gray-900">All Courses</p>
+                        <p className="text-xs text-gray-500">Browse available courses</p>
+                      </div>
+                    </Link>
+
+                    {isTeacher && (
+                      <Link
+                        href="/teacher/lessons/new"
+                        onClick={() => setShowCoursesDropdown(false)}
+                        className="cursor-pointer flex items-center space-x-3 px-4 py-3 hover:bg-blue-50 transition-colors duration-200 group"
+                      >
+                        <div className="p-1.5 bg-blue-100 rounded-lg group-hover:bg-blue-200 transition-colors">
+                          <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                          </svg>
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium text-gray-900">Create Course</p>
+                          <p className="text-xs text-gray-500">Add new lesson content</p>
+                        </div>
+                      </Link>
+                    )}
+                  </div>
+                )}
+              </div>
+
+              {/* Student Reports */}
+              <Link
+                href={isTeacher ? '/reports/students' : '/reports/my-report'}
+                className="cursor-pointer flex items-center space-x-2 px-4 py-2.5 bg-gradient-to-r from-indigo-600 to-indigo-700 text-white rounded-lg font-medium hover:from-indigo-700 hover:to-indigo-800 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                </svg>
+                <span className="hidden xl:inline">{isTeacher ? 'Student Reports' : 'My Report'}</span>
+                <span className="xl:hidden">Reports</span>
+              </Link>
+
+            </div>
+          )}
+
+          {/* Right Side - Auth Section */}
+          <div className="flex items-center space-x-4">
+            {!isLoggedIn ? (
+              <>
+                <Link
+                  href="/login"
+                  className="cursor-pointer text-gray-600 hover:text-gray-900 font-medium transition-colors duration-200"
+                >
+                  Login
+                </Link>
+                <Link
+                  href="/signup"
+                  className="cursor-pointer bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 lg:px-6 py-2.5 rounded-lg font-medium hover:from-blue-700 hover:to-purple-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 text-sm lg:text-base"
+                >
+                  Sign Up
+                </Link>
+              </>
+            ) : (
+              <div className="flex items-center space-x-3">
+                {/* Profile */}
+                <div className="flex items-center space-x-3">
+                  <div className="w-8 h-8 lg:w-10 lg:h-10 relative">
                     {session.user?.image ? (
                       <Image
                         src={session.user.image}
                         alt={session.user.name || 'User'}
-                        width={32}
-                        height={32}
-                        className="w-8 h-8 rounded-full border-2 border-sky-light"
+                        width={40}
+                        height={40}
+                        className="w-full h-full rounded-full border-2 border-gray-200 object-cover"
                       />
                     ) : (
-                      <div className="w-8 h-8 bg-sky-light rounded-full flex items-center justify-center">
-                        <svg className="w-4 h-4 text-navy" fill="currentColor" viewBox="0 0 24 24">
-                          <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
-                        </svg>
+                      <div className="w-full h-full bg-gradient-to-br from-gray-500 to-gray-600 rounded-full flex items-center justify-center text-white font-semibold text-sm lg:text-base">
+                        {session.user?.name?.[0]?.toUpperCase() || 'U'}
                       </div>
                     )}
-                    <div className="hidden xl:block">
-                      <p className="text-gray-700 font-medium text-sm">
-                        Welcome back
-                        {session.user?.name ? `, ${session.user.name.split(' ')[0]}` : ''}!
-                      </p>
-                      {isTeacher && <p className="text-xs text-teal font-medium">Teacher</p>}
-                    </div>
                   </div>
-                  {/* Logout */}
-                  <button
-                    onClick={() => signOut({ callbackUrl: '/' })}
-                    className="cursor-pointer flex items-center space-x-2 text-gray-600 hover:text-red-600 transition-colors duration-300 font-medium px-4 py-2 rounded-lg hover:bg-red-50"
-                  >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
-                      />
-                    </svg>
-                    <span>Logout</span>
-                  </button>
+                  <div className="hidden xl:block">
+                    <p className="text-sm font-medium text-gray-900">
+                      {session.user?.name ? `${session.user.name.split(' ')[0]}` : 'User'}
+                    </p>
+                    <p className="text-xs text-gray-500">
+                      {isTeacher ? 'Teacher' : 'Student'}
+                    </p>
+                  </div>
                 </div>
-              )}
-            </div>
+                
+                {/* Logout */}
+                <button
+                  onClick={() => signOut({ callbackUrl: '/' })}
+                  className="cursor-pointer flex items-center space-x-2 text-gray-600 hover:text-red-600 transition-colors duration-300 font-medium px-3 py-2 rounded-lg hover:bg-red-50"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                  </svg>
+                  <span className="hidden sm:inline">Logout</span>
+                </button>
+              </div>
+            )}
           </div>
-        )}
 
-        {/* Mobile menu button (static) */}
-        <button
-          onClick={() => setIsMobileMenuOpen((o) => !o)}
-          className="lg:hidden flex items-center justify-center w-10 h-10 rounded-lg hover:bg-gray-100 transition-colors duration-300"
-        >
-          {isMobileMenuOpen ? (
-            <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          ) : (
-            <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
-          )}
-        </button>
+          {/* Mobile menu button */}
+          <button
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            className="cursor-pointer lg:hidden flex items-center justify-center w-10 h-10 rounded-lg hover:bg-gray-100 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-gray-500"
+            aria-label="Toggle mobile menu"
+          >
+            {isMobileMenuOpen ? (
+              <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            ) : (
+              <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            )}
+          </button>
+        </div>
       </div>
 
-      {/* Mobile menu */}
-      {!mounted
-        ? null
-        : isMobileMenuOpen && (
-            <div className="lg:hidden mt-4 pb-4 border-t border-gray-100">
-              <div className="flex flex-col space-y-4 pt-4">
-                {/* Mobile Action Buttons */}
-                <div className="px-4 space-y-3 border-b border-gray-100 pb-4">
-                  <button
-                    onClick={() => {
-                      handleProtectedAction('/lessons');
-                      setIsMobileMenuOpen(false);
-                    }}
-                    className="flex items-center justify-center space-x-3 bg-teal text-white px-4 py-3 rounded-lg font-medium hover:bg-opacity-90 transition-all duration-300 w-full"
-                  >
-                    All Courses Dashboard
-                  </button>
-
-                  {/* Mobile Groups Navigation */}
-                  {isLoggedIn && (
-                    <button
-                      onClick={() => {
-                        handleProtectedAction('/groups');
-                        setIsMobileMenuOpen(false);
-                      }}
-                      className="flex items-center justify-center space-x-3 bg-emerald-600 text-white px-4 py-3 rounded-lg font-medium hover:bg-opacity-90 transition-all duration-300 w-full"
+      {/* Mobile Menu - IMPROVED */}
+      {!mounted ? null : isMobileMenuOpen && (
+        <div className="lg:hidden border-t border-gray-200 bg-white animate-in slide-in-from-top duration-300">
+          <div className="px-4 py-6 space-y-6 max-h-[calc(100vh-4rem)] overflow-y-auto">
+            
+            {isLoggedIn && (
+              <>
+                {/* Mobile Chat Section */}
+                <div className="space-y-3">
+                  <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wide flex items-center">
+                    <svg className="w-4 h-4 mr-2 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                    </svg>
+                    Chat
+                  </h3>
+                  
+                  {isTeacher && (
+                    <Link
+                      href="/chat/students"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="cursor-pointer relative flex items-center space-x-3 p-4 bg-purple-50 rounded-xl hover:bg-purple-100 transition-colors group"
                     >
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
-                        />
+                      <svg className="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
                       </svg>
-                      Groups & Communities
-                      {groupUnreadData.totalUnread > 0 && (
-                        <span className="bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
-                          {groupUnreadData.totalUnread > 9 ? '9+' : groupUnreadData.totalUnread}
-                        </span>
-                      )}
-                    </button>
-                  )}
-
-                  {/* Mobile Chat Navigation */}
-                  {isLoggedIn && isTeacher && (
-                    <div className="relative">
-                      <button
-                        onClick={() => {
-                          handleProtectedAction('/chat/students');
-                          setIsMobileMenuOpen(false);
-                        }}
-                        className="flex items-center justify-center space-x-3 bg-purple-600 text-white px-4 py-3 rounded-lg font-medium hover:bg-opacity-90 transition-all duration-300 w-full"
-                      >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a2 2 0 01-2-2v-6a2 2 0 012-2h8z"
-                          />
-                        </svg>
-                        Student List & Chat
-                        {unreadData.totalUnread > 0 && (
-                          <span className="bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
-                            {unreadData.totalUnread > 9 ? '9+' : unreadData.totalUnread}
-                          </span>
-                        )}
-                      </button>
-                    </div>
-                  )}
-
-                  {isLoggedIn && isStudent && (
-                    <div className="relative">
-                      <button
-                        onClick={() => {
-                          handleProtectedAction('/chat/teachers');
-                          setIsMobileMenuOpen(false);
-                        }}
-                        className="flex items-center justify-center space-x-3 bg-purple-600 text-white px-4 py-3 rounded-lg font-medium hover:bg-opacity-90 transition-all duration-300 w-full"
-                      >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a2 2 0 01-2-2v-6a2 2 0 012-2h8z"
-                          />
-                        </svg>
-                        Teacher List & Chat
-                        {unreadData.totalUnread > 0 && (
-                          <span className="bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
-                            {unreadData.totalUnread > 9 ? '9+' : unreadData.totalUnread}
-                          </span>
-                        )}
-                      </button>
-                    </div>
-                  )}
-
-                  {isLoggedIn && isTeacher && (
-                    <button
-                      onClick={() => {
-                        handleProtectedAction('/teacher/lessons/new');
-                        setIsMobileMenuOpen(false);
-                      }}
-                      className="flex items-center justify-center space-x-3 bg-navy text-white px-4 py-3 rounded-lg font-medium hover:bg-opacity-90 transition-all duration-300 w-full"
-                    >
-                      Create New Lesson
-                    </button>
-                  )}
-                </div>
-
-                {/* Rest of mobile menu */}
-                <Link href="#features" onClick={() => setIsMobileMenuOpen(false)} className="px-4 py-2 font-medium hover:text-teal">
-                  Features
-                </Link>
-                <Link href="#how-it-works" onClick={() => setIsMobileMenuOpen(false)} className="px-4 py-2 font-medium hover:text-teal">
-                  How It Works
-                </Link>
-                <Link href="#who-its-for" onClick={() => setIsMobileMenuOpen(false)} className="px-4 py-2 font-medium hover:text-teal">
-                  Who It&apos;s For
-                </Link>
-
-                {/* Mobile Auth Section */}
-                <div className="border-t border-gray-100 pt-4 space-y-3">
-                  {!isLoggedIn ? (
-                    <>
-                      <Link
-                        href="/login"
-                        onClick={() => setIsMobileMenuOpen(false)}
-                        className="block px-4 py-3 font-medium hover:text-teal"
-                      >
-                        Login to Your Account
-                      </Link>
-                      <Link
-                        href="/signup"
-                        onClick={() => setIsMobileMenuOpen(false)}
-                        className="block bg-teal text-white px-4 py-3 rounded-lg font-medium hover:bg-opacity-90"
-                      >
-                        Create New Account
-                      </Link>
-                    </>
-                  ) : (
-                    <div className="space-y-3">
-                      <div className="flex items-center space-x-3 px-4 py-3 bg-sky-light-10 rounded-lg">
-                        {session.user?.image ? (
-                          <Image
-                            src={session.user.image}
-                            alt={session.user.name || 'User'}
-                            width={40}
-                            height={40}
-                            className="w-10 h-10 rounded-full border-2 border-sky-light"
-                          />
-                        ) : (
-                          <div className="w-10 h-10 bg-sky-light rounded-full flex items-center justify-center">
-                            <svg className="w-5 h-5 text-navy" fill="currentColor" viewBox="0 0 24 24">
-                              <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
-                            </svg>
-                          </div>
-                        )}
-                        <div>
-                          <p className="text-navy font-medium">
-                            {session.user?.name
-                              ? `Welcome, ${session.user.name.split(' ')[0]}!`
-                              : 'Welcome back!'}
-                          </p>
-                          <p className="text-gray-600 text-sm">
-                            {isTeacher ? 'Teacher Account' : 'Manage your account'}
-                          </p>
-                        </div>
+                      <div className="flex-1">
+                        <span className="font-medium text-gray-900">Student List</span>
+                        <p className="text-xs text-gray-500">Chat with your students</p>
                       </div>
-                      <button
-                        onClick={() => {
-                          signOut({ callbackUrl: '/' });
-                          setIsMobileMenuOpen(false);
-                        }}
-                        className="block px-4 py-3 font-medium text-red-600 hover:text-red-700"
-                      >
-                        Logout
-                      </button>
+                      {unreadData.totalUnread > 0 && (
+                        <NotificationBadge count={unreadData.totalUnread} />
+                      )}
+                    </Link>
+                  )}
+                  
+                  {isStudent && (
+                    <Link
+                      href="/chat/teachers"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="cursor-pointer relative flex items-center space-x-3 p-4 bg-purple-50 rounded-xl hover:bg-purple-100 transition-colors group"
+                    >
+                      <svg className="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
+                      </svg>
+                      <div className="flex-1">
+                        <span className="font-medium text-gray-900">Teacher List</span>
+                        <p className="text-xs text-gray-500">Chat with your teachers</p>
+                      </div>
+                      {unreadData.totalUnread > 0 && (
+                        <NotificationBadge count={unreadData.totalUnread} />
+                      )}
+                    </Link>
+                  )}
+                  
+                  <Link
+                    href="/groups"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="cursor-pointer relative flex items-center space-x-3 p-4 bg-emerald-50 rounded-xl hover:bg-emerald-100 transition-colors group"
+                  >
+                    <svg className="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>
+                    <div className="flex-1">
+                      <span className="font-medium text-gray-900">Groups</span>
+                      <p className="text-xs text-gray-500">Join group discussions</p>
                     </div>
+                    {groupUnreadData.totalUnread > 0 && (
+                      <NotificationBadge count={groupUnreadData.totalUnread} />
+                    )}
+                  </Link>
+                </div>
+
+                {/* Mobile Courses Section */}
+                <div className="space-y-3">
+                  <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wide flex items-center">
+                    <svg className="w-4 h-4 mr-2 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                    </svg>
+                    Courses
+                  </h3>
+                  
+                  <Link
+                    href="/lessons"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="cursor-pointer flex items-center space-x-3 p-4 bg-emerald-50 rounded-xl hover:bg-emerald-100 transition-colors group"
+                  >
+                    <svg className="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                    </svg>
+                    <div className="flex-1">
+                      <span className="font-medium text-gray-900">All Courses</span>
+                      <p className="text-xs text-gray-500">Browse available courses</p>
+                    </div>
+                  </Link>
+                  
+                  {isTeacher && (
+                    <Link
+                      href="/teacher/lessons/new"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="cursor-pointer flex items-center space-x-3 p-4 bg-blue-50 rounded-xl hover:bg-blue-100 transition-colors group"
+                    >
+                      <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                      </svg>
+                      <div className="flex-1">
+                        <span className="font-medium text-gray-900">Create Course</span>
+                        <p className="text-xs text-gray-500">Add new lesson content</p>
+                      </div>
+                    </Link>
                   )}
                 </div>
+
+                {/* Mobile Reports Section */}
+                <div className="space-y-3">
+                  <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wide flex items-center">
+                    <svg className="w-4 h-4 mr-2 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                    </svg>
+                    Reports
+                  </h3>
+                  
+                  <Link
+                    href={isTeacher ? '/reports/students' : '/reports/my-report'}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="cursor-pointer flex items-center space-x-3 p-4 bg-indigo-50 rounded-xl hover:bg-indigo-100 transition-colors group"
+                  >
+                    <svg className="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                    </svg>
+                    <div className="flex-1">
+                      <span className="font-medium text-gray-900">{isTeacher ? 'Student Reports' : 'My Report'}</span>
+                      <p className="text-xs text-gray-500">View performance analytics</p>
+                    </div>
+                  </Link>
+                </div>
+              </>
+            )}
+
+            {/* Mobile Auth Section */}
+            {!isLoggedIn ? (
+              <div className="space-y-3 pt-4 border-t border-gray-200">
+                <Link
+                  href="/login"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="cursor-pointer block w-full text-center py-3 text-gray-600 hover:text-gray-900 font-medium rounded-lg hover:bg-gray-50 transition-colors"
+                >
+                  Login to Your Account
+                </Link>
+                <Link
+                  href="/signup"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="cursor-pointer block w-full text-center py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg font-medium hover:from-blue-700 hover:to-purple-700 transition-colors"
+                >
+                  Create New Account
+                </Link>
               </div>
-            </div>
-          )}
+            ) : (
+              <div className="pt-4 border-t border-gray-200">
+                <div className="flex items-center space-x-3 mb-4 p-4 bg-gradient-to-r from-gray-50 to-blue-50 rounded-xl">
+                  {session.user?.image ? (
+                    <Image
+                      src={session.user.image}
+                      alt={session.user.name || 'User'}
+                      width={48}
+                      height={48}
+                      className="w-12 h-12 rounded-full border-2 border-white shadow-sm object-cover"
+                    />
+                  ) : (
+                    <div className="w-12 h-12 bg-gradient-to-br from-gray-500 to-gray-600 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-sm">
+                      {session.user?.name?.[0]?.toUpperCase() || 'U'}
+                    </div>
+                  )}
+                  <div>
+                    <p className="font-semibold text-gray-900">
+                      {session.user?.name || 'User'}
+                    </p>
+                    <p className="text-sm text-gray-600">
+                      {isTeacher ? 'Teacher Account' : 'Student Account'}
+                    </p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => {
+                    signOut({ callbackUrl: '/' });
+                    setIsMobileMenuOpen(false);
+                  }}
+                  className="cursor-pointer w-full flex items-center justify-center space-x-2 py-3 text-red-600 hover:text-red-700 font-medium rounded-lg hover:bg-red-50 transition-colors"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                  </svg>
+                  <span>Logout</span>
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </nav>
   );
 }

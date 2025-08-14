@@ -308,7 +308,7 @@ const handleSendMessage = async (e: React.FormEvent) => {
           <div className="flex items-center space-x-4">
             <button
               onClick={() => router.push('/groups')}
-              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              className="cursor-pointer p-2 hover:bg-gray-100 rounded-lg transition-colors"
             >
               <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -390,7 +390,7 @@ const handleSendMessage = async (e: React.FormEvent) => {
               {isAdmin && (
                 <button
                   onClick={handleUnpinMessage}
-                  className="text-yellow-600 hover:text-yellow-800 p-1 rounded transition-colors"
+                  className="cursor-pointer text-yellow-600 hover:text-yellow-800 p-1 rounded transition-colors"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -500,7 +500,7 @@ const handleSendMessage = async (e: React.FormEvent) => {
                     {isAdmin && !isCurrentUser && (
                       <button
                         onClick={() => setShowPinOptions(showPinOptions === message.id ? null : message.id)}
-                        className="absolute -left-8 top-1/2 transform -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded hover:bg-gray-200"
+                        className="cursor-pointer absolute -left-8 top-1/2 transform -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded hover:bg-gray-200"
                       >
                         <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 12h.01M12 12h.01M19 12h.01" />
@@ -512,7 +512,7 @@ const handleSendMessage = async (e: React.FormEvent) => {
                       <div className="absolute left-0 top-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-10">
                         <button
                           onClick={() => handlePinMessage(message.id)}
-                          className="flex items-center space-x-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg"
+                          className="cursor-pointer flex items-center space-x-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg"
                         >
                           <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
                             <path d="M16 12V4a1 1 0 00-1-1H9a1 1 0 00-1 1v8c0 .6.4 1 1 1h6c.6 0 1-.4 1-1z" />
@@ -611,7 +611,7 @@ const handleSendMessage = async (e: React.FormEvent) => {
                 <h3 className="text-lg font-semibold text-gray-900">Members</h3>
                 <button
                   onClick={() => setShowMembers(false)}
-                  className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                  className="cursor-pointer p-2 hover:bg-gray-100 rounded-lg transition-colors"
                 >
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />

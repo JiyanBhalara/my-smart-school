@@ -43,7 +43,7 @@ export default async function LessonDetail({ params }: LessonDetailProps) {
         <Link
           href={lesson.fileUrl}
           target="_blank"
-          className="inline-block mt-4 text-sm underline text-[#219EBC]"
+          className="cursor-pointer inline-block mt-4 text-sm underline text-[#219EBC]"
         >
           Download / View File
         </Link>
@@ -54,7 +54,7 @@ export default async function LessonDetail({ params }: LessonDetailProps) {
           <h2 className="text-2xl font-semibold">Quizzes</h2>
           <Link
             href={`/teacher/lessons/${lesson.id}/quizzes/new`}
-            className="bg-[#219EBC] text-white px-4 py-2 rounded"
+            className="cursor-pointer bg-[#219EBC] text-white px-4 py-2 rounded"
           >
             + New Quiz
           </Link>
@@ -73,7 +73,7 @@ export default async function LessonDetail({ params }: LessonDetailProps) {
               >
                 <Link
                   href={`/teacher/lessons/${lesson.id}/quizzes/${quiz.id}`}
-                  className="text-xl font-medium text-[#023047] hover:underline"
+                  className="cursor-pointer text-xl font-medium text-[#023047] hover:underline"
                 >
                   {quiz.title}
                 </Link>

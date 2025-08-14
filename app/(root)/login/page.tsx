@@ -60,7 +60,7 @@ export default function Login() {
       <div className="relative w-full max-w-md">
         {/* Header section */}
         <div className="text-center mb-8 animate-fadeIn">
-          <Link suppressHydrationWarning={true} href="/" className="inline-block group">
+          <Link suppressHydrationWarning={true} href="/" className="cursor-pointer inline-block group">
             <div className="w-16 h-16 mx-auto mb-4 rounded-2xl flex items-center justify-center shadow-lg transform group-hover:scale-105 transition-transform duration-200"
                  style={{ backgroundColor: '#023047' }}>
               <svg className="w-8 h-8" style={{ color: '#8ECAE6' }} fill="currentColor" viewBox="0 0 20 20">
@@ -164,7 +164,7 @@ export default function Login() {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full py-4 px-6 rounded-xl font-semibold text-white text-sm transition-all duration-200 transform hover:scale-105 hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none focus:outline-none focus:ring-4 focus:ring-opacity-50"
+                className="cursor-pointer w-full py-4 px-6 rounded-xl font-semibold text-white text-sm transition-all duration-200 transform hover:scale-105 hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none focus:outline-none focus:ring-4 focus:ring-opacity-50"
                 style={{ 
                   backgroundColor: '#023047',
                 }}
@@ -202,7 +202,7 @@ export default function Login() {
             suppressHydrationWarning={true}
               onClick={handleGoogleLogin}
               disabled={isLoading}
-              className="w-full flex items-center justify-center px-4 py-4 border-2 rounded-xl bg-white font-medium text-sm transition-all duration-200 transform hover:scale-105 hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none focus:outline-none focus:ring-4 focus:ring-opacity-50"
+              className="cursor-pointer w-full flex items-center justify-center px-4 py-4 border-2 rounded-xl bg-white font-medium text-sm transition-all duration-200 transform hover:scale-105 hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none focus:outline-none focus:ring-4 focus:ring-opacity-50"
               style={{ 
                 borderColor: '#e2e8f0',
                 color: '#023047',
@@ -228,7 +228,7 @@ export default function Login() {
             Don&apos;t have an account?{" "}
             <Link 
               href="/signup" 
-              className="font-semibold hover:opacity-80 transition-opacity duration-200"
+              className="cursor-pointer cursor-pointer font-semibold hover:opacity-80 transition-opacity duration-200"
               style={{ color: '#023047' }}
             >
               Create one here
@@ -240,7 +240,7 @@ export default function Login() {
         <div className="text-center mt-4 animate-fadeIn delay-500">
           <Link 
             href="/" 
-            className="inline-flex items-center font-medium hover:opacity-80 transition-opacity duration-200"
+            className="cursor-pointer inline-flex items-center font-medium hover:opacity-80 transition-opacity duration-200"
             style={{ color: '#023047' }}
           >
             <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">

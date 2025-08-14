@@ -118,7 +118,7 @@ export default async function QuizReportPage({ params }: Props) {
         <div className="mb-8">
           <Link
             href={`/lessons/${quiz.lesson.id}/quizzes`}
-            className="inline-flex items-center gap-2 text-[#219EBC] hover:text-[#0077B6] font-medium mb-6 group"
+            className="cursor-pointer inline-flex items-center gap-2 text-[#219EBC] hover:text-[#0077B6] font-medium mb-6 group"
           >
             <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
             Back to All Quizzes

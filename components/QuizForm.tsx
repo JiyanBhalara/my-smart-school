@@ -377,7 +377,7 @@ export default function QuizForm({ lessonId, initialData, isEdit = false }: Quiz
                       variant="outline"
                       size="sm"
                       onClick={() => removeQuestion(questionIndex)}
-                      className="border-red-200 text-red-700 hover:bg-red-50 hover:text-red-800"
+                      className="cursor-pointer border-red-200 text-red-700 hover:bg-red-50 hover:text-red-800"
                     >
                       <Trash2 className="h-4 w-4" />
                     </Button>
@@ -447,7 +447,7 @@ export default function QuizForm({ lessonId, initialData, isEdit = false }: Quiz
                             href={question.imageUrl}
                             target="_blank"
                             rel="noreferrer"
-                            className="inline-flex items-center rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-700 hover:bg-slate-50"
+                            className="cursor-pointer inline-flex items-center rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-700 hover:bg-slate-50"
                           >
                             <ExternalLink className="mr-2 h-4 w-4" />
                             Preview
@@ -560,7 +560,7 @@ export default function QuizForm({ lessonId, initialData, isEdit = false }: Quiz
                                     href={option.imageUrl}
                                     target="_blank"
                                     rel="noreferrer"
-                                    className="inline-flex items-center rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-700 hover:bg-slate-50"
+                                    className="cursor-pointer inline-flex items-center rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-700 hover:bg-slate-50"
                                   >
                                     <ExternalLink className="mr-2 h-4 w-4" />
                                     Preview
@@ -581,7 +581,7 @@ export default function QuizForm({ lessonId, initialData, isEdit = false }: Quiz
                     type="button"
                     variant="outline"
                     onClick={addQuestion}
-                    className="border-slate-300 hover:border-slate-400 hover:bg-slate-50"
+                    className="cursor-pointer border-slate-300 hover:border-slate-400 hover:bg-slate-50"
                   >
                     <Plus className="mr-2 h-4 w-4" />
                     Add Next Question
@@ -598,7 +598,7 @@ export default function QuizForm({ lessonId, initialData, isEdit = false }: Quiz
             type="button"
             variant="outline"
             onClick={addQuestion}
-            className="mt-2 border-slate-300 hover:border-slate-400 hover:bg-slate-50"
+            className="cursor-pointer mt-2 border-slate-300 hover:border-slate-400 hover:bg-slate-50"
           >
             <Plus className="mr-2 h-4 w-4" />
             Add Question
@@ -620,7 +620,7 @@ export default function QuizForm({ lessonId, initialData, isEdit = false }: Quiz
                 type="button"
                 variant="outline"
                 onClick={() => router.back()}
-                className="border-slate-300 hover:bg-slate-50"
+                className="cursor-pointer border-slate-300 hover:bg-slate-50"
                 disabled={uploading}
               >
                 Cancel
@@ -628,7 +628,7 @@ export default function QuizForm({ lessonId, initialData, isEdit = false }: Quiz
               <Button
                 type="submit"
                 disabled={loading || uploading}
-                className="bg-teal-600 hover:bg-teal-700 focus-visible:ring-teal-500"
+                className="cursor-pointer bg-teal-600 hover:bg-teal-700 focus-visible:ring-teal-500"
               >
                 {loading ? 'Saving...' : isEdit ? 'Update Quiz' : 'Create Quiz'}
               </Button>

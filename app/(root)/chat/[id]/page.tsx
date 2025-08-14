@@ -345,7 +345,7 @@ export default function ChatPage() {
                             href={message.fileUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className={`flex items-center space-x-3 p-3 rounded-lg border transition-colors ${
+                            className={`cursor-pointer flex items-center space-x-3 p-3 rounded-lg border transition-colors ${
                               isCurrentUser 
                                 ? 'bg-slate-600 border-slate-500 hover:bg-slate-500' 
                                 : 'bg-gray-50 border-gray-200 hover:bg-gray-100'

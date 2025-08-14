@@ -392,7 +392,7 @@ export default function GroupSettingsPage() {
           <div className="mt-4">
             <button
               onClick={() => router.push(`/groups/${groupId}`)}
-              className="px-4 py-2 bg-yellow-600 text-white rounded-lg font-medium hover:bg-yellow-700 transition-colors"
+              className="cursor-pointer px-4 py-2 bg-yellow-600 text-white rounded-lg font-medium hover:bg-yellow-700 transition-colors"
             >
               Back to Group Chat
             </button>
@@ -410,7 +410,7 @@ export default function GroupSettingsPage() {
           <div className="flex items-center space-x-4 mb-4">
             <button
               onClick={() => router.push(`/groups/${groupId}`)}
-              className="p-2 hover:bg-gray-200 rounded-lg transition-colors"
+              className="cursor-pointer p-2 hover:bg-gray-200 rounded-lg transition-colors"
             >
               <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -459,7 +459,7 @@ export default function GroupSettingsPage() {
                 <button
                   type="submit"
                   disabled={saving || !groupName.trim()}
-                  className="px-6 py-3 bg-emerald-600 text-white rounded-lg font-medium hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center space-x-2"
+                  className="cursor-pointer px-6 py-3 bg-emerald-600 text-white rounded-lg font-medium hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center space-x-2"
                 >
                   {saving ? (
                     <>
@@ -485,7 +485,7 @@ export default function GroupSettingsPage() {
               <h2 className="text-xl font-semibold text-gray-900">Members ({group.members.length})</h2>
               <button
                 onClick={() => setShowAddMembers(!showAddMembers)}
-                className="px-4 py-2 bg-emerald-600 text-white rounded-lg font-medium hover:bg-emerald-700 transition-colors flex items-center space-x-2"
+                className="cursor-pointer px-4 py-2 bg-emerald-600 text-white rounded-lg font-medium hover:bg-emerald-700 transition-colors flex items-center space-x-2"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
@@ -542,7 +542,7 @@ export default function GroupSettingsPage() {
                             </div>
                             <button
                               onClick={() => handleAddMember(user.id)}
-                              className="px-3 py-1 bg-emerald-600 text-white text-sm rounded font-medium hover:bg-emerald-700 transition-colors"
+                              className="cursor-pointer px-3 py-1 bg-emerald-600 text-white text-sm rounded font-medium hover:bg-emerald-700 transition-colors"
                             >
                               Add
                             </button>
@@ -602,7 +602,7 @@ export default function GroupSettingsPage() {
                       <select
                         value={member.role}
                         onChange={(e) => handleChangeRole(member.user.id, e.target.value as 'ADMIN' | 'MEMBER')}
-                        className="text-sm border border-gray-300 rounded px-2 py-1 focus:ring-2 focus:ring-emerald-500"
+                        className="cursor-pointer text-sm border border-gray-300 rounded px-2 py-1 focus:ring-2 focus:ring-emerald-500"
                       >
                         <option value="MEMBER">Member</option>
                         <option value="ADMIN">Admin</option>
@@ -611,7 +611,7 @@ export default function GroupSettingsPage() {
                       {/* Remove Button */}
                       <button
                         onClick={() => handleRemoveMember(member.user.id)}
-                        className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                        className="cursor-pointer p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                         title="Remove member"
                       >
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -638,7 +638,7 @@ export default function GroupSettingsPage() {
                 </div>
                 <button
                   onClick={handleClearMessages}
-                  className="px-4 py-2 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 transition-colors"
+                  className="cursor-pointer px-4 py-2 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 transition-colors"
                 >
                   Clear Messages
                 </button>
@@ -653,7 +653,7 @@ export default function GroupSettingsPage() {
                   </div>
                   <button
                     onClick={() => setShowDeleteConfirm(true)}
-                    className="px-4 py-2 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 transition-colors"
+                    className="cursor-pointer px-4 py-2 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 transition-colors"
                   >
                     Delete Group
                   </button>
@@ -674,7 +674,7 @@ export default function GroupSettingsPage() {
               <div className="flex space-x-4">
                 <button
                   onClick={() => setShowDeleteConfirm(false)}
-                  className="flex-1 px-4 py-2 text-gray-700 bg-gray-200 rounded-lg font-medium hover:bg-gray-300 transition-colors"
+                  className="cursor-pointer flex-1 px-4 py-2 text-gray-700 bg-gray-200 rounded-lg font-medium hover:bg-gray-300 transition-colors"
                 >
                   Cancel
                 </button>
@@ -683,7 +683,7 @@ export default function GroupSettingsPage() {
                     handleDeleteGroup();
                     setShowDeleteConfirm(false);
                   }}
-                  className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 transition-colors"
+                  className="cursor-pointer flex-1 px-4 py-2 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 transition-colors"
                 >
                   Delete
                 </button>

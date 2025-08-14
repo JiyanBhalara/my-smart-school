@@ -172,7 +172,7 @@ export default function Onboarding() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-4 px-6 rounded-xl font-semibold text-white text-sm transition-all duration-200 transform hover:scale-105 hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none focus:outline-none focus:ring-4 focus:ring-opacity-50"
+            className="cursor-pointer w-full py-4 px-6 rounded-xl font-semibold text-white text-sm transition-all duration-200 transform hover:scale-105 hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none focus:outline-none focus:ring-4 focus:ring-opacity-50"
             style={{ 
               backgroundColor: loading ? '#219EBC' : '#023047',
             }}

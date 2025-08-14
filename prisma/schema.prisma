@@ -21,29 +21,30 @@ model User {
   image          String?
   emailVerified  DateTime?
   role           Role              @default(STUDENT)
-
-  // moved profile fields to a separate table
   profile        Profile?
-  teacherStatus  TeacherStatus?    // null unless they choose 'Teacher'
-
+  teacherStatus  TeacherStatus?
   accounts       Account[]
   sessions       Session[]
   createdAt      DateTime          @default(now())
   
-  // Quiz relations - CORRECTED
+  // Quiz relations
   createdQuizzes Quiz[]            @relation("TeacherQuizzes")
   quizAttempts   QuizAttempt[]     @relation("StudentAttempts")
-
-  //chat
+  
+  // Chat relations
   teacherConversations Conversation[] @relation("TeacherConversations")
   studentConversations Conversation[] @relation("StudentConversations")
   sentMessages         Message[]      @relation("SentMessages")
-
-  // GROUP CHAT - NEW RELATIONS
+  
+  // Group chat relations
   createdGroups    Group[]         @relation("CreatedGroups")
   groupMemberships GroupMember[]   @relation("GroupMembers")
   sentGroupMessages GroupMessage[] @relation("SentGroupMessages")
-
+  
+  // Student notes relations - FIXED
+  studentNotes     StudentNote[]   @relation("StudentNotes")    // Notes about this user
+  createdNotes     StudentNote[]   @relation("TeacherNotes")    // Notes created by this user
+  
   @@map("users")
 }
 
@@ -338,4 +339,19 @@ model GroupMessage {
 enum GroupMemberRole {
   ADMIN    // Can manage group (add/remove members, change name, etc.)
   MEMBER   // Can only send messages
+}
+
+
+model StudentNote {
+  id        String   @id @default(cuid())
+  studentId String
+  teacherId String
+  note      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  student   User @relation("StudentNotes", fields: [studentId], references: [id])
+  teacher   User @relation("TeacherNotes", fields: [teacherId], references: [id])
+  
+  @@map("student_notes") // Added table mapping for consistency
 }

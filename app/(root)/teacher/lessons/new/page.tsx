@@ -117,7 +117,7 @@ export default function NewLessonPage() {
       <div className="max-w-4xl mx-auto mb-8">
         <button
           onClick={() => router.back()}
-          className="mt-5 cursor-pointer flex items-center gap-2 text-white hover:text-[#FFB703] transition-colors duration-200 mb-6"
+          className="cursor-pointer mt-5 cursor-pointer flex items-center gap-2 text-white hover:text-[#FFB703] transition-colors duration-200 mb-6"
         >
           <ArrowLeft className="w-5 h-5" />
           <span className="font-medium">Back to Lessons</span>
