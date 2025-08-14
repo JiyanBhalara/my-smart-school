@@ -11,7 +11,6 @@ import {
   UserIcon, 
   TrophyIcon, 
   ChartBarIcon,
-  ClockIcon,
   AcademicCapIcon,
   CalendarIcon,
   EyeIcon,
@@ -163,17 +162,6 @@ export default function MyReportPage() {
       return names[0][0].toUpperCase();
     }
     return (names[0][0] + names[names.length - 1][0]).toUpperCase();
-  };
-
-  const getAvatarBgColor = (name: string | null) => {
-    if (!name) return 'bg-gray-500';
-    const colors = [
-      'bg-red-500', 'bg-blue-500', 'bg-green-500', 'bg-yellow-500',
-      'bg-purple-500', 'bg-pink-500', 'bg-indigo-500', 'bg-teal-500',
-      'bg-orange-500', 'bg-cyan-500', 'bg-lime-500', 'bg-emerald-500'
-    ];
-    const index = name.charCodeAt(0) % colors.length;
-    return colors[index];
   };
 
   const getScoreColor = (percentage: number) => {
@@ -345,7 +333,7 @@ export default function MyReportPage() {
                   <h1 className="text-3xl lg:text-4xl font-bold mb-2">
                     Welcome back, {reportData.student.name?.split(' ')[0] || 'Student'}! 👋
                   </h1>
-                  <p className="text-indigo-100 text-lg mb-4">Here's how you're performing across all your courses</p>
+                  <p className="text-indigo-100 text-lg mb-4">Here&apos;s how you&apos;re performing across all your courses</p>
                   
                   <div className="flex flex-wrap items-center gap-4">
                     <div className="flex items-center gap-2 bg-white/20 px-4 py-2 rounded-full backdrop-blur-sm">

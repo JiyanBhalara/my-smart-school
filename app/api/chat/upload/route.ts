@@ -83,7 +83,7 @@ export async function POST(request: NextRequest) {
     const buffer = new Uint8Array(fileBuffer);
 
     // Upload to Supabase Storage
-    const { data: uploadData, error: uploadError } = await supabaseAdmin.storage
+    const { error: uploadError } = await supabaseAdmin.storage
       .from('chat-files')
       .upload(filePath, buffer, {
         contentType: file.type,

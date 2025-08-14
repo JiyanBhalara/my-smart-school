@@ -23,14 +23,11 @@ export default function SupabaseImage({
 }: SupabaseImageProps) {
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [useRegularImg, setUseRegularImg] = useState(false);
 
-  // Check if the src is a Supabase URL that might not be configured in next.config.js
-  useEffect(() => {
-    if (src && src.includes('.supabase.co')) {
-      setUseRegularImg(true);
-    }
-  }, [src]);
+  // Custom loader for external URLs (including Supabase)
+  const customLoader = ({ src }: { src: string }) => {
+    return src;
+  };
 
   if (error || !src) {
     return (
@@ -53,35 +50,7 @@ export default function SupabaseImage({
     );
   }
 
-  // Use regular img tag for Supabase URLs to avoid Next.js configuration issues
-  if (useRegularImg) {
-    return (
-      <div className="relative" style={fill ? undefined : { width: width || 'auto', height: height || 'auto' }}>
-        {loading && (
-          <div 
-            className={`absolute inset-0 bg-gray-200 animate-pulse rounded flex items-center justify-center z-10 ${className}`}
-            style={{ width: width || '100%', height: height || 'auto' }}
-          >
-            <div className="w-6 h-6 border-2 border-gray-400 border-t-transparent rounded-full animate-spin" />
-          </div>
-        )}
-        
-        <img
-          src={src}
-          alt={alt}
-          className={`object-cover transition-opacity duration-300 ${loading ? 'opacity-0' : 'opacity-100'} ${className}`}
-          style={fill ? { width: '100%', height: '100%' } : { width: width || 'auto', height: height || 'auto' }}
-          onLoad={() => setLoading(false)}
-          onError={() => {
-            setError(true);
-            setLoading(false);
-          }}
-        />
-      </div>
-    );
-  }
-
-  // Use Next.js Image for other URLs
+  // Use Next.js Image with custom loader for all URLs
   return (
     <div className="relative">
       {loading && (
@@ -98,6 +67,7 @@ export default function SupabaseImage({
           src={src}
           alt={alt}
           fill
+          loader={customLoader}
           className={`object-cover transition-opacity duration-300 ${loading ? 'opacity-0' : 'opacity-100'} ${className}`}
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           onLoad={() => setLoading(false)}
@@ -105,6 +75,7 @@ export default function SupabaseImage({
             setError(true);
             setLoading(false);
           }}
+          unoptimized
         />
       ) : (
         <Image
@@ -112,12 +83,14 @@ export default function SupabaseImage({
           alt={alt}
           width={width || 500}
           height={height || 300}
+          loader={customLoader}
           className={`object-cover transition-opacity duration-300 ${loading ? 'opacity-0' : 'opacity-100'} ${className}`}
           onLoad={() => setLoading(false)}
           onError={() => {
             setError(true);
             setLoading(false);
           }}
+          unoptimized
         />
       )}
     </div>

@@ -1,10 +1,29 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useSession } from 'next-auth/react';
-import { use } from 'react'; // Import React's use hook
+import { use } from 'react';
 import QuizTaker from '@/components/QuizTaker';
 import { Card, CardContent } from '@/components/ui/card';
+
+interface Quiz {
+  id: string;
+  title: string;
+  description?: string;
+  timeLimit?: number;
+  questions: Array<{
+    id: string;
+    questionText: string;
+    questionImage?: string;
+    points: number;
+    options: Array<{
+      id: string;
+      optionText: string;
+      optionImage?: string;
+      isCorrect: boolean;
+    }>;
+  }>;
+}
 
 interface PageProps {
   params: Promise<{ id: string; quizId: string }>; // params is now a Promise
@@ -12,7 +31,7 @@ interface PageProps {
 
 export default function TakeQuizPage({ params }: PageProps) {
   const { data: session } = useSession();
-  const [quiz, setQuiz] = useState<any>(null);
+  const [quiz, setQuiz] = useState<Quiz | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -20,11 +39,7 @@ export default function TakeQuizPage({ params }: PageProps) {
   const { id, quizId } = use(params);
   const lessonId = id;
   
-  useEffect(() => {
-    fetchQuiz();
-  }, [quizId]); // Now we can safely use quizId in dependency array
-
-  const fetchQuiz = async () => {
+  const fetchQuiz = useCallback(async () => {
     try {
       const response = await fetch(`/api/lessons/${lessonId}/quizzes/${quizId}`);
       
@@ -41,7 +56,11 @@ export default function TakeQuizPage({ params }: PageProps) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [lessonId, quizId]);
+  
+  useEffect(() => {
+    fetchQuiz();
+  }, [fetchQuiz]); // Now we can safely use fetchQuiz in dependency array
 
   if (!session) {
     return (
@@ -73,6 +92,10 @@ export default function TakeQuizPage({ params }: PageProps) {
         </Card>
       </div>
     );
+  }
+
+  if (!quiz) {
+    return null;
   }
 
   return (

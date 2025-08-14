@@ -1,4 +1,3 @@
-
 // app/reports/student/[studentId]/page.tsx
 'use client';
 
@@ -14,9 +13,7 @@ import {
   ChartBarIcon,
   ClockIcon,
   AcademicCapIcon,
-  PencilSquareIcon,
-  CalendarIcon,
-  EyeIcon
+  PencilSquareIcon
 } from '@heroicons/react/24/outline';
 import { Doughnut, Line } from 'react-chartjs-2';
 import {
@@ -628,7 +625,7 @@ export default function StudentReportPage() {
                   <PencilSquareIcon className="h-8 w-8 text-gray-300 mx-auto mb-3" />
                   <p className="text-gray-500 text-sm">No teacher notes yet</p>
                   {isTeacher && (
-                    <p className="text-xs text-gray-400 mt-1">Click "Add Note" to get started</p>
+                    <p className="text-xs text-gray-400 mt-1">Click &quot;Add Note&quot; to get started</p>
                   )}
                 </div>
               ) : (

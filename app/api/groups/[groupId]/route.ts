@@ -99,7 +99,11 @@ export async function PUT(
     }
 
     const { name, description, pinnedMessageId } = await request.json();
-    const data: any = {};
+    const data: {
+      name?: string;
+      description?: string;
+      pinnedMessageId?: string | null;
+    } = {};
     if (name !== undefined) data.name = name.trim();
     if (description !== undefined) data.description = description.trim();
     if (pinnedMessageId !== undefined) data.pinnedMessageId = pinnedMessageId;

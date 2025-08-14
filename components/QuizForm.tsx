@@ -56,6 +56,11 @@ interface QuizFormData  {
   questions: Question[];
 }
 
+interface UploadResponse {
+  url?: string;
+  error?: string;
+}
+
 export default function QuizForm({ lessonId, initialData, isEdit = false }: QuizFormProps) {
   const router = useRouter();
   const [loading, setLoading] = useState<boolean>(false);
@@ -94,7 +99,7 @@ export default function QuizForm({ lessonId, initialData, isEdit = false }: Quiz
     });
 
     const text = await res.text();
-    let json: any = null;
+    let json: UploadResponse | null = null;
     try {
       json = text ? JSON.parse(text) : null;
     } catch {
@@ -429,8 +434,8 @@ export default function QuizForm({ lessonId, initialData, isEdit = false }: Quiz
                                 setUploading(true);
                                 const url = await uploadImage(file, { lessonId, scope: 'question' });
                                 updateQuestion(questionIndex, 'imageUrl', url);
-                              } catch (err: any) {
-                                alert(err.message || 'Upload failed');
+                              } catch (err: unknown) {
+                                alert((err as Error).message || 'Upload failed');
                               } finally {
                                 setUploading(false);
                                 // Fix: Check if the element exists and has a value property
@@ -542,8 +547,8 @@ export default function QuizForm({ lessonId, initialData, isEdit = false }: Quiz
                                         setUploading(true);
                                         const url = await uploadImage(file, { lessonId, scope: 'option' });
                                         updateOption(questionIndex, optionIndex, 'imageUrl', url);
-                                      } catch (err: any) {
-                                        alert(err.message || 'Upload failed');
+                                      } catch (err: unknown) {
+                                        alert((err as Error).message || 'Upload failed');
                                       } finally {
                                         setUploading(false);
                                         // Fix: Check if the element exists and has a value property

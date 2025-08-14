@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 
 interface StudentAvatarProps {
   student: {
@@ -39,10 +40,12 @@ export default function StudentAvatar({ student }: StudentAvatarProps) {
     <div className="flex items-center">
       <div className="flex-shrink-0 h-10 w-10">
         {student.image && !imageError ? (
-          <img
+          <Image
             className="h-10 w-10 rounded-full object-cover border-2 border-gray-200"
             src={student.image}
             alt={student.name || "Student"}
+            width={40}
+            height={40}
             onError={() => setImageError(true)}
           />
         ) : (

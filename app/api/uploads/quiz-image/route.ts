@@ -45,8 +45,8 @@ async function uploadWithRetry(
   buffer: Buffer,
   contentType: string,
   maxRetries = 3
-): Promise<{ data: any; error: Error | null }> {
-  let lastError: any;
+): Promise<{ data: unknown; error: Error | null }> {
+  let lastError: Error = new Error("Unknown upload error");
   
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
@@ -65,16 +65,16 @@ async function uploadWithRetry(
 
       console.log(`Upload successful on attempt ${attempt}`);
       return { data, error: null };
-    } catch (error: any) {
-      lastError = error;
+    } catch (error: unknown) {
+      lastError = error as Error;
       console.error(`Upload attempt ${attempt} failed:`, error);
       
       // If it's a network error and we have retries left, wait and try again
       if (attempt < maxRetries && (
-        error.code === 'UND_ERR_SOCKET' || 
-        error.message?.includes('fetch failed') ||
-        error.message?.includes('network') ||
-        error.message?.includes('timeout')
+        (error as { code?: string }).code === 'UND_ERR_SOCKET' || 
+        (error as { message?: string }).message?.includes('fetch failed') ||
+        (error as { message?: string }).message?.includes('network') ||
+        (error as { message?: string }).message?.includes('timeout')
       )) {
         const delay = Math.min(1000 * Math.pow(2, attempt - 1), 5000); // Exponential backoff, max 5s
         console.log(`Waiting ${delay}ms before retry...`);
@@ -182,12 +182,12 @@ export async function POST(req: NextRequest) {
         signedUrlData = result.data;
         signedUrlError = result.error;
         break;
-      } catch (error: any) {
+      } catch (error: unknown) {
         console.error(`Signed URL attempt ${attempt} failed:`, error);
         if (attempt < 3) {
           await new Promise(resolve => setTimeout(resolve, 1000));
         } else {
-          signedUrlError = error;
+          signedUrlError = error as Error;
         }
       }
     }
@@ -221,21 +221,21 @@ export async function POST(req: NextRequest) {
       expiresAt: new Date(Date.now() + 31536000 * 1000).toISOString()
     });
     
-  } catch (e: any) {
+  } catch (e: unknown) {
     console.error("Upload failed:", e);
     
     // Provide more specific error messages based on error type
     let errorMessage = "Internal server error";
-    if (e.code === 'UND_ERR_SOCKET') {
+    if ((e as { code?: string }).code === 'UND_ERR_SOCKET') {
       errorMessage = "Network connection error. Please try again with a smaller file.";
-    } else if (e.message?.includes('fetch failed')) {
+    } else if ((e as { message?: string }).message?.includes('fetch failed')) {
       errorMessage = "Network error during upload. Please check your connection and try again.";
-    } else if (e.message?.includes('timeout')) {
+    } else if ((e as { message?: string }).message?.includes('timeout')) {
       errorMessage = "Upload timed out. Please try with a smaller file.";
     }
     
     return NextResponse.json(
-      { error: errorMessage, details: e.message },
+      { error: errorMessage, details: (e as { message?: string }).message },
       { status: 500 }
     );
   }

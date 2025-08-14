@@ -166,7 +166,6 @@ const handleSendMessage = async (e: React.FormEvent) => {
 
   const currentUserMembership = group?.members.find(m => m.user.id === session?.user?.id);
   const isAdmin = currentUserMembership?.role === 'ADMIN';
-  const isCreator = group?.createdBy.id === session?.user?.id;
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -667,3 +666,4 @@ const handleSendMessage = async (e: React.FormEvent) => {
     </div>
   );
 }
+

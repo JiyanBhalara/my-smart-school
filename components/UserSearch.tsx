@@ -17,6 +17,20 @@ interface SearchProps {
   className?: string;
 }
 
+interface Conversation {
+  id: string;
+  teacher: {
+    id: string;
+  };
+  student: {
+    id: string;
+  };
+}
+
+interface ConversationListResponse {
+  conversations: Conversation[];
+}
+
 export default function UserSearch({ currentUserId, onChatSelect, className = '' }: SearchProps) {
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<User[]>([]);
@@ -45,10 +59,10 @@ export default function UserSearch({ currentUserId, onChatSelect, className = ''
         if (data.users.length > 0) {
           const convRes = await fetch('/api/chat/conversations/list');
           if (convRes.ok) {
-            const convData = await convRes.json();
+            const convData: ConversationListResponse = await convRes.json();
             const map: Record<string, string> = {};
             
-            convData.conversations.forEach((conv: any) => {
+            convData.conversations.forEach((conv) => {
               const otherUserId = conv.teacher.id === currentUserId ? conv.student.id : conv.teacher.id;
               map[otherUserId] = conv.id;
             });

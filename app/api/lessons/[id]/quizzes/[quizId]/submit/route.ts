@@ -8,6 +8,13 @@ interface SubmissionAnswer {
   optionId: string;
 }
 
+interface AnswerResult {
+  questionId: string;
+  selectedOptionId?: string;
+  isCorrect: boolean;
+  pointsEarned: number;
+}
+
 export async function POST(
   request: NextRequest,
   { params }: { params: { lessonId: string; quizId: string } }
@@ -53,12 +60,11 @@ export async function POST(
     // Calculate score
     let totalScore = 0;
     let totalPossible = 0;
-    const answerResults: any[] = [];
+    const answerResults: AnswerResult[] = [];
 
     for (const question of quiz.questions) {
       totalPossible += question.points;
       const userAnswer = answers.find(a => a.questionId === question.id);
-      const correctOption = question.options.find(o => o.isCorrect);
       const selectedOption = question.options.find(o => o.id === userAnswer?.optionId);
       
       const isCorrect = selectedOption?.isCorrect || false;

@@ -3,6 +3,19 @@ import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/app/utils/authOptions';
 import prisma from '@/lib/prisma';
 
+interface QuizOption {
+  text: string;
+  imageUrl?: string;
+  isCorrect: boolean;
+}
+
+interface QuizQuestion {
+  text: string;
+  imageUrl?: string;
+  points?: number;
+  options: QuizOption[];
+}
+
 export async function PUT(
   request: NextRequest,
   { params }: { params: { id: string } }
@@ -26,7 +39,13 @@ export async function PUT(
       }, { status: 404 });
     }
 
-    const { title, description, timeLimit, maxAttempts, questions } = await request.json();
+    const { title, description, timeLimit, maxAttempts, questions }: {
+      title: string;
+      description?: string;
+      timeLimit?: number;
+      maxAttempts?: number;
+      questions: QuizQuestion[];
+    } = await request.json();
 
     // Delete existing questions and options
     await prisma.question.deleteMany({
@@ -42,13 +61,13 @@ export async function PUT(
         timeLimit,
         maxAttempts,
         questions: {
-          create: questions.map((q: any, index: number) => ({
+          create: questions.map((q: QuizQuestion, index: number) => ({
             questionText: q.text,
             questionImage: q.imageUrl,
             points: q.points || 1,
             order: index,
             options: {
-              create: q.options.map((opt: any, optIndex: number) => ({
+              create: q.options.map((opt: QuizOption, optIndex: number) => ({
                 optionText: opt.text,
                 optionImage: opt.imageUrl,
                 isCorrect: opt.isCorrect,
@@ -75,7 +94,6 @@ export async function PUT(
 }
 
 export async function DELETE(
-  request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {

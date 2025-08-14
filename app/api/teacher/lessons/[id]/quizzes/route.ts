@@ -3,6 +3,19 @@ import { getServerSession } from 'next-auth/next';
 import {authOptions} from '@/app/utils/authOptions';
 import prisma from '@/lib/prisma';
 
+interface QuizOption {
+  text: string;
+  imageUrl?: string;
+  isCorrect: boolean;
+}
+
+interface QuizQuestion {
+  text: string;
+  imageUrl?: string;
+  points?: number;
+  options: QuizOption[];
+}
+
 export async function POST(
   request: NextRequest,
   { params }: { params: { id: string } }
@@ -20,6 +33,12 @@ export async function POST(
       timeLimit, 
       maxAttempts, 
       questions 
+    }: {
+      title: string;
+      description?: string;
+      timeLimit?: number;
+      maxAttempts?: number;
+      questions: QuizQuestion[];
     } = await request.json();
 
     const quiz = await prisma.quiz.create({
@@ -31,13 +50,13 @@ export async function POST(
         lessonId: params.id,
         authorId: session.user.id,
         questions: {
-          create: questions.map((q: any, index: number) => ({
+          create: questions.map((q: QuizQuestion, index: number) => ({
             questionText: q.text,
             questionImage: q.imageUrl,
             points: q.points || 1,
             order: index,
             options: {
-              create: q.options.map((opt: any, optIndex: number) => ({
+              create: q.options.map((opt: QuizOption, optIndex: number) => ({
                 optionText: opt.text,
                 optionImage: opt.imageUrl,
                 isCorrect: opt.isCorrect,

@@ -96,7 +96,7 @@ export default function StudentListPage() {
     if (session?.user?.role === 'TEACHER') {
       fetchStudents(currentPage, searchTerm);
     }
-  }, [session, currentPage]);
+  }, [session, currentPage, searchTerm]);
 
   // Search handler
   const handleSearch = (e: React.FormEvent) => {

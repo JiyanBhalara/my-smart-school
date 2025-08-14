@@ -14,8 +14,8 @@ export async function GET(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    // Await the params Promise before accessing its properties
-    const { lessonId, quizId } = await params;
+    // Await the params Promise and only destructure what we need
+    const { quizId } = await params;
 
     // Check if user has already reached max attempts
     const completedAttempts = await prisma.quizAttempt.count({

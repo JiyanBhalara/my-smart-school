@@ -43,7 +43,18 @@ export async function GET(
     const limit = parseInt(searchParams.get('limit') || '50');
 
     // Build query with cursor pagination
-    const queryOptions: any = {
+    const queryOptions: {
+      where: { groupId: string };
+      include: {
+        sender: {
+          select: { id: true; name: true; image: true; role: true };
+        };
+      };
+      orderBy: { createdAt: 'desc' };
+      take: number;
+      cursor?: { id: string };
+      skip?: number;
+    } = {
       where: { groupId: groupId },
       include: {
         sender: {

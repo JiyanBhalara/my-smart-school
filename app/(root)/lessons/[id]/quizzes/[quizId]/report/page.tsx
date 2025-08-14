@@ -12,6 +12,22 @@ type Props = {
   params: Promise<{ quizId: string }>;
 };
 
+interface QuizAttempt {
+  id: string;
+  studentId: string;
+  score: number;
+  percentage: number;
+  totalPoints: number;
+  completedAt: Date | null;
+  student: {
+    id: string;
+    name: string | null;
+    email: string | null;
+    image: string | null;
+    role: string;
+  };
+}
+
 export default async function QuizReportPage({ params }: Props) {
   const { quizId } = await params;
   const session = await getServerSession(authOptions);
@@ -64,8 +80,8 @@ export default async function QuizReportPage({ params }: Props) {
   );
 
   // Group attempts by student and get latest attempt for each
-  const studentMap = new Map<string, any>();
-  const allAttempts = new Map<string, any[]>();
+  const studentMap = new Map<string, QuizAttempt>();
+  const allAttempts = new Map<string, QuizAttempt[]>();
   
   studentOnlyAttempts.forEach((attempt) => {
     const studentId = attempt.studentId;

@@ -9,7 +9,12 @@ import { useRouter } from 'next/navigation';
 
 interface UnreadData {
   totalUnread: number;
-  conversationsWithUnread: any[];
+  conversationsWithUnread: Array<{
+    conversationId: string;
+    unreadCount: number;
+    otherUser: { id: string; name: string | null; image: string | null };
+    lastMessageAt: Date | undefined;
+  }>;
   usersWithUnread: string[];
 }
 
@@ -101,13 +106,6 @@ export default function Header() {
   }, [isLoggedIn]);
 
   const router = useRouter();
-  const handleProtectedAction = (href: string) => {
-    if (!isLoggedIn) {
-      router.push('/signup');
-      return;
-    }
-    router.push(href);
-  };
 
   // Notification Badge Component
   const NotificationBadge = ({ count }: { count: number }) => {

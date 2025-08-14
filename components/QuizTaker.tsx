@@ -9,10 +9,48 @@ import { Clock, CheckCircle, AlertCircle, ArrowLeft, ArrowRight, Trophy } from '
 import toast, { Toaster } from 'react-hot-toast';
 import SupabaseImage from '@/components/SupabaseImage';
 
+interface QuizOption {
+  id: string;
+  optionText: string;
+  optionImage?: string;
+  isCorrect: boolean;
+}
+
+interface QuizQuestion {
+  id: string;
+  questionText: string;
+  questionImage?: string;
+  points: number;
+  options: QuizOption[];
+}
+
+interface Quiz {
+  id: string;
+  title: string;
+  timeLimit?: number;
+  questions: QuizQuestion[];
+}
+
+interface QuizResult {
+  questionId: string;
+  isCorrect: boolean;
+  pointsEarned: number;
+}
+
+interface SubmissionResults {
+  score: number;
+  totalPoints: number;
+  percentage: number;
+  timeSpent?: number;
+  results?: QuizResult[];
+  maxScore?: number;
+  totalQuestions?: number;
+}
+
 interface QuizTakerProps {
   lessonId: string;
   quizId: string;
-  quiz: any;
+  quiz: Quiz;
 }
 
 export default function QuizTaker({ lessonId, quizId, quiz }: QuizTakerProps) {
@@ -24,7 +62,7 @@ export default function QuizTaker({ lessonId, quizId, quiz }: QuizTakerProps) {
   );
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
-  const [results, setResults] = useState<any>(null);
+  const [results, setResults] = useState<SubmissionResults | null>(null);
   const [timeExpired, setTimeExpired] = useState(false);
   
   const notifiedAt75Ref = useRef(false);
@@ -249,7 +287,7 @@ export default function QuizTaker({ lessonId, quizId, quiz }: QuizTakerProps) {
               <div className="space-y-3 sm:space-y-4 mb-6 sm:mb-8">
                 <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-4">Question Results</h3>
                 <div className="max-h-64 sm:max-h-80 overflow-y-auto space-y-3">
-                  {(results.results || []).map((result: any, index: number) => {
+                  {(results.results || []).map((result: QuizResult, index: number) => {
                     const question = quiz.questions[index];
                     const maxPoints = question?.points || 1;
                     const earnedPoints = result.isCorrect ? maxPoints : 0;
@@ -407,7 +445,7 @@ export default function QuizTaker({ lessonId, quizId, quiz }: QuizTakerProps) {
                 </div>
 
                 <div className="space-y-3 sm:space-y-4">
-                  {quiz.questions[currentQuestion]?.options?.map((option: any, optionIndex: number) => (
+                  {quiz.questions[currentQuestion]?.options?.map((option: QuizOption, optionIndex: number) => (
                     <label
                       key={option.id}
                       className={`block p-3 sm:p-4 lg:p-5 rounded-xl border-2 cursor-pointer transition-all duration-200 hover:shadow-md ${
@@ -508,7 +546,7 @@ export default function QuizTaker({ lessonId, quizId, quiz }: QuizTakerProps) {
                 </h3>
                 
                 <div className="grid grid-cols-6 sm:grid-cols-8 lg:grid-cols-4 xl:grid-cols-5 gap-1.5 sm:gap-2 mb-3 sm:mb-4">
-                  {quiz.questions.map((_: any, index: number) => (
+                  {quiz.questions.map((_: QuizQuestion, index: number) => (
                     <button
                       key={index}
                       onClick={() => setCurrentQuestion(index)}

@@ -9,7 +9,6 @@ import { authOptions } from "@/app/utils/authOptions";
 export default async function AllQuizzesPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const session = await getServerSession(authOptions);
-  const isTeacher = !!session && session.user?.role === "TEACHER";
   const userId = session?.user?.id;
   const userRole = session?.user?.role;
   const lesson = await prisma.lesson.findUnique({
@@ -63,3 +62,4 @@ export default async function AllQuizzesPage({ params }: { params: Promise<{ id:
     </main>
   );
 }
+

@@ -14,6 +14,20 @@ interface User {
   role: string;
 }
 
+interface Conversation {
+  id: string;
+  teacher: {
+    id: string;
+  };
+  student: {
+    id: string;
+  };
+}
+
+interface ConversationListResponse {
+  conversations: Conversation[];
+}
+
 export default function TeacherListPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
@@ -72,10 +86,10 @@ export default function TeacherListPage() {
         // Fetch existing conversations to check which teachers we already chat with
         const convResponse = await fetch('/api/chat/conversations/list');
         if (convResponse.ok) {
-          const convData = await convResponse.json();
+          const convData: ConversationListResponse = await convResponse.json();
           const map: Record<string, string> = {};
           
-          convData.conversations.forEach((conv: any) => {
+          convData.conversations.forEach((conv) => {
             const otherUserId = conv.teacher.id === session?.user?.id ? conv.student.id : conv.teacher.id;
             map[otherUserId] = conv.id;
           });

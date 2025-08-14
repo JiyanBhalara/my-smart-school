@@ -173,7 +173,6 @@ export async function GET(request: NextRequest, { params }: Props) {
 
     // Calculate overall statistics
     const allScores = student.quizAttempts.map(attempt => attempt.percentage);
-    const allActualScores = student.quizAttempts.map(attempt => attempt.score);
     const totalPossiblePoints = student.quizAttempts.reduce((sum, attempt) => sum + attempt.totalPoints, 0);
     const totalEarnedPoints = student.quizAttempts.reduce((sum, attempt) => sum + attempt.score, 0);
 
@@ -210,3 +209,4 @@ export async function GET(request: NextRequest, { params }: Props) {
     );
   }
 }
+

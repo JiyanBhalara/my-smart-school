@@ -277,7 +277,6 @@ export default function GroupSettingsPage() {
         throw new Error('Failed to change member role');
       }
 
-      const data = await response.json();
       // Update group members
       setGroup(prev => prev ? {
         ...prev,
@@ -695,3 +694,4 @@ export default function GroupSettingsPage() {
     </div>
   );
 }
+
