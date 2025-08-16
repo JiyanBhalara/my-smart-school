@@ -53,7 +53,7 @@ export default async function AllQuizzesPage({ params }: { params: Promise<{ id:
                 </Link>
                 <div>
                   <h1 className="text-3xl lg:text-4xl font-bold mb-2">All Quizzes</h1>
-                  <p className="text-xl text-white/90 font-medium">"{lesson.title}"</p>
+                  <p className="text-xl text-white/90 font-medium">&quot;{lesson.title}&quot;</p>
                   <p className="text-white/70 mt-2">
                     {lesson.quizzes.length === 0
                       ? "No quizzes available yet"

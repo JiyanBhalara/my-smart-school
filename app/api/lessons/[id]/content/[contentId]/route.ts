@@ -16,7 +16,7 @@ export async function PUT(
   { params }: { params: Promise<{ id: string; contentId: string }> }
 ) {
   try {
-    const { id, contentId } = await params;
+    const { contentId } = await params;
     const session = await getServerSession(authOptions);
 
     if (!session || session.user?.role !== "TEACHER") {
@@ -76,7 +76,7 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string; contentId: string }> }
 ) {
   try {
-    const { id, contentId } = await params;
+    const { contentId } = await params;
     const session = await getServerSession(authOptions);
 
     if (!session || session.user?.role !== "TEACHER") {

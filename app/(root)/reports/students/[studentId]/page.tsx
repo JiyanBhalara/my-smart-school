@@ -647,7 +647,7 @@ export default function StudentReportPage() {
                   <PencilSquareIcon className="h-6 sm:h-8 w-6 sm:w-8 text-gray-300 mx-auto mb-3" />
                   <p className="text-gray-500 text-xs sm:text-sm">No teacher notes yet</p>
                   {isTeacher && (
-                    <p className="text-xs text-gray-400 mt-1">Click "Add Note" to get started</p>
+                    <p className="text-xs text-gray-400 mt-1">Click &quot;Add Note&quot; to get started</p>
                   )}
                 </div>
               ) : (

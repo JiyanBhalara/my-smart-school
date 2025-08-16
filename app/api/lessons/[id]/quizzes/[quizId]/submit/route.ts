@@ -26,7 +26,7 @@ export async function POST(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { lessonId, quizId } = await params; // Await params
+    const { quizId } = await params; // Await params
     const { answers }: { answers: SubmissionAnswer[] } = await request.json();
 
     // Get quiz with questions and correct answers

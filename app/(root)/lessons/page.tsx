@@ -140,7 +140,7 @@ async function LessonsContent({ searchParams }: LessonsPageProps) {
             </h3>
             <p className="text-gray-600 mb-8 max-w-md mx-auto text-sm lg:text-base px-4">
               {params.search || params.subject ? (
-                <>Try adjusting your search terms or filters to find what you're looking for.</>
+                <>Try adjusting your search terms or filters to find what you&apos;re looking for.</>
               ) : (
                 <>Start building your lesson library. Your educational content will be displayed here once you create your first lesson.</>
               )}
@@ -159,7 +159,7 @@ async function LessonsContent({ searchParams }: LessonsPageProps) {
               <div className="mb-6 flex flex-wrap gap-2">
                 {params.search && (
                   <span className="inline-flex items-center gap-2 px-3 py-1 bg-[#8ECAE6] text-[#023047] rounded-full text-sm font-medium">
-                    Search: "{params.search}"
+                    Search: &quot;{params.search}&quot;
                   </span>
                 )}
                 {params.subject && (

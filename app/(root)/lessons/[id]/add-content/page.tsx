@@ -262,7 +262,7 @@ export default function AddContentPage() {
           </Link>
           <h1 className="text-3xl font-bold text-gray-900">Add Content</h1>
           <p className="text-gray-600 mt-2">
-            Add new content to "{lesson?.title}"
+            Add new content to &quot;{lesson?.title}&quot;
           </p>
         </div>
 

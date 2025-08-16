@@ -20,9 +20,31 @@ type Props = {
   params: Promise<{ id: string }>;
 };
 
+interface LessonContent {
+  id: string;
+  title: string;
+  type: string;
+  markdown?: string;
+  fileName?: string;
+  fileUrl?: string;
+  createdAt: string;
+  author: {
+    name: string | null;
+  };
+}
+
+interface Lesson {
+  id: string;
+  title: string;
+  subject?: string;
+  createdAt: string;
+  tags: { tag: { name: string } }[];
+  lessonContents: LessonContent[];
+}
+
 export default function AllContentPage({ params }: Props) {
   const [lessonId, setLessonId] = useState<string>("");
-  const [lesson, setLesson] = useState<any>(null);
+  const [lesson, setLesson] = useState<Lesson | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -156,7 +178,7 @@ export default function AllContentPage({ params }: Props) {
             </div>
             <h3 className="text-xl font-bold text-gray-900 mb-3">No Content Available</h3>
             <p className="text-gray-600 mb-8 max-w-lg mx-auto leading-relaxed">
-              This lesson doesn't have any additional content yet. Check back later for materials and resources.
+              This lesson doesn&apos;t have any additional content yet. Check back later for materials and resources.
             </p>
             <Link
               href={`/lessons/${lessonId}`}
@@ -168,7 +190,7 @@ export default function AllContentPage({ params }: Props) {
           </div>
         ) : (
           <div className="grid gap-6">
-            {lesson.lessonContents.map((content: any) => (
+            {lesson.lessonContents.map((content: LessonContent) => (
               <div
                 key={content.id}
                 className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-all duration-200"
