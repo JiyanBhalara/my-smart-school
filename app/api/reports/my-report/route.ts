@@ -1,10 +1,10 @@
 // app/api/reports/my-report/route.ts
-import { NextRequest, NextResponse } from 'next/server'; // Added NextRequest for consistency
+import { NextResponse } from 'next/server'; // Removed unused NextRequest
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/app/utils/authOptions';
 import prisma from '@/lib/prisma';
 
-export async function GET(request: NextRequest) { // Added request parameter for consistency
+export async function GET() { // Removed unused request parameter
   try {
     const session = await getServerSession(authOptions);
 

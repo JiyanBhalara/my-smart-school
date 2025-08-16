@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Calendar, ExternalLink, BookOpen, Tag, Clock, PlayCircle } from "lucide-react";
+import { Calendar, ExternalLink, BookOpen, Tag, PlayCircle } from "lucide-react";
 
 type LessonCardProps = {
   id: string;

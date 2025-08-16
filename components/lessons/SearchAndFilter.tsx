@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Search, X } from 'lucide-react';
 
@@ -18,16 +18,7 @@ export default function SearchAndFilter({
   const [searchTerm, setSearchTerm] = useState(currentSearch);
   const [isSearchFocused, setIsSearchFocused] = useState(false);
 
-  // Debounced search
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      updateURL(searchTerm);
-    }, 300);
-
-    return () => clearTimeout(timer);
-  }, [searchTerm]);
-
-  const updateURL = (search: string) => {
+  const updateURL = useCallback((search: string) => {
     const params = new URLSearchParams(searchParams);
     
     if (search) {
@@ -38,7 +29,16 @@ export default function SearchAndFilter({
 
     const newURL = params.toString() ? `/lessons?${params.toString()}` : '/lessons';
     router.push(newURL, { scroll: false });
-  };
+  }, [searchParams, router]);
+
+  // Debounced search
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      updateURL(searchTerm);
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [searchTerm, updateURL]);
 
   const clearSearch = () => {
     setSearchTerm('');
