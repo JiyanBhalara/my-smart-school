@@ -1,3 +1,4 @@
+// app/api/lessons/[lessonId]/quizzes/[quizId]/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/app/utils/authOptions';
@@ -5,7 +6,7 @@ import prisma from '@/lib/prisma';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ lessonId: string; quizId: string }> } // params is now a Promise
+  { params }: { params: Promise<{ lessonId: string; quizId: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -14,20 +15,25 @@ export async function GET(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    // Await the params Promise and only destructure what we need
-    const { quizId } = await params;
+    // FIXED: Await params first, then destructure
+    const { lessonId, quizId } = await params;
+
+    // Add validation to catch undefined values early
+    if (!lessonId || !quizId) {
+      return NextResponse.json({ error: 'Missing lessonId or quizId' }, { status: 400 });
+    }
 
     // Check if user has already reached max attempts
     const completedAttempts = await prisma.quizAttempt.count({
       where: {
-        quizId: quizId, // Now using the awaited quizId
+        quizId: quizId,
         studentId: session.user.id,
         isCompleted: true
       }
     });
 
     const quiz = await prisma.quiz.findUnique({
-      where: { id: quizId }, // Now using the awaited quizId
+      where: { id: quizId },
       include: {
         questions: {
           include: {
@@ -62,6 +68,69 @@ export async function GET(
     });
   } catch (error) {
     console.error('Error fetching quiz:', error);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+  }
+}
+
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string; quizId: string }> }
+) {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session || session.user?.role !== 'TEACHER') {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const userId = session.user.id;
+
+    // FIXED: Await params first, then destructure
+    const { id, quizId } = await params;
+    const lessonId = id;
+    // Add validation to catch undefined values early
+    if (!lessonId || !quizId) {
+      console.error('Missing parameters:', { lessonId, quizId });
+      return NextResponse.json({ error: 'Missing lessonId or quizId' }, { status: 400 });
+    }
+
+    // Log for debugging
+    console.log('Delete quiz request:', { lessonId, quizId, userId });
+
+    // Verify lesson ownership
+    const lesson = await prisma.lesson.findUnique({
+      where: { id: lessonId },
+      select: { authorId: true },
+    });
+
+    if (!lesson) {
+      return NextResponse.json({ error: 'Lesson not found' }, { status: 404 });
+    }
+
+    if (lesson.authorId !== userId) {
+      return NextResponse.json({ error: 'Forbidden - You can only delete quizzes from your own lessons' }, { status: 403 });
+    }
+
+    // Verify quiz belongs to this lesson and user
+    const quiz = await prisma.quiz.findFirst({
+      where: { 
+        id: quizId, 
+        lessonId: lessonId,
+        authorId: userId 
+      },
+    });
+
+    if (!quiz) {
+      return NextResponse.json({ error: 'Quiz not found or access denied' }, { status: 404 });
+    }
+
+    // Delete the quiz (CASCADE will handle related records)
+    await prisma.quiz.delete({ 
+      where: { id: quizId } 
+    });
+
+    return NextResponse.json({ success: true, message: 'Quiz deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting quiz:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

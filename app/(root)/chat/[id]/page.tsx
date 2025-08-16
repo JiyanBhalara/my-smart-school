@@ -3,7 +3,9 @@
 import { useState, useEffect, useRef } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter, useParams } from 'next/navigation';
+import Link from 'next/link';
 import Image from 'next/image';
+import { ArrowLeft } from 'lucide-react';
 
 interface User {
   id: string;
@@ -47,6 +49,10 @@ export default function ChatPage() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  // Determine back URL based on user role
+  const backUrl = session?.user?.role === 'TEACHER' ? '/chat/students' : '/chat/teachers';
+  const backText = session?.user?.role === 'TEACHER' ? 'Students' : 'Teachers';
+  
   // Redirect if not authenticated
   useEffect(() => {
     if (status === 'loading') return;
@@ -249,7 +255,18 @@ export default function ChatPage() {
 
   return (
     <div className="min-h-screen bg-gray-50 pt-20 px-4 lg:px-6 mb-7">
-      <div className="max-w-5xl mx-auto h-[calc(100vh-6rem)] bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden flex flex-col">
+      {/* Back Button */}
+      <div className="max-w-5xl mx-auto mb-4">
+        <Link
+          href={backUrl}
+          className="cursor-pointer inline-flex items-center gap-2 text-sm text-slate-600 hover:text-slate-900 font-medium px-3 py-2 rounded-lg hover:bg-white/60 transition-all duration-200 group"
+        >
+          <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform duration-200" />
+          <span>Back to {backText}</span>
+        </Link>
+      </div>
+
+      <div className="max-w-5xl mx-auto h-[calc(100vh-8rem)] bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden flex flex-col">
         
         {/* Chat Header */}
         <header className="flex items-center justify-between p-4 lg:p-6 border-b border-gray-200 bg-white">

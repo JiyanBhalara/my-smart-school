@@ -37,7 +37,6 @@ export async function GET(
       new URL(`/lessons/${id}?noMaterial=1`, request.url)
     );
   }
-  console.log(data);
   // 4️⃣ redirect the browser to the signed URL
   return NextResponse.redirect(data.signedUrl);
 }

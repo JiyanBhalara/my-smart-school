@@ -3,7 +3,9 @@
 import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import Image from 'next/image';
+import { ArrowLeft, Home } from 'lucide-react';
 import { useUnreadMessages } from '@/hooks/useUnreadMessages';
 
 interface User {
@@ -53,7 +55,7 @@ export default function TeacherListPage() {
       </div>
     );
   };
-  
+
   // Redirect if not authenticated or not a student
   useEffect(() => {
     if (status === 'loading') return;
@@ -73,7 +75,6 @@ export default function TeacherListPage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Fetch all teachers
         const teachersResponse = await fetch('/api/chat/users?role=TEACHER');
         const teachersData = await teachersResponse.json();
         
@@ -83,7 +84,6 @@ export default function TeacherListPage() {
         
         setTeachers(teachersData.users);
 
-        // Fetch existing conversations to check which teachers we already chat with
         const convResponse = await fetch('/api/chat/conversations/list');
         if (convResponse.ok) {
           const convData: ConversationListResponse = await convResponse.json();
@@ -122,7 +122,6 @@ export default function TeacherListPage() {
         if (!response.ok) throw new Error('Search failed');
         
         const data = await response.json();
-        // Filter only teachers from search results
         const teacherResults = data.users.filter((user: User) => user.role === 'TEACHER');
         setSearchResults(teacherResults);
         setShowSearchResults(true);
@@ -141,7 +140,6 @@ export default function TeacherListPage() {
     const existingConversation = conversationsMap[teacherId];
     
     if (existingConversation) {
-      // Navigate to existing conversation
       router.push(`/chat/${existingConversation}`);
       return;
     }
@@ -175,7 +173,7 @@ export default function TeacherListPage() {
       <div className="min-h-screen bg-gray-50 pt-20">
         <div className="max-w-6xl mx-auto px-4 py-8">
           <div className="flex items-center justify-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-teal"></div>
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-teal-600"></div>
             <span className="ml-2 text-gray-600">Loading teachers...</span>
           </div>
         </div>
@@ -197,22 +195,34 @@ export default function TeacherListPage() {
 
   return (
     <div className="min-h-screen bg-gray-50 pt-20">
-      <div className="max-w-6xl mx-auto px-4 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:py-8">
+        {/* Back to Home Button */}
+        <div className="mb-6">
+          <Link
+            href="/"
+            className="cursor-pointer inline-flex items-center gap-2 text-sm sm:text-base text-slate-600 hover:text-slate-900 font-medium px-3 py-2 rounded-lg hover:bg-white/60 transition-all duration-200 group"
+          >
+            <Home size={16} className="group-hover:scale-110 transition-transform duration-200" />
+            <span className="hidden sm:inline">Back to Home</span>
+            <span className="sm:hidden">Home</span>
+          </Link>
+        </div>
+
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-navy mb-2">Teacher Directory</h1>
-          <p className="text-gray-600">Connect and chat with your teachers</p>
+        <div className="mb-6 lg:mb-8">
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-2">Teacher Directory</h1>
+          <p className="text-sm sm:text-base text-gray-600">Connect and chat with your teachers</p>
         </div>
 
         {/* Search Bar */}
-        <div className="relative mb-8 max-w-md">
+        <div className="relative mb-6 lg:mb-8 max-w-md">
           <div className="relative">
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search teachers by name..."
-              className="w-full pl-10 pr-10 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent text-slate-900 placeholder-slate-400 transition-colors duration-200"
+              className="w-full pl-10 pr-10 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent text-slate-900 placeholder-slate-400 transition-colors duration-200 text-sm sm:text-base"
               onFocus={() => searchQuery.length >= 2 && setShowSearchResults(true)}
             />
             <svg 
@@ -246,7 +256,7 @@ export default function TeacherListPage() {
 
         {/* Results Header */}
         <div className="mb-6">
-          <p className="text-gray-600">
+          <p className="text-sm sm:text-base text-gray-600">
             {showSearchResults 
               ? `Search results for "${searchQuery}" (${displayedTeachers.length} found)`
               : `All Teachers (${displayedTeachers.length} total)`
@@ -263,7 +273,7 @@ export default function TeacherListPage() {
             <h3 className="text-lg font-medium text-gray-900 mb-2">
               {showSearchResults ? 'No matching teachers found' : 'No teachers found'}
             </h3>
-            <p className="text-gray-500">
+            <p className="text-gray-500 text-sm sm:text-base max-w-md mx-auto">
               {showSearchResults 
                 ? 'Try adjusting your search terms or browse all teachers below.'
                 : 'There are currently no teachers registered in the system.'
@@ -271,14 +281,14 @@ export default function TeacherListPage() {
             </p>
           </div>
         ) : (
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
             {displayedTeachers.map((teacher) => {
               const existingConversation = conversationsMap[teacher.id];
               
               return (
                 <div
                   key={teacher.id}
-                  className="relative bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-lg transition-all duration-200 hover:border-teal-200"
+                  className="relative bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6 hover:shadow-lg transition-all duration-200 hover:border-teal-200"
                 >
                   <UnreadBadge userId={teacher.id} />
                   
@@ -290,26 +300,26 @@ export default function TeacherListPage() {
                         alt={teacher.name || 'Teacher'}
                         width={48}
                         height={48}
-                        className="w-12 h-12 rounded-full border-2 border-teal-200"
+                        className="w-10 h-10 sm:w-12 sm:h-12 rounded-full border-2 border-teal-200 flex-shrink-0"
                       />
                     ) : (
-                      <div className="w-12 h-12 bg-gradient-to-br from-teal-500 to-teal-600 rounded-full flex items-center justify-center">
-                        <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+                      <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-teal-500 to-teal-600 rounded-full flex items-center justify-center flex-shrink-0">
+                        <svg className="w-5 h-5 sm:w-6 sm:h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
                           <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
                         </svg>
                       </div>
                     )}
                     <div className="ml-3 flex-1 min-w-0">
-                      <h3 className="font-semibold text-gray-900 truncate">
+                      <h3 className="font-semibold text-gray-900 truncate text-sm sm:text-base">
                         {teacher.name || 'Unnamed Teacher'}
                       </h3>
-                      <p className="text-sm text-gray-500 truncate">{teacher.email}</p>
+                      <p className="text-xs sm:text-sm text-gray-500 truncate">{teacher.email}</p>
                     </div>
                   </div>
 
                   {/* Role Badge */}
                   <div className="mb-4">
-                    <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-teal-100 text-teal-800">
+                    <span className="inline-flex items-center px-2 sm:px-3 py-1 rounded-full text-xs font-medium bg-teal-100 text-teal-800">
                       <svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 24 24">
                         <path d="M12 14l9-5-9-5-9 5 9 5z" />
                         <path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
@@ -321,7 +331,7 @@ export default function TeacherListPage() {
                   {/* Chat Button */}
                   <button
                     onClick={() => handleStartChat(teacher.id)}
-                    className={`cursor-pointer w-full flex items-center justify-center space-x-2 px-4 py-3 rounded-lg font-medium transition-all duration-200 ${
+                    className={`cursor-pointer w-full flex items-center justify-center space-x-2 px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg font-medium transition-all duration-200 text-sm sm:text-base ${
                       existingConversation
                         ? 'bg-green-600 hover:bg-green-700 text-white shadow-sm hover:shadow-md'
                         : 'bg-purple-600 hover:bg-purple-700 text-white shadow-sm hover:shadow-md'
@@ -332,10 +342,7 @@ export default function TeacherListPage() {
                         strokeLinecap="round"
                         strokeLinejoin="round"
                         strokeWidth={2}
-                        d={existingConversation 
-                          ? "M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
-                          : "M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
-                        }
+                        d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
                       />
                     </svg>
                     <span>{existingConversation ? 'Continue Chat' : 'Start Chat'}</span>

@@ -9,8 +9,8 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+ provider          = "postgresql"
+ url               = env("DATABASE_URL")
 }
 
 model User {
@@ -44,6 +44,9 @@ model User {
   // Student notes relations - FIXED
   studentNotes     StudentNote[]   @relation("StudentNotes")    // Notes about this user
   createdNotes     StudentNote[]   @relation("TeacherNotes")    // Notes created by this user
+  
+  // Lesson Content relations - NEW
+  createdContents  LessonContent[]
   
   @@map("users")
 }
@@ -124,8 +127,9 @@ model Lesson {
   updatedAt DateTime      @updatedAt // Added for tracking updates
 
   // many-to-many with tags
-  tags      LessonTag[]
-  quizzes   Quiz[]        // back-relation for quizzes
+  tags           LessonTag[]
+  quizzes        Quiz[]        // back-relation for quizzes
+  lessonContents LessonContent[]  // NEW - relation to lesson contents
 
   @@map("lessons")
 }
@@ -299,8 +303,6 @@ model Group {
   @@map("groups")
 }
 
-// Update your GroupMember model in schema.prisma to include lastReadAt:
-
 model GroupMember {
   id       String        @id @default(cuid())
   groupId  String
@@ -315,7 +317,6 @@ model GroupMember {
   @@unique([groupId, userId]) // One membership per user per group
   @@map("group_members")
 }
-
 
 model GroupMessage {
   id        String   @id @default(cuid())
@@ -341,7 +342,6 @@ enum GroupMemberRole {
   MEMBER   // Can only send messages
 }
 
-
 model StudentNote {
   id        String   @id @default(cuid())
   studentId String
@@ -353,5 +353,37 @@ model StudentNote {
   student   User @relation("StudentNotes", fields: [studentId], references: [id])
   teacher   User @relation("TeacherNotes", fields: [teacherId], references: [id])
   
-  @@map("student_notes") // Added table mapping for consistency
+  @@map("student_notes")
+}
+
+// ================================
+// LESSON CONTENT MODELS - NEW
+// ================================
+
+model LessonContent {
+  id           String       @id @default(cuid())
+  lessonId     String
+  authorId     String
+  type         ContentType
+  title        String
+  markdown     String?      @db.Text  // Stored Markdown/text
+  fileUrl      String?      // Supabase storage path for files
+  fileName     String?      // Original filename
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+
+  lesson       Lesson       @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  author       User         @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  @@index([lessonId])
+  @@map("lesson_contents")
+}
+
+enum ContentType {
+  MARKDOWN
+  PDF
+  PPT
+  DOC
+  IMAGE
+  OTHER
 }
