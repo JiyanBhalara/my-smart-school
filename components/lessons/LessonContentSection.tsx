@@ -155,7 +155,7 @@ export default function LessonContentSection({
     try {
       // For files stored in Supabase, we might need to generate a fresh download URL
       window.open(content.fileUrl, '_blank');
-    } catch (err) {
+    } catch {
       alert("Failed to download file");
     }
   };
@@ -257,7 +257,7 @@ export default function LessonContentSection({
             </div>
             <h3 className="text-xl font-bold text-gray-900 mb-3">No Content Available</h3>
             <p className="text-gray-600 mb-8 max-w-lg mx-auto leading-relaxed">
-              Additional lesson content hasn't been added yet. {isAuthor && isTeacher ? "Click the 'Add Content' button above to get started." : "Check back later for materials and resources."}
+              Additional lesson content hasn&apos;t been added yet. {isAuthor && isTeacher ? "Click the 'Add Content' button above to get started." : "Check back later for materials and resources."}
             </p>
             {!isAuthor || !isTeacher ? (
               <Link

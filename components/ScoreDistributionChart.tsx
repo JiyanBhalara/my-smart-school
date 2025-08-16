@@ -10,14 +10,6 @@ import {
 } from "chart.js";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
-
-interface TooltipContext {
-  label: string;
-  raw: number;
-  dataset: {
-    data: number[];
-  };
-}
 interface ScoreDistributionChartProps {
   data: {
     failing: number;

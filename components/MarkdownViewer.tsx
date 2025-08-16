@@ -165,7 +165,7 @@ export default function MarkdownViewer({
                       <MarkdownPreview
                         source={value}
                         style={{ backgroundColor: "transparent" }}
-                        wrapperElement={{ "data-color-mode": "light" } as any}
+                        wrapperElement={{ "data-color-mode": "light" } as React.HTMLAttributes<HTMLDivElement>}
                       />
                     ) : (
                       <p className="text-gray-500 italic">Preview will appear here...</p>
@@ -181,7 +181,7 @@ export default function MarkdownViewer({
               <MarkdownPreview
                 source={content}
                 style={{ backgroundColor: "transparent" }}
-                wrapperElement={{ "data-color-mode": "light" } as any}
+                wrapperElement={{ "data-color-mode": "light" } as React.HTMLAttributes<HTMLDivElement>}
               />
             ) : (
               <p className="text-gray-500 italic">No content available</p>

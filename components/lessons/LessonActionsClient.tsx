@@ -35,7 +35,7 @@ export default function LessonActionsClient({
         const err = await res.json();
         alert(err.error || "Failed to delete lesson");
       }
-    } catch (error) {
+    } catch {
       alert("Failed to delete lesson");
     } finally {
       setDeleting(false);
@@ -86,7 +86,7 @@ export default function LessonActionsClient({
               </div>
               
               <p className="text-gray-600 mb-6">
-                Are you sure you want to delete "{lessonTitle}"? This action cannot be undone.
+                Are you sure you want to delete &quot;{lessonTitle}&quot;? This action cannot be undone.
                 {quizCount > 0 && (
                   <span className="block mt-2 text-red-600 text-sm font-medium">
                     Note: This lesson has {quizCount} quiz(es). You must delete all quizzes first.
