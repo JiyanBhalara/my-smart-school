@@ -83,20 +83,17 @@ export async function POST(
 
       log.debug(`✅ File uploaded to blob: ${blob.url}`);
 
-      // Call Python function with the exact same parameters as your script
-      const uploadResponse = await fetch(`${process.env.NEXTAUTH_URL}/api/upload-to-ia`, {
-        method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          fileUrl: blob.url,
-          videoid: video.id,
-          title: title.trim(),
-          description: description.trim(),
-          callbackUrl: `${process.env.NEXTAUTH_URL}/api/video/${video.id}/status`
-        })
-      });
+      const uploadResponse = await fetch(`${process.env.NEXTAUTH_URL}/python/upload-to-ia`, {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    fileUrl: blob.url,
+    videoid: video.id,
+    title: title.trim(),
+    description: description.trim(),
+    callbackUrl: `${process.env.NEXTAUTH_URL}/api/video/${video.id}/status`
+  })
+});
 
       if (!uploadResponse.ok) {
         const errorText = await uploadResponse.text();
