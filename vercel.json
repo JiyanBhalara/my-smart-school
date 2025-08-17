@@ -2,7 +2,7 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "functions": {
     "python/upload-to-ia.py": {
-      "runtime": "python3.9"
+      "runtime": "@vercel/python"
     }
   },
   "framework": "nextjs"
