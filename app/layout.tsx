@@ -7,6 +7,8 @@ import type { Session } from 'next-auth';
 import { authOptions } from "@/app/utils/authOptions";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { UploadProvider } from "@/contexts/UploadContext";
+import UploadToast from "@/components/UploadToast";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -40,13 +42,16 @@ export default async function RootLayout({
         suppressHydrationWarning
       >
         <Providers session={session}>
-          <div className="min-h-screen flex flex-col">
-            <Header />
-            <main className="flex-1 mt-12">
-              {children}
-            </main>
-            <Footer />
-          </div>
+          <UploadProvider>
+            <div className="min-h-screen flex flex-col">
+              <Header />
+              <main className="flex-1 mt-12">
+                {children}
+              </main>
+              <Footer />
+            </div>
+            <UploadToast />
+          </UploadProvider>
         </Providers>
       </body>
     </html>

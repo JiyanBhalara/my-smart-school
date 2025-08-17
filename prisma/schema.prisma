@@ -9,8 +9,8 @@ generator client {
 }
 
 datasource db {
- provider          = "postgresql"
- url               = env("DATABASE_URL")
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 model User {
@@ -45,8 +45,11 @@ model User {
   studentNotes     StudentNote[]   @relation("StudentNotes")    // Notes about this user
   createdNotes     StudentNote[]   @relation("TeacherNotes")    // Notes created by this user
   
-  // Lesson Content relations - NEW
+  // Lesson Content relations
   createdContents  LessonContent[]
+  
+  // NEW - Video relations
+  authoredVideos   LessonVideo[]   @relation("AuthoredVideos")  // Videos authored by this user
   
   @@map("users")
 }
@@ -129,7 +132,10 @@ model Lesson {
   // many-to-many with tags
   tags           LessonTag[]
   quizzes        Quiz[]        // back-relation for quizzes
-  lessonContents LessonContent[]  // NEW - relation to lesson contents
+  lessonContents LessonContent[]  // relation to lesson contents
+  
+  // NEW - Video relations
+  videos         LessonVideo[]    // Videos for this lesson
 
   @@map("lessons")
 }
@@ -145,7 +151,6 @@ model Tag {
 model LessonTag {
   lesson   Lesson  @relation(fields: [lessonId], references: [id], onDelete: Cascade)
   lessonId String
-
   tag      Tag     @relation(fields: [tagId], references: [id], onDelete: Cascade)
   tagId    String
 
@@ -386,4 +391,38 @@ enum ContentType {
   DOC
   IMAGE
   OTHER
+}
+
+// ================================
+// LESSON VIDEO MODELS - NEW
+// ================================
+
+model LessonVideo {
+  id                String      @id @default(cuid())
+  lessonId          String
+  authorId          String
+  title             String
+  description       String?     @db.Text
+  archiveIdentifier String      @unique  // Internet Archive item identifier
+  archiveUrl        String      // Full IA video URL for embedding/viewing  
+  directVideoUrl    String      // Direct MP4 URL for downloading
+  fileSize          BigInt      // File size in bytes (using BigInt for large files)
+  duration          Int?        // Video duration in seconds (optional)
+  uploadStatus      UploadStatus @default(UPLOADING)
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+
+  lesson  Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  author  User   @relation("AuthoredVideos", fields: [authorId], references: [id], onDelete: Cascade)
+
+  @@index([lessonId])
+  @@index([authorId])
+  @@map("lesson_videos")
+}
+
+enum UploadStatus {
+  UPLOADING
+  PROCESSING
+  COMPLETED
+  FAILED
 }

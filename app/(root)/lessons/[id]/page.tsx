@@ -1,4 +1,3 @@
-// app/lessons/[id]/page.tsx
 import prisma from "@/lib/prisma";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -18,6 +17,7 @@ import { authOptions } from "@/app/utils/authOptions";
 import QuizCard from "@/components/QuizCard";
 import LessonActionsClient from "@/components/lessons/LessonActionsClient";
 import LessonContentSection from "@/components/lessons/LessonContentSection";
+import LessonVideoSection from "@/components/LessonVideoSection";
 import QuizDeleteActions from "@/components/lessons/QuizDeleteActions";
 
 type Props = {
@@ -34,7 +34,7 @@ export default async function LessonDetailPage({ params, searchParams }: Props) 
   const userId = session?.user?.id;
   const userRole = session?.user?.role;
 
-  // Updated query to include lesson content
+  // Updated query to include lesson content and videos
   const lesson = await prisma.lesson.findUnique({
     where: { id },
     include: {
@@ -57,6 +57,10 @@ export default async function LessonDetailPage({ params, searchParams }: Props) 
             select: { id: true, name: true, role: true }
           }
         }
+      },
+      videos: {
+        where: { uploadStatus: 'COMPLETED' },
+        orderBy: { createdAt: "desc" }
       }
     }
   });
@@ -71,10 +75,10 @@ export default async function LessonDetailPage({ params, searchParams }: Props) 
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-gray-50 to-white relative">
-      {/* No Materials Modal */}
+      {/* FIXED: No Materials Modal with scrollable container */}
       {noMaterial === "1" && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-xl shadow-2xl border border-gray-200 max-w-md w-full mx-4 animate-in fade-in duration-300">
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-start sm:items-center justify-center p-4 overflow-y-auto">
+          <div className="bg-white rounded-xl shadow-2xl border border-gray-200 max-w-md w-full mx-4 my-8 animate-in fade-in duration-300">
             <div className="flex items-center justify-between p-6 border-b border-gray-100">
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-amber-100 rounded-lg">
@@ -235,29 +239,36 @@ export default async function LessonDetailPage({ params, searchParams }: Props) 
           isTeacher={isTeacher}
         />
 
-        {/* Quizzes Section */}
-        <div className="grid lg:grid-cols-4 gap-8">
-          {/* Main Content - Quizzes */}
-          <div className="lg:col-span-3">
-            <section className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-              {/* Section Header with optional Add button and Delete All button (lesson authors only) */}
-              <div className="bg-gradient-to-r from-gray-50 via-white to-gray-50 border-b border-gray-100 px-8 py-8">
-                <div className="flex items-center gap-4 justify-between">
-                  <div className="flex items-center gap-4">
-                    <div className="p-3 bg-[#219EBC]/10 rounded-xl border border-[#219EBC]/20">
-                      <Play size={28} className="text-[#219EBC]" />
-                    </div>
-                    <div>
-                      <h2 className="text-2xl lg:text-3xl font-bold text-gray-900">Interactive Quizzes</h2>
-                      <p className="text-gray-600 mt-1">
-                        {lesson.quizzes.length === 0
-                          ? "No quizzes available yet"
-                          : `${lesson.quizzes.length} quiz${lesson.quizzes.length === 1 ? "" : "es"} available`}
-                      </p>
-                    </div>
-                  </div>
+        {/* NEW: Video Section */}
+        <LessonVideoSection
+          lessonId={lesson.id}
+          isAuthor={isAuthor}
+        />
 
-                  <div className="flex items-center gap-3">
+        {/* FIXED: Responsive Quizzes Section */}
+        <div className="space-y-8">
+          {/* Main Content - Quizzes */}
+          <section className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+            {/* Section Header with optional Add button and Delete All button (lesson authors only) */}
+            <div className="bg-gradient-to-r from-gray-50 via-white to-gray-50 border-b border-gray-100 px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div className="flex items-center gap-3 sm:gap-4">
+                  <div className="p-2 sm:p-3 bg-[#219EBC]/10 rounded-xl border border-[#219EBC]/20">
+                    <Play size={24} className="text-[#219EBC] sm:w-7 sm:h-7" />
+                  </div>
+                  <div>
+                    <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">Interactive Quizzes</h2>
+                    <p className="text-gray-600 mt-1 text-sm sm:text-base">
+                      {lesson.quizzes.length === 0
+                        ? "No quizzes available yet"
+                        : `${lesson.quizzes.length} quiz${lesson.quizzes.length === 1 ? "" : "es"} available`}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Action Buttons - Responsive Stack */}
+                {isAuthor && (
+                  <div className="cursor-pointer flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3">
                     {/* Delete All Quizzes Button - Only for lesson author */}
                     <QuizDeleteActions
                       lessonId={lesson.id}
@@ -266,151 +277,152 @@ export default async function LessonDetailPage({ params, searchParams }: Props) 
                       quizCount={lesson.quizzes.length}
                     />
 
-                    {/* UPDATED: Add Quiz Button - Only for lesson author (not all teachers) */}
-                    {isAuthor && (
-                      <Link
-                        href={`/teacher/lessons/${lesson.id}/quizzes/new`}
-                        className="cursor-pointer inline-flex items-center gap-2 px-4 py-2 bg-[#023047] text-white font-semibold rounded-lg hover:bg-[#034569] transition-all duration-200"
-                      >
-                        <Plus size={16} />
-                        <span>Add Quiz</span>
-                      </Link>
-                    )}
-                  </div>
-                </div>
-              </div>
-
-              {/* Quiz Content */}
-              <div className="p-8">
-                {recentQuizzes.length === 0 ? (
-                  <div className="text-center py-16">
-                    <div className="w-24 h-24 mx-auto mb-6 bg-gradient-to-br from-gray-100 to-gray-200 rounded-2xl flex items-center justify-center">
-                      <Play size={36} className="text-gray-400" />
-                    </div>
-                    <h3 className="text-xl font-bold text-gray-900 mb-3">No Quizzes Available</h3>
-                    <p className="text-gray-600 mb-8 max-w-lg mx-auto leading-relaxed">
-                      Interactive quizzes for this lesson haven&apos;t been created yet. 
-                      {isAuthor && " You can add the first quiz to get started!"}
-                      {!isAuthor && " Check back later or explore other lessons while you wait."}
-                    </p>
-                    
-                    <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                      <Link
-                        href="/lessons"
-                        className="cursor-pointer inline-flex items-center gap-2 px-6 py-3 text-[#219EBC] hover:text-white bg-[#219EBC]/10 hover:bg-[#219EBC] font-semibold rounded-xl transition-all duration-300 border border-[#219EBC]/20 hover:border-[#219EBC]"
-                      >
-                        <BookOpen size={18} />
-                        Browse Other Lessons
-                        <ExternalLink size={16} />
-                      </Link>
-                      
-                      {/* UPDATED: Add Quiz Button in empty state - Only for lesson author */}
-                      {isAuthor && (
-                        <Link
-                          href={`/teacher/lessons/${lesson.id}/quizzes/new`}
-                          className="cursor-pointer inline-flex items-center gap-2 px-6 py-3 bg-[#00A884] text-white font-semibold rounded-xl hover:bg-[#007F66] transition-all duration-300 shadow-md hover:shadow-lg"
-                        >
-                          <Plus size={18} />
-                          Create First Quiz
-                        </Link>
-                      )}
-                    </div>
-                  </div>
-                ) : (
-                  <div className="grid gap-8">
-                    {recentQuizzes.map((quiz, index) => (
-                      <div key={quiz.id} className="relative">
-                        <QuizCard
-                          quiz={quiz}
-                          lessonId={lesson.id}
-                          index={index}
-                          userId={userId}
-                          userRole={userRole}
-                        />
-                      </div>
-                    ))}
-                    
-                    {/* Add "View All Quizzes" button when there are more */}
-                    {hasMoreQuizzes && (
-                      <div className="text-center pt-4">
-                        <Link
-                          href={`/lessons/${lesson.id}/quizzes`}
-                          className="inline-flex items-center gap-2 px-6 py-3 bg-[#219EBC] text-white font-semibold rounded-xl hover:bg-[#0077B6] transition-all duration-300 shadow-md hover:shadow-lg"
-                        >
-                          <BookOpen size={18} />
-                          View All Quizzes ({lesson.quizzes.length})
-                          <ExternalLink size={16} />
-                        </Link>
-                      </div>
-                    )}
+                    {/* Add Quiz Button - Only for lesson author */}
+                    <Link
+                      href={`/teacher/lessons/${lesson.id}/quizzes/new`}
+                      className="cursor-pointer inline-flex items-center justify-center gap-2 px-4 py-2 bg-[#023047] text-white font-semibold rounded-lg hover:bg-[#034569] transition-all duration-200 text-sm sm:text-base whitespace-nowrap"
+                    >
+                      <Plus size={16} />
+                      <span className="hidden sm:inline">Add Quiz</span>
+                      <span className="sm:hidden">Add</span>
+                    </Link>
                   </div>
                 )}
               </div>
-            </section>
-          </div>
+            </div>
 
-          {/* Sidebar */}
-          <div className="lg:col-span-1">
-            <div className="sticky top-8 space-y-6">
-              <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-                <h3 className="font-bold text-gray-900 mb-4">Quick Actions</h3>
-                <div className="space-y-3">
-                  <Link
-                    href="/lessons"
-                    className="cursor-pointer w-full inline-flex items-center gap-3 px-4 py-3 bg-gray-50 hover:bg-gray-100 text-gray-700 font-medium rounded-xl transition-all duration-300 group"
-                  >
-                    <BookOpen size={18} />
-                    <span>All Lessons</span>
-                    <ExternalLink size={14} className="ml-auto group-hover:translate-x-1 transition-transform" />
-                  </Link>
-
-                  <Link
-                    href={`/api/lessons/${lesson.id}/download`}
-                    target="_blank"
-                    className="cursor-pointer w-full inline-flex items-center gap-3 px-4 py-3 bg-gradient-to-r from-[#FFB703] to-[#FB8500] text-white font-medium rounded-xl hover:shadow-md transition-all duration-300 transform hover:scale-105 group"
-                  >
-                    <FileText size={18} />
-                    <span>Download</span>
-                    <ExternalLink size={14} className="ml-auto group-hover:translate-x-1 transition-transform" />
-                  </Link>
-                </div>
-              </div>
-
-              <div className="bg-gradient-to-br from-[#219EBC]/5 to-[#0077B6]/5 rounded-2xl border border-[#219EBC]/10 p-6">
-                <h3 className="font-bold text-gray-900 mb-4">Lesson Stats</h3>
-                <div className="space-y-4">
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-600">Available Content</span>
-                    <span className="font-semibold text-[#219EBC]">{lesson.lessonContents.length}</span>
+            {/* Quiz Content */}
+            <div className="p-4 sm:p-6 lg:p-8">
+              {recentQuizzes.length === 0 ? (
+                <div className="text-center py-12 sm:py-16">
+                  <div className="w-20 h-20 sm:w-24 sm:h-24 mx-auto mb-6 bg-gradient-to-br from-gray-100 to-gray-200 rounded-2xl flex items-center justify-center">
+                    <Play size={28} className="text-gray-400 sm:w-9 sm:h-9" />
                   </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-600">Available Quizzes</span>
-                    <span className="font-semibold text-[#219EBC]">{lesson.quizzes.length}</span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-600">Course Tags</span>
-                    <span className="font-semibold text-[#219EBC]">{lesson.tags.length}</span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-600">Subject</span>
-                    <span className="font-semibold text-[#219EBC] text-sm truncate max-w-24" title={lesson.subject}>
-                      {lesson.subject}
-                    </span>
+                  <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-3">No Quizzes Available</h3>
+                  <p className="text-gray-600 mb-6 sm:mb-8 max-w-lg mx-auto leading-relaxed text-sm sm:text-base px-4">
+                    Interactive quizzes for this lesson haven&apos;t been created yet. 
+                    {isAuthor && " You can add the first quiz to get started!"}
+                    {!isAuthor && " Check back later or explore other lessons while you wait."}
+                  </p>
+                  
+                  <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center px-4">
+                    <Link
+                      href="/lessons"
+                      className="cursor-pointer inline-flex items-center justify-center gap-2 px-4 sm:px-6 py-2.5 sm:py-3 text-[#219EBC] hover:text-white bg-[#219EBC]/10 hover:bg-[#219EBC] font-semibold rounded-xl transition-all duration-300 border border-[#219EBC]/20 hover:border-[#219EBC] text-sm sm:text-base"
+                    >
+                      <BookOpen size={16} className="sm:w-[18px] sm:h-[18px]" />
+                      <span>Browse Other Lessons</span>
+                      <ExternalLink size={14} className="sm:w-4 sm:h-4" />
+                    </Link>
+                    
+                    {/* Add Quiz Button in empty state - Only for lesson author */}
+                    {isAuthor && (
+                      <Link
+                        href={`/teacher/lessons/${lesson.id}/quizzes/new`}
+                        className="cursor-pointer inline-flex items-center justify-center gap-2 px-4 sm:px-6 py-2.5 sm:py-3 bg-[#00A884] text-white font-semibold rounded-xl hover:bg-[#007F66] transition-all duration-300 shadow-md hover:shadow-lg text-sm sm:text-base"
+                      >
+                        <Plus size={16} className="sm:w-[18px] sm:h-[18px]" />
+                        <span>Create First Quiz</span>
+                      </Link>
+                    )}
                   </div>
                 </div>
-              </div>
-
-              {/* UPDATED: Add Quiz Button in sidebar - Only for lesson author */}
-              {isAuthor && (
-                <Link
-                  href={`/teacher/lessons/${lesson.id}/quizzes/new`}
-                  className="cursor-pointer w-full inline-flex items-center justify-center gap-3 px-4 py-3 bg-[#00A884] hover:bg-[#019972] text-white font-semibold rounded-xl transition-all duration-200"
-                >
-                  <Plus size={18} />
-                  <span>Add Quiz</span>
-                </Link>
+              ) : (
+                <div className="space-y-6 sm:space-y-8">
+                  {recentQuizzes.map((quiz, index) => (
+                    <div key={quiz.id} className="relative">
+                      <QuizCard
+                        quiz={quiz}
+                        lessonId={lesson.id}
+                        index={index}
+                        userId={userId}
+                        userRole={userRole}
+                      />
+                    </div>
+                  ))}
+                  
+                  {/* Add "View All Quizzes" button when there are more */}
+                  {hasMoreQuizzes && (
+                    <div className="text-center pt-4">
+                      <Link
+                        href={`/lessons/${lesson.id}/quizzes`}
+                        className="inline-flex items-center gap-2 px-4 sm:px-6 py-2.5 sm:py-3 bg-[#219EBC] text-white font-semibold rounded-xl hover:bg-[#0077B6] transition-all duration-300 shadow-md hover:shadow-lg text-sm sm:text-base"
+                      >
+                        <BookOpen size={16} className="sm:w-[18px] sm:h-[18px]" />
+                        <span>View All Quizzes ({lesson.quizzes.length})</span>
+                        <ExternalLink size={14} className="sm:w-4 sm:h-4" />
+                      </Link>
+                    </div>
+                  )}
+                </div>
               )}
             </div>
+          </section>
+
+          {/* Sidebar - Now Below Main Content on Mobile */}
+          <div className="space-y-6">
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 sm:p-6">
+              <h3 className="font-bold text-gray-900 mb-4 text-lg">Quick Actions</h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-3">
+                <Link
+                  href="/lessons"
+                  className="cursor-pointer w-full inline-flex items-center gap-3 px-4 py-3 bg-gray-50 hover:bg-gray-100 text-gray-700 font-medium rounded-xl transition-all duration-300 group text-sm sm:text-base"
+                >
+                  <BookOpen size={16} className="sm:w-[18px] sm:h-[18px]" />
+                  <span>All Lessons</span>
+                  <ExternalLink size={12} className="ml-auto group-hover:translate-x-1 transition-transform sm:w-[14px] sm:h-[14px]" />
+                </Link>
+
+                <Link
+                  href={`/api/lessons/${lesson.id}/download`}
+                  target="_blank"
+                  className="cursor-pointer w-full inline-flex items-center gap-3 px-4 py-3 bg-gradient-to-r from-[#FFB703] to-[#FB8500] text-white font-medium rounded-xl hover:shadow-md transition-all duration-300 transform hover:scale-105 group text-sm sm:text-base"
+                >
+                  <FileText size={16} className="sm:w-[18px] sm:h-[18px]" />
+                  <span>Download</span>
+                  <ExternalLink size={12} className="ml-auto group-hover:translate-x-1 transition-transform sm:w-[14px] sm:h-[14px]" />
+                </Link>
+              </div>
+            </div>
+
+            <div className="bg-gradient-to-br from-[#219EBC]/5 to-[#0077B6]/5 rounded-2xl border border-[#219EBC]/10 p-4 sm:p-6">
+              <h3 className="font-bold text-gray-900 mb-4 text-lg">Lesson Stats</h3>
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-1 gap-3 sm:gap-4">
+                <div className="flex flex-col sm:flex-row lg:flex-row justify-between items-start sm:items-center">
+                  <span className="text-gray-600 text-sm">Available Content</span>
+                  <span className="font-semibold text-[#219EBC] text-sm sm:text-base">{lesson.lessonContents.length}</span>
+                </div>
+                <div className="flex flex-col sm:flex-row lg:flex-row justify-between items-start sm:items-center">
+                  <span className="text-gray-600 text-sm">Available Videos</span>
+                  <span className="font-semibold text-[#219EBC] text-sm sm:text-base">{lesson.videos.length}</span>
+                </div>
+                <div className="flex flex-col sm:flex-row lg:flex-row justify-between items-start sm:items-center">
+                  <span className="text-gray-600 text-sm">Available Quizzes</span>
+                  <span className="font-semibold text-[#219EBC] text-sm sm:text-base">{lesson.quizzes.length}</span>
+                </div>
+                <div className="flex flex-col sm:flex-row lg:flex-row justify-between items-start sm:items-center">
+                  <span className="text-gray-600 text-sm">Course Tags</span>
+                  <span className="font-semibold text-[#219EBC] text-sm sm:text-base">{lesson.tags.length}</span>
+                </div>
+                <div className="flex flex-col sm:flex-row lg:flex-row justify-between items-start sm:items-center lg:col-span-1">
+                  <span className="text-gray-600 text-sm">Subject</span>
+                  <span className="font-semibold text-[#219EBC] text-sm truncate max-w-full lg:max-w-24" title={lesson.subject}>
+                    {lesson.subject}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Add Quiz Button in sidebar - Only for lesson author */}
+            {isAuthor && (
+              <Link
+                href={`/teacher/lessons/${lesson.id}/quizzes/new`}
+                className="cursor-pointer w-full inline-flex items-center justify-center gap-3 px-4 py-3 bg-[#00A884] hover:bg-[#019972] text-white font-semibold rounded-xl transition-all duration-200 text-sm sm:text-base"
+              >
+                <Plus size={16} className="sm:w-[18px] sm:h-[18px]" />
+                <span>Add Quiz</span>
+              </Link>
+            )}
           </div>
         </div>
       </div>

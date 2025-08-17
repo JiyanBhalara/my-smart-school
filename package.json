@@ -42,6 +42,7 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
+    "@types/bun": "^1.2.20",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-chartjs-2": "^2.5.7",
