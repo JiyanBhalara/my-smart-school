@@ -2,10 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/app/utils/authOptions";
 import prisma from "@/lib/prisma";
-import { spawn } from "child_process";
-import { writeFileSync, mkdirSync, existsSync } from "fs";
-import { join } from "path";
-import { tmpdir } from "os";
+import { put } from '@vercel/blob';
 
 // 750MB upload limit
 const MAX_SIZE = 750 * 1024 * 1024;
@@ -52,26 +49,8 @@ export async function POST(
   }
 
   try {
-    // Get system temp directory (cross-platform)
-    const tempDir = tmpdir();
-
-    // Ensure temp directory exists
-    if (!existsSync(tempDir)) {
-      mkdirSync(tempDir, { recursive: true });
-    }
-
-    // Create file path using proper path joining - sanitize filename more aggressively
-    const fileName = `${Date.now()}_${file.name.replace(
-      /[^a-zA-Z0-9.-]/g,
-      "_"
-    )}`;
-    const tmpPath = join(tempDir, fileName);
-
-    // Write file to temp directory
+    // Convert file to buffer
     const buffer = Buffer.from(await file.arrayBuffer());
-    writeFileSync(tmpPath, buffer);
-
-    log.debug(`✅ File saved to: ${tmpPath}`);
 
     // Save DB entry as UPLOADING first
     const video = await prisma.lessonVideo.create({
@@ -92,125 +71,42 @@ export async function POST(
 
     log.info(`📝 Video record created: ${video.id}`);
 
-    // Try to run Python script with better error handling
     try {
-      // Multiple Python command attempts for better compatibility
-      const pythonCommands = process.platform === "win32" 
-        ? ["python", "py", "python3"] 
-        : ["python3", "python"];
+      // Create sanitized filename like your original script
+      const sanitizedFileName = `${Date.now()}_${file.name.replace(/[^a-zA-Z0-9.-]/g, "_")}`;
+      
+      // Upload file to Vercel Blob for temporary access
+      const blob = await put(sanitizedFileName, buffer, {
+        access: 'public',
+        token: process.env.BLOB_READ_WRITE_TOKEN,
+      });
 
-      let pythonProcess;
-      let commandFound = false;
-      let stderrData = '';
+      log.debug(`✅ File uploaded to blob: ${blob.url}`);
 
-      for (const pythonCmd of pythonCommands) {
-        try {
-          // Properly escape arguments for Windows shell
-          const escapedTmpPath = process.platform === "win32" 
-            ? `"${tmpPath}"` 
-            : tmpPath;
-          
-          const escapedTitle = process.platform === "win32"
-            ? `"${title.replace(/"/g, '\\"')}"` // Escape quotes in title
-            : title;
-            
-          const escapedDescription = process.platform === "win32"
-            ? `"${description.replace(/"/g, '\\"')}"` // Escape quotes in description
-            : description;
+      // Call Python function with the exact same parameters as your script
+      const uploadResponse = await fetch(`${process.env.NEXTAUTH_URL}/api/upload-to-ia`, {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          fileUrl: blob.url,
+          videoid: video.id,
+          title: title.trim(),
+          description: description.trim(),
+          callbackUrl: `${process.env.NEXTAUTH_URL}/api/video/${video.id}/status`
+        })
+      });
 
-          const args = [
-            join(process.cwd(), "scripts", "upload_to_ia.py"),
-            "--filepath",
-            escapedTmpPath,
-            "--videoid",
-            video.id,
-            "--title",
-            escapedTitle,
-            "--description",
-            escapedDescription,
-          ];
-
-          log.debug(`🐍 Starting Python upload with: ${pythonCmd}`);
-
-          pythonProcess = spawn(pythonCmd, args, {
-            detached: true,
-            stdio: ["ignore", "pipe", "pipe"],
-            shell: true, // Required for proper quote handling on Windows
-            env: {
-              ...process.env,
-              NODE_ENV: process.env.NODE_ENV, // Pass environment to Python
-            }
-          });
-
-          commandFound = true;
-          log.info(`🚀 Upload process started for video: ${video.id}`);
-          break;
-        } catch (cmdError) {
-          log.debug(`❌ Failed to start with ${pythonCmd}: ${cmdError instanceof Error ? cmdError.message : String(cmdError)}`);
-          continue;
-        }
+      if (!uploadResponse.ok) {
+        const errorText = await uploadResponse.text();
+        throw new Error(`Upload service failed: ${errorText}`);
       }
 
-      if (!commandFound || !pythonProcess) {
-        throw new Error("No Python command found. Please install Python and add it to PATH.");
-      }
-
-      // Collect stderr for error reporting (but not stdout to reduce noise)
-      pythonProcess.stderr?.on("data", (data) => {
-        const error = data.toString().trim();
-        stderrData += error + '\n';
-        // Only log critical errors in production
-        if (!isDevelopment && (error.includes('ERROR') || error.includes('FAILED'))) {
-          log.error(`🐍 Upload Error: ${error}`);
-        }
-      });
-
-      pythonProcess.on("close", (code) => {
-        log.debug(`🐍 Python script exited with code: ${code}`);
-        
-        // FIXED: Handle exit code 120 as success (it's a cleanup issue, not a failure)
-        if (code !== 0 && code !== 120) {
-          log.error(`❌ Upload failed for video ${video.id}: exit code ${code}`);
-          
-          // Extract specific error types from stderr
-          let errorType = "Upload failed";
-          if (stderrData.includes("Authentication")) {
-            errorType = "Internet Archive authentication failed";
-          } else if (stderrData.includes("ConnectionError")) {
-            errorType = "Network connection error";
-          } else if (stderrData.includes("ModuleNotFoundError")) {
-            errorType = "Missing Python module";
-          }
-          
-          log.error(`❌ Error type: ${errorType}`);
-          
-          prisma.lessonVideo
-            .update({
-              where: { id: video.id },
-              data: { uploadStatus: "FAILED" },
-            })
-            .catch(console.error);
-        } else if (code === 120) {
-          log.info(`✅ Upload completed for video ${video.id} (exit code 120 - cleanup issue)`);
-        } else {
-          log.info(`✅ Upload completed successfully for video ${video.id}`);
-        }
-      });
-
-      pythonProcess.on("error", (error) => {
-        log.error(`❌ Failed to start upload process for video ${video.id}: ${error.message}`);
-        
-        // Update video status to FAILED
-        prisma.lessonVideo
-          .update({
-            where: { id: video.id },
-            data: { uploadStatus: "FAILED" },
-          })
-          .catch(console.error);
-      });
-
-    } catch (scriptError) {
-      log.error(`❌ Error spawning Python script: ${scriptError}`);
+      log.info(`🚀 Upload process started for video: ${video.id}`);
+      
+    } catch (serviceError) {
+      log.error(`❌ Error calling upload service: ${serviceError}`);
 
       // Update video status to FAILED
       await prisma.lessonVideo.update({
@@ -220,8 +116,8 @@ export async function POST(
 
       return NextResponse.json(
         { 
-          error: "Failed to start upload process. Please ensure Python is installed and accessible.",
-          details: scriptError instanceof Error ? scriptError.message : String(scriptError)
+          error: "Failed to start upload process.",
+          details: serviceError instanceof Error ? serviceError.message : String(serviceError)
         },
         { status: 500 }
       );
