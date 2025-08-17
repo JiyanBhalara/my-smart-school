@@ -2,7 +2,7 @@
   "functions": {
     "api/upload-to-ia.py": {
       "runtime": "python3.12",
-      "maxDuration": 900
+      "maxDuration": 300
     }
   }
 }
