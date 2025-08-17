@@ -168,10 +168,10 @@ export default function VideoCard({ video, lessonId, isAuthor, onUpdate }: Video
         showToast('Video updated successfully!', 'success');
         onUpdate?.();
       } else {
-        const error = await response.json();
-        showToast(error.error || 'Failed to update video', 'error');
+        const errorData = await response.json();
+        showToast(errorData.error || 'Failed to update video', 'error');
       }
-    } catch (error) {
+    } catch {
       showToast('Network error. Please try again.', 'error');
     } finally {
       setLoading(false);
@@ -206,10 +206,10 @@ export default function VideoCard({ video, lessonId, isAuthor, onUpdate }: Video
         }, 2000); // Show success message for 2 seconds before reload
         
       } else {
-        const error = await response.json();
-        showToast(error.error || 'Failed to delete video', 'error');
+        const errorData = await response.json();
+        showToast(errorData.error || 'Failed to delete video', 'error');
       }
-    } catch (error) {
+    } catch {
       showToast('Network error. Please try again.', 'error');
     } finally {
       setLoading(false);

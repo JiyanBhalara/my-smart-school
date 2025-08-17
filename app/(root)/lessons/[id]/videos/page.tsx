@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import { ArrowLeft, Video, Plus, Trash2 } from 'lucide-react';
+import { ArrowLeft, Video } from 'lucide-react';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/app/utils/authOptions';
 import prisma from '@/lib/prisma';
@@ -86,7 +86,7 @@ export default async function AllVideosPage({ params }: Props) {
             </div>
             <h2 className="text-2xl font-bold text-gray-900 mb-3">No Videos Yet</h2>
             <p className="text-gray-600 mb-8 max-w-lg mx-auto">
-              This lesson doesn't have any videos uploaded yet.
+              This lesson doesn&apos;t have any videos uploaded yet.
               {isAuthor && " Upload the first video to get started!"}
             </p>
             

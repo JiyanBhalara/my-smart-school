@@ -52,7 +52,7 @@ export default function VideoUploadModal({ lessonId, onClose, onUploaded }: Vide
         const response = await fetch(`/api/lessons/${lessonId}/videos`);
         if (response.ok) {
           const data = await response.json();
-          const video = data.videos.find((v: any) => v.id === videoId);
+          const video = data.videos.find((v: { id: string; uploadStatus: string }) => v.id === videoId);
           
           if (video?.uploadStatus === 'COMPLETED') {
             updateProgress(videoId, 'Upload completed! 🎉');
@@ -230,7 +230,7 @@ export default function VideoUploadModal({ lessonId, onClose, onUploaded }: Vide
                 <ul className="text-xs space-y-1 list-disc list-inside ml-2">
                   <li>Video will be uploaded to Internet Archive</li>
                   <li>Processing may take several minutes</li>
-                  <li>You'll get a notification when upload completes</li>
+                  <li>You&apos;ll get a notification when upload completes</li>
                   <li>Keep this tab open during upload</li>
                 </ul>
               </div>

@@ -7,7 +7,8 @@ import { writeFileSync, mkdirSync, existsSync } from "fs";
 import { join } from "path";
 import { tmpdir } from "os";
 
-export const maxSize = 750 * 1024 * 1024; // 750MB
+// 750MB upload limit
+const MAX_SIZE = 750 * 1024 * 1024;
 
 // Environment-based logging
 const isDevelopment = process.env.NODE_ENV === 'development';
@@ -20,7 +21,7 @@ const log = {
 
 export async function POST(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const session = await getServerSession(authOptions);
   if (!session || session.user.role !== "TEACHER") {
@@ -40,7 +41,7 @@ export async function POST(
   if (!file || file.type !== "video/mp4") {
     return NextResponse.json({ error: "Only MP4 allowed." }, { status: 400 });
   }
-  if (file.size > maxSize) {
+  if (file.size > MAX_SIZE) {
     return NextResponse.json(
       { error: "File must be less than 750MB." },
       { status: 400 }

@@ -1,11 +1,12 @@
 import prisma from '@/lib/prisma';
 import { NextRequest, NextResponse } from 'next/server';
 
-export async function GET(req: NextRequest, { params }: { params: { lessonId: string } }) {
+export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const { id: lessonId } = await params;
     const videos = await prisma.lessonVideo.findMany({
       where: { 
-        lessonId: params.lessonId,
+        lessonId: lessonId,
         uploadStatus: {
           not: 'FAILED' // Exclude videos with FAILED status
         }

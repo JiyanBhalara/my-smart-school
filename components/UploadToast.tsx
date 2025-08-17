@@ -93,8 +93,8 @@ export default function UploadToast() {
                 {isUploading && (
                   <div className="flex items-center gap-1 mt-1.5 sm:mt-2 text-xs text-amber-600">
                     <AlertCircle size={10} className="sm:w-3 sm:h-3" />
-                    <span className="hidden sm:inline">Please don't close this tab</span>
-                    <span className="sm:hidden">Don't close tab</span>
+                    <span className="hidden sm:inline">Please don&apos;t close this tab</span>
+                    <span className="sm:hidden">Don&apos;t close tab</span>
                   </div>
                 )}
 

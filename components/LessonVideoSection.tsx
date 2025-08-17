@@ -1,6 +1,6 @@
 "use client";
-import { useEffect, useState } from 'react';
-import { Plus, Video, Eye, Trash2 } from 'lucide-react';
+import { useEffect, useState, useCallback } from 'react';
+import { Plus, Video, Eye } from 'lucide-react';
 import VideoCard from './VideoCard';
 import VideoUploadModal from './VideoUploadModal';
 import DeleteAllVideosButton from './DeleteAllVideosButton';
@@ -10,12 +10,25 @@ interface LessonVideoSectionProps {
   isAuthor: boolean;
 }
 
+interface Video {
+  id: string;
+  title: string;
+  description?: string;
+  archiveIdentifier: string;
+  archiveUrl: string;
+  directVideoUrl: string;
+  fileSize: number;
+  duration?: number;
+  createdAt: string;
+  uploadStatus: string;
+}
+
 export default function LessonVideoSection({ lessonId, isAuthor }: LessonVideoSectionProps) {
-  const [videos, setVideos] = useState<any[]>([]);
+  const [videos, setVideos] = useState<Video[]>([]);
   const [loading, setLoading] = useState(true);
   const [showUploadModal, setShowUploadModal] = useState(false);
 
-  const fetchVideos = async () => {
+  const fetchVideos = useCallback(async () => {
     try {
       const response = await fetch(`/api/lessons/${lessonId}/videos`);
       if (response.ok) {
@@ -27,11 +40,11 @@ export default function LessonVideoSection({ lessonId, isAuthor }: LessonVideoSe
     } finally {
       setLoading(false);
     }
-  };
+  }, [lessonId]);
 
   useEffect(() => {
     fetchVideos();
-  }, [lessonId]);
+  }, [fetchVideos]);
 
   if (loading) {
     return (
@@ -98,7 +111,7 @@ export default function LessonVideoSection({ lessonId, isAuthor }: LessonVideoSe
             </div>
             <h3 className="text-xl font-bold text-gray-900 mb-3">No Videos Available</h3>
             <p className="text-gray-600 mb-8 max-w-lg mx-auto leading-relaxed">
-              Educational videos for this lesson haven't been uploaded yet.
+              Educational videos for this lesson haven&apos;t been uploaded yet.
               {isAuthor && " You can upload the first video to get started!"}
             </p>
             

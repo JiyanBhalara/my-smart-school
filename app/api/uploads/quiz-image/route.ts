@@ -21,14 +21,14 @@ if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE) {
 const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE, {
   auth: { persistSession: false },
   global: {
-    fetch: (url, options = {}) => {
+    fetch: ((url: string | URL | Request, options: RequestInit = {}) => {
       // Add timeout and retry configuration
       return fetch(url, {
         ...options,
         // Increase timeout to 60 seconds
         signal: AbortSignal.timeout(60000),
       });
-    },
+    }) as typeof fetch,
   },
 });
 

@@ -138,10 +138,10 @@ export default function DeleteAllVideosButton({
           onDeleted?.();
         }, 1000);
       } else {
-        const error = await response.json();
-        showToast(error.error || 'Failed to delete videos', 'error');
+        const errorData = await response.json();
+        showToast(errorData.error || 'Failed to delete videos', 'error');
       }
-    } catch (error) {
+    } catch {
       showToast('Network error. Please try again.', 'error');
     } finally {
       setLoading(false);

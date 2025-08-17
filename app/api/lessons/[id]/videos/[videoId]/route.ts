@@ -7,10 +7,10 @@ import { spawn } from 'child_process';
 // UPDATE video title/description
 export async function PUT(
   req: NextRequest, 
-  { params }: { params: { id: string; videoId: string } }
+  { params }: { params: Promise<{ id: string; videoId: string }> }
 ) {
   try {
-    const { id: lessonId, videoId } = await params;
+    const { videoId } = await params;
     const session = await getServerSession(authOptions);
     if (!session || session.user.role !== 'TEACHER') {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -53,10 +53,10 @@ export async function PUT(
 // DELETE video
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { id: string; videoId: string } }
+  { params }: { params: Promise<{ id: string; videoId: string }> }
 ) {
   try {
-    const { id: lessonId, videoId } = await params;
+    const { videoId } = await params;
     const session = await getServerSession(authOptions);
     if (!session || session.user.role !== 'TEACHER') {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });

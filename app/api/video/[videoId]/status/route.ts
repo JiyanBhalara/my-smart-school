@@ -1,13 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 
-export async function POST(req: NextRequest, { params }: { params: { videoId: string } }) {
+export async function POST(req: NextRequest, { params }: { params: Promise<{ videoId: string }> }) {
   try {
     const { videoId } = await params;
     const updates = await req.json();
     
     // Convert archiveIdentifier, archiveUrl, directVideoUrl, uploadStatus
-    const updateData: any = {};
+    const updateData: Record<string, string> = {};
     
     if (updates.archiveIdentifier) updateData.archiveIdentifier = updates.archiveIdentifier;
     if (updates.archiveUrl) updateData.archiveUrl = updates.archiveUrl;
