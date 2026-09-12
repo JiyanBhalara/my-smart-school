@@ -27,11 +27,7 @@ export default function StudentAvatar({ student }: StudentAvatarProps) {
   // Helper function to generate avatar background color based on name
   const getAvatarBgColor = (name: string | null) => {
     if (!name) return "bg-gray-500";
-    const colors = [
-      "bg-red-500", "bg-blue-500", "bg-green-500", "bg-yellow-500", 
-      "bg-purple-500", "bg-pink-500", "bg-indigo-500", "bg-teal-500",
-      "bg-orange-500", "bg-cyan-500", "bg-lime-500", "bg-emerald-500"
-    ];
+    const colors = ['bg-ink'];
     const index = name.charCodeAt(0) % colors.length;
     return colors[index];
   };
@@ -41,7 +37,7 @@ export default function StudentAvatar({ student }: StudentAvatarProps) {
       <div className="flex-shrink-0 h-10 w-10">
         {student.image && !imageError ? (
           <Image
-            className="h-10 w-10 rounded-full object-cover border-2 border-gray-200"
+            className="h-10 w-10 rounded-full object-cover border-2 border-rule"
             src={student.image}
             alt={student.name || "Student"}
             width={40}
@@ -49,16 +45,16 @@ export default function StudentAvatar({ student }: StudentAvatarProps) {
             onError={() => setImageError(true)}
           />
         ) : (
-          <div className={`flex h-10 w-10 rounded-full items-center justify-center text-white font-bold text-sm ${getAvatarBgColor(student.name)} border-2 border-white shadow-sm`}>
+          <div className={`flex h-10 w-10 rounded-full items-center justify-center text-white font-bold text-sm ${getAvatarBgColor(student.name)} border-2 border-white`}>
             {getStudentInitials(student.name)}
           </div>
         )}
       </div>
       <div className="ml-4">
-        <div className="text-sm font-medium text-gray-900">
+        <div className="text-sm font-medium text-ink">
           {student.name || "Unnamed Student"}
         </div>
-        <div className="text-sm text-gray-500">{student.email}</div>
+        <div className="text-sm text-graphite">{student.email}</div>
       </div>
     </div>
   );

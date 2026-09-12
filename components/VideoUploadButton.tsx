@@ -20,8 +20,8 @@ export default function VideoUploadButton({
   const baseClasses = "cursor-pointer inline-flex items-center gap-2 font-semibold rounded-xl transition-colors shadow-md hover:shadow-lg";
   
   const variantClasses = {
-    default: "px-4 py-2 bg-purple-600 text-white hover:bg-purple-700",
-    primary: "px-6 py-3 bg-purple-600 text-white hover:bg-purple-700"
+    default: "px-4 py-2 text-ink text-white hover:text-ink",
+    primary: "px-6 py-3 text-ink text-white hover:text-ink"
   };
 
   return (

@@ -128,7 +128,7 @@ export default async function QuizReportPage({ params }: Props) {
   };
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-gray-50 to-white">
+    <main className="min-h-screen bg-sheet">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Header */}
         <div className="mb-8">
@@ -136,21 +136,21 @@ export default async function QuizReportPage({ params }: Props) {
             href={`/lessons/${quiz.lesson.id}/quizzes`}
             className="cursor-pointer inline-flex items-center gap-2 text-[#219EBC] hover:text-[#0077B6] font-medium mb-6 group"
           >
-            <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
+            <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-colors" />
             Back to All Quizzes
           </Link>
           
           <div className="flex items-center gap-4 mb-4">
-            <div className="p-3 bg-indigo-100 rounded-xl border border-indigo-200">
-              <Trophy size={28} className="text-indigo-600" />
+            <div className="p-3 bg-[#edf2f5] rounded-[4px] border border-ink">
+              <Trophy size={28} className="text-ink" />
             </div>
             <div>
-              <h1 className="text-3xl lg:text-4xl font-bold text-gray-900">{quiz.title}</h1>
-              <p className="text-gray-600 mt-1">
+              <h1 className="text-3xl lg:text-4xl font-bold text-ink">{quiz.title}</h1>
+              <p className="text-graphite mt-1">
                 Quiz Report • {quiz.lesson.title}
               </p>
               {/* ADDED: Show total possible points */}
-              <p className="text-sm text-gray-500 mt-1">
+              <p className="text-sm text-graphite mt-1">
                 Total Points: {totalPossiblePoints} • Students Only (Teachers Excluded)
               </p>
             </div>
@@ -159,54 +159,54 @@ export default async function QuizReportPage({ params }: Props) {
 
         {/* Overall Statistics Cards - FIXED: Show both actual scores and percentages */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+          <div className="bg-white p-6 rounded-[4px] border border-rule">
             <div className="flex items-center gap-3 mb-2">
-              <div className="p-2 bg-blue-100 rounded-lg">
-                <TrendingUp size={20} className="text-blue-600" />
+              <div className="p-2 bg-[#edf2f5] rounded-[4px]">
+                <TrendingUp size={20} className="text-ink" />
               </div>
-              <span className="text-sm font-medium text-gray-500">Average Score</span>
+              <span className="text-sm font-medium text-graphite">Average Score</span>
             </div>
-            <p className="text-2xl font-bold text-blue-600">{averageScore.toFixed(1)}%</p>
-            <p className="text-sm text-gray-500 mt-1">
+            <p className="text-2xl font-bold text-ink">{averageScore.toFixed(1)}%</p>
+            <p className="text-sm text-graphite mt-1">
               {averageActualScore.toFixed(1)}/{totalPossiblePoints} points
             </p>
           </div>
 
-          <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+          <div className="bg-white p-6 rounded-[4px] border border-rule">
             <div className="flex items-center gap-3 mb-2">
-              <div className="p-2 bg-green-100 rounded-lg">
-                <Trophy size={20} className="text-green-600" />
+              <div className="p-2 bg-[#edf2f5] rounded-[4px]">
+                <Trophy size={20} className="text-ink" />
               </div>
-              <span className="text-sm font-medium text-gray-500">Highest Score</span>
+              <span className="text-sm font-medium text-graphite">Highest Score</span>
             </div>
-            <p className="text-2xl font-bold text-green-600">{maxScore.toFixed(1)}%</p>
-            <p className="text-sm text-gray-500 mt-1">
+            <p className="text-2xl font-bold text-ink">{maxScore.toFixed(1)}%</p>
+            <p className="text-sm text-graphite mt-1">
               {maxActualScore}/{totalPossiblePoints} points
             </p>
           </div>
 
-          <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+          <div className="bg-white p-6 rounded-[4px] border border-rule">
             <div className="flex items-center gap-3 mb-2">
-              <div className="p-2 bg-red-100 rounded-lg">
-                <Target size={20} className="text-red-600" />
+              <div className="p-2 bg-[#fdf3f2] rounded-[4px]">
+                <Target size={20} className="text-mark" />
               </div>
-              <span className="text-sm font-medium text-gray-500">Lowest Score</span>
+              <span className="text-sm font-medium text-graphite">Lowest Score</span>
             </div>
-            <p className="text-2xl font-bold text-red-600">{minScore.toFixed(1)}%</p>
-            <p className="text-sm text-gray-500 mt-1">
+            <p className="text-2xl font-bold text-mark">{minScore.toFixed(1)}%</p>
+            <p className="text-sm text-graphite mt-1">
               {minActualScore}/{totalPossiblePoints} points
             </p>
           </div>
 
-          <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+          <div className="bg-white p-6 rounded-[4px] border border-rule">
             <div className="flex items-center gap-3 mb-2">
-              <div className="p-2 bg-purple-100 rounded-lg">
-                <Users size={20} className="text-purple-600" />
+              <div className="p-2 bg-[#edf2f5] rounded-[4px]">
+                <Users size={20} className="text-ink" />
               </div>
-              <span className="text-sm font-medium text-gray-500">Students</span>
+              <span className="text-sm font-medium text-graphite">Students</span>
             </div>
-            <p className="text-2xl font-bold text-purple-600">{totalStudents}</p>
-            <p className="text-sm text-gray-500 mt-1">
+            <p className="text-2xl font-bold text-ink">{totalStudents}</p>
+            <p className="text-sm text-graphite mt-1">
               {quiz.attempts.length - studentOnlyAttempts.length} teacher attempts excluded
             </p>
           </div>
@@ -215,39 +215,39 @@ export default async function QuizReportPage({ params }: Props) {
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Score Distribution Chart */}
           <div className="lg:col-span-1">
-            <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Score Distribution</h3>
+            <div className="bg-white p-6 rounded-[4px] border border-rule">
+              <h3 className="text-lg font-semibold text-ink mb-4">Score Distribution</h3>
               <ScoreDistributionChart data={scoreDistribution} />
             </div>
           </div>
 
           {/* Student Results Table */}
           <div className="lg:col-span-2">
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-              <div className="px-6 py-4 border-b border-gray-100">
-                <h3 className="text-lg font-semibold text-gray-900">Student Performance</h3>
-                <p className="text-sm text-gray-500 mt-1">
+            <div className="bg-white rounded-[4px] border border-rule overflow-hidden">
+              <div className="px-6 py-4 border-b border-rule">
+                <h3 className="text-lg font-semibold text-ink">Student Performance</h3>
+                <p className="text-sm text-graphite mt-1">
                   Showing latest attempt per student • Teachers excluded from results
                 </p>
               </div>
               
               <div className="overflow-x-auto">
                 <table className="w-full">
-                  <thead className="bg-gray-50">
+                  <thead className="bg-[#edf2f5]">
                     <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-graphite uppercase tracking-wider">
                         Student
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-graphite uppercase tracking-wider">
                         Attempts
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-graphite uppercase tracking-wider">
                         Score
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-graphite uppercase tracking-wider">
                         Percentage
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-graphite uppercase tracking-wider">
                         Status
                       </th>
                     </tr>
@@ -258,32 +258,24 @@ export default async function QuizReportPage({ params }: Props) {
                       const isPassing = result.percentage >= 60;
                       
                       return (
-                        <tr key={result.studentId} className="hover:bg-gray-50">
+                        <tr key={result.studentId} className="hover:bg-[#edf2f5]">
                           <td className="px-6 py-4 whitespace-nowrap">
                             <StudentAvatar student={result.student} />
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-ink">
                             {attemptCount}
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-ink">
                             <div className="font-medium">{result.score}/{result.totalPoints}</div>
-                            <div className="text-xs text-gray-500">points</div>
+                            <div className="text-xs text-graphite">points</div>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
-                            <span className={`text-sm font-semibold ${
-                              result.percentage >= 90 ? 'text-green-600' :
-                              result.percentage >= 80 ? 'text-blue-600' :
-                              result.percentage >= 60 ? 'text-yellow-600' : 'text-red-600'
-                            }`}>
+                            <span className={`text-sm font-semibold ${ result.percentage >= 90 ? 'text-ink' : result.percentage >= 80 ? 'text-ink' : result.percentage >= 60 ? 'text-mark' : 'text-mark' }`}>
                               {result.percentage.toFixed(1)}%
                             </span>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
-                            <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                              isPassing 
-                                ? 'bg-green-100 text-green-800' 
-                                : 'bg-red-100 text-red-800'
-                            }`}>
+                            <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${ isPassing ? 'bg-[#edf2f5] text-ink' : 'bg-[#fdf3f2] text-mark' }`}>
                               {isPassing ? 'Passed' : 'Failed'}
                             </span>
                           </td>
@@ -297,9 +289,9 @@ export default async function QuizReportPage({ params }: Props) {
               {studentResults.length === 0 && (
                 <div className="text-center py-12">
                   <Users size={48} className="text-gray-300 mx-auto mb-4" />
-                  <p className="text-gray-500">No students have taken this quiz yet.</p>
+                  <p className="text-graphite">No students have taken this quiz yet.</p>
                   {quiz.attempts.length > 0 && (
-                    <p className="text-sm text-gray-400 mt-2">
+                    <p className="text-sm text-graphite mt-2">
                       ({quiz.attempts.length} teacher attempt{quiz.attempts.length === 1 ? '' : 's'} excluded)
                     </p>
                   )}

@@ -37,7 +37,7 @@ function Toast({ message, type, onClose }: ToastProps) {
       }`}>
         <div className="flex-shrink-0">
           {type === 'success' ? (
-            <div className={`p-1 rounded-full ${isDeleteSuccess ? 'bg-[#edf2f5]' : 'bg-[#edf2f5]'}`}>
+            <div className={`p-1 rounded-full bg-[#edf2f5]`}>
               <Check size={14} className="text-ink" />
             </div>
           ) : (

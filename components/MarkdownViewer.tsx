@@ -71,14 +71,14 @@ export default function MarkdownViewer({
   // Show loading state during SSR/hydration
   if (!mounted) {
     return (
-      <div className="relative bg-white p-6 rounded-lg border border-gray-200 min-h-[200px] flex items-center justify-center">
-        <Loader2 size={24} className="animate-spin text-gray-400" />
+      <div className="relative bg-white p-6 rounded-[4px] border border-rule min-h-[200px] flex items-center justify-center">
+        <Loader2 size={24} className="animate-spin text-graphite" />
       </div>
     );
   }
 
   return (
-    <div className="relative bg-white p-6 rounded-lg border border-gray-200">
+    <div className="relative bg-white p-6 rounded-[4px] border border-rule">
       {/* Action Buttons */}
       {canEdit && onSave && (
         <div className="absolute top-4 right-4 flex gap-2 z-10">
@@ -88,7 +88,7 @@ export default function MarkdownViewer({
                 type="button"
                 onClick={cancelEdit}
                 disabled={saving}
-                className="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-red-600 bg-red-50 border border-red-200 rounded-lg hover:bg-red-100 hover:border-red-300 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-1 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+                className="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-mark bg-[#fdf3f2] border border-mark rounded-[4px] hover:bg-[#fdf3f2] hover:border-mark focus:outline-none focus:ring-2 focus:ring-ink focus:ring-offset-1 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 title="Cancel editing"
               >
                 <X size={16} />
@@ -98,7 +98,7 @@ export default function MarkdownViewer({
                 type="button"
                 onClick={saveEdit}
                 disabled={saving}
-                className="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-white bg-green-600 border border-green-600 rounded-lg hover:bg-green-700 hover:border-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-1 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+                className="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-white bg-ink border border-ink rounded-[4px] hover:bg-ink hover:border-ink focus:outline-none focus:ring-2 focus:ring-ink focus:ring-offset-1 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 title="Save changes"
               >
                 {saving ? (
@@ -118,7 +118,7 @@ export default function MarkdownViewer({
             <button
               type="button"
               onClick={startEdit}
-              className="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-blue-600 bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 hover:border-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 transition-all duration-200"
+              className="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-ink bg-[#edf2f5] border border-ink rounded-[4px] hover:bg-[#edf2f5] hover:border-ink focus:outline-none focus:ring-2 focus:ring-ink focus:ring-offset-1 transition-colors"
               title="Edit content"
             >
               <Edit size={16} />
@@ -135,8 +135,8 @@ export default function MarkdownViewer({
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
               {/* Editor */}
               <div className="space-y-2">
-                <h4 className="text-sm font-medium text-gray-700">Editor</h4>
-                <div className="border border-gray-300 rounded-lg overflow-hidden">
+                <h4 className="text-sm font-medium text-ink">Editor</h4>
+                <div className="border border-rule rounded-[4px] overflow-hidden">
                   <MDEditor
                     value={value}
                     onChange={(v) => setValue(v || "")}
@@ -158,8 +158,8 @@ export default function MarkdownViewer({
 
               {/* Live Preview */}
               <div className="space-y-2">
-                <h4 className="text-sm font-medium text-gray-700">Preview</h4>
-                <div className="border border-gray-300 rounded-lg p-4 bg-gray-50 h-[400px] overflow-auto">
+                <h4 className="text-sm font-medium text-ink">Preview</h4>
+                <div className="border border-rule rounded-[4px] p-4 bg-[#edf2f5] h-[400px] overflow-auto">
                   <div className="prose prose-sm max-w-none">
                     {value ? (
                       <MarkdownPreview
@@ -168,7 +168,7 @@ export default function MarkdownViewer({
                         wrapperElement={{ "data-color-mode": "light" } as React.HTMLAttributes<HTMLDivElement>}
                       />
                     ) : (
-                      <p className="text-gray-500 italic">Preview will appear here...</p>
+                      <p className="text-graphite italic">Preview will appear here...</p>
                     )}
                   </div>
                 </div>
@@ -184,7 +184,7 @@ export default function MarkdownViewer({
                 wrapperElement={{ "data-color-mode": "light" } as React.HTMLAttributes<HTMLDivElement>}
               />
             ) : (
-              <p className="text-gray-500 italic">No content available</p>
+              <p className="text-graphite italic">No content available</p>
             )}
           </div>
         )}

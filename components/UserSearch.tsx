@@ -95,11 +95,11 @@ export default function UserSearch({ currentUserId, onChatSelect, className = ''
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Search users by name..."
-          className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-slate-500 focus:border-transparent text-slate-900 placeholder-slate-400 transition-colors duration-200"
+          className="w-full pl-10 pr-4 py-3 border border-rule rounded-[4px] focus:ring-2 focus:ring-slate-500 focus:border-transparent text-ink placeholder-slate-400 transition-colors duration-200"
           onFocus={() => query.length >= 2 && setShowResults(true)}
         />
         <svg 
-          className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-400" 
+          className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-graphite" 
           fill="none" 
           stroke="currentColor" 
           viewBox="0 0 24 24"
@@ -107,16 +107,16 @@ export default function UserSearch({ currentUserId, onChatSelect, className = ''
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
         </svg>
         {loading && (
-          <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-            <div className="animate-spin rounded-full h-5 w-5 border-2 border-slate-300 border-t-slate-600"></div>
+          <div className="absolute right-3 top-1/2 -translate-y-1/2">
+            <div className="animate-spin rounded-full h-5 w-5 border-2 border-rule border-t-slate-600"></div>
           </div>
         )}
       </div>
 
       {showResults && (
-        <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-gray-200 rounded-xl shadow-lg z-50 max-h-80 overflow-y-auto">
+        <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-rule rounded-[4px] z-50 max-h-80 overflow-y-auto">
           {results.length === 0 && !loading && (
-            <div className="p-4 text-center text-slate-500">
+            <div className="p-4 text-center text-graphite">
               <svg className="w-8 h-8 mx-auto mb-2 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -130,7 +130,7 @@ export default function UserSearch({ currentUserId, onChatSelect, className = ''
             return (
               <div
                 key={user.id}
-                className="flex items-center justify-between p-4 hover:bg-gray-50 transition-colors cursor-pointer border-b border-gray-100 last:border-b-0"
+                className="flex items-center justify-between p-4 hover:bg-[#edf2f5] transition-colors cursor-pointer border-b border-rule last:border-b-0"
                 onClick={() => handleUserSelect(user)}
               >
                 <div className="flex items-center space-x-3 flex-1 min-w-0">
@@ -140,32 +140,24 @@ export default function UserSearch({ currentUserId, onChatSelect, className = ''
                       alt={user.name}
                       width={40}
                       height={40}
-                      className="w-10 h-10 rounded-full border border-gray-200"
+                      className="w-10 h-10 rounded-full border border-rule"
                     />
                   ) : (
-                    <div className="w-10 h-10 bg-gradient-to-br from-slate-500 to-slate-600 text-white rounded-full flex items-center justify-center font-medium">
+                    <div className="w-10 h-10 bg-ink text-white rounded-full flex items-center justify-center font-medium">
                       {user.name?.[0]?.toUpperCase() || '?'}
                     </div>
                   )}
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-semibold text-slate-900 truncate">{user.name}</p>
-                    <p className="text-xs text-slate-500 truncate">{user.email}</p>
-                    <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium mt-1 ${
-                      user.role === 'TEACHER' 
-                        ? 'bg-teal-100 text-teal-800' 
-                        : 'bg-blue-100 text-blue-800'
-                    }`}>
+                    <p className="text-sm font-semibold text-ink truncate">{user.name}</p>
+                    <p className="text-xs text-graphite truncate">{user.email}</p>
+                    <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium mt-1 ${ user.role === 'TEACHER' ? 'border border-ink text-ink' : 'border border-rule text-graphite' }`}>
                       {user.role === 'TEACHER' ? 'Teacher' : 'Student'}
                     </span>
                   </div>
                 </div>
                 
                 <button
-                  className={`ml-4 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                    existingConversation
-                      ? 'bg-green-600 hover:bg-green-700 text-white'
-                      : 'bg-slate-700 hover:bg-slate-800 text-white'
-                  }`}
+                  className={`ml-4 px-4 py-2 rounded-[4px] text-sm font-medium transition-colors ${ existingConversation ? 'border border-rule bg-sheet text-ink hover:border-ink' : 'bg-ink text-white hover:bg-[#01243a]' }`}
                 >
                   {existingConversation ? 'Continue Chat' : 'Start Chat'}
                 </button>

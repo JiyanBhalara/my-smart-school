@@ -331,10 +331,10 @@ export default function GroupSettingsPage() {
 
   if (status === 'loading' || loading) {
     return (
-      <div className="min-h-screen bg-gray-50 pt-20 flex items-center justify-center">
+      <div className="min-h-screen bg-[#edf2f5] pt-20 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-4 border-slate-200 border-t-emerald-600 mx-auto"></div>
-          <span className="mt-4 text-slate-600 font-medium text-lg">Loading settings...</span>
+          <div className="animate-spin rounded-full h-12 w-12 border-4 border-rule border-t-ink mx-auto"></div>
+          <span className="mt-4 text-graphite font-medium text-lg">Loading settings...</span>
         </div>
       </div>
     );
@@ -342,13 +342,13 @@ export default function GroupSettingsPage() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-50 pt-20 flex items-center justify-center px-4">
-        <div className="max-w-xl w-full bg-red-50 border border-red-200 rounded-xl p-6 shadow-sm">
+      <div className="min-h-screen bg-[#edf2f5] pt-20 flex items-center justify-center px-4">
+        <div className="max-w-xl w-full bg-[#fdf3f2] border border-mark rounded-[4px] p-6">
           <div className="flex items-center space-x-3">
-            <svg className="w-6 h-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-6 h-6 text-mark" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
-            <p className="text-red-700 font-medium">Error: {error}</p>
+            <p className="text-mark font-medium">Error: {error}</p>
           </div>
         </div>
       </div>
@@ -358,18 +358,18 @@ export default function GroupSettingsPage() {
   // FIXED: Better access control check
   if (!group) {
     return (
-      <div className="min-h-screen bg-gray-50 pt-20 flex items-center justify-center">
-        <p className="text-gray-600">Group not found</p>
+      <div className="min-h-screen bg-[#edf2f5] pt-20 flex items-center justify-center">
+        <p className="text-graphite">Group not found</p>
       </div>
     );
   }
 
   if (!currentUser) {
     return (
-      <div className="min-h-screen bg-gray-50 pt-20 flex items-center justify-center">
+      <div className="min-h-screen bg-[#edf2f5] pt-20 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-4 border-slate-200 border-t-emerald-600 mx-auto"></div>
-          <span className="mt-4 text-slate-600 font-medium text-lg">Loading user data...</span>
+          <div className="animate-spin rounded-full h-12 w-12 border-4 border-rule border-t-ink mx-auto"></div>
+          <span className="mt-4 text-graphite font-medium text-lg">Loading user data...</span>
         </div>
       </div>
     );
@@ -377,21 +377,21 @@ export default function GroupSettingsPage() {
 
   if (!isAdmin) {
     return (
-      <div className="min-h-screen bg-gray-50 pt-20 flex items-center justify-center px-4">
-        <div className="max-w-xl w-full bg-yellow-50 border border-yellow-200 rounded-xl p-6 shadow-sm">
+      <div className="min-h-screen bg-[#edf2f5] pt-20 flex items-center justify-center px-4">
+        <div className="max-w-xl w-full bg-[#edf2f5] border border-mark rounded-[4px] p-6">
           <div className="flex items-center space-x-3">
-            <svg className="w-6 h-6 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-6 h-6 text-mark" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
             </svg>
             <div>
-              <p className="text-yellow-700 font-medium">Access Denied</p>
-              <p className="text-yellow-600 text-sm">Only group administrators can access these settings.</p>
+              <p className="text-mark font-medium">Access Denied</p>
+              <p className="text-mark text-sm">Only group administrators can access these settings.</p>
             </div>
           </div>
           <div className="mt-4">
             <button
               onClick={() => router.push(`/groups/${groupId}`)}
-              className="cursor-pointer px-4 py-2 bg-yellow-600 text-white rounded-lg font-medium hover:bg-yellow-700 transition-colors"
+              className="cursor-pointer px-4 py-2 bg-yellow-600 text-white rounded-[4px] font-medium hover:bg-yellow-700 transition-colors"
             >
               Back to Group Chat
             </button>
@@ -402,46 +402,46 @@ export default function GroupSettingsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 pt-20">
+    <div className="min-h-screen bg-[#edf2f5] pt-20">
       <div className="max-w-4xl mx-auto px-4 py-8">
         {/* Header */}
         <div className="mb-8">
           <div className="flex items-center space-x-4 mb-4">
             <button
               onClick={() => router.push(`/groups/${groupId}`)}
-              className="cursor-pointer p-2 hover:bg-gray-200 rounded-lg transition-colors"
+              className="cursor-pointer p-2 hover:bg-[#edf2f5] rounded-[4px] transition-colors"
             >
-              <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-5 h-5 text-graphite" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
               </svg>
             </button>
             <h1 className="text-3xl font-bold text-navy">Group Settings</h1>
           </div>
-          <p className="text-gray-600">Manage your group settings and members</p>
+          <p className="text-graphite">Manage your group settings and members</p>
         </div>
 
         <div className="space-y-8">
           {/* Group Information */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-            <h2 className="text-xl font-semibold text-gray-900 mb-6">Group Information</h2>
+          <div className="bg-white rounded-[4px] border border-rule p-6">
+            <h2 className="text-xl font-semibold text-ink mb-6">Group Information</h2>
             
             <form onSubmit={handleUpdateGroup} className="space-y-6">
               <div>
-                <label htmlFor="groupName" className="block text-sm font-medium text-gray-700 mb-2">
-                  Group Name <span className="text-red-500">*</span>
+                <label htmlFor="groupName" className="block text-sm font-medium text-ink mb-2">
+                  Group Name <span className="text-mark">*</span>
                 </label>
                 <input
                   type="text"
                   id="groupName"
                   value={groupName}
                   onChange={(e) => setGroupName(e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-colors"
+                  className="w-full px-4 py-3 border border-rule rounded-[4px] focus:ring-2 focus:ring-ink focus:border-transparent transition-colors"
                   maxLength={100}
                 />
               </div>
 
               <div>
-                <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="description" className="block text-sm font-medium text-ink mb-2">
                   Description
                 </label>
                 <textarea
@@ -449,7 +449,7 @@ export default function GroupSettingsPage() {
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   rows={4}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-colors resize-none"
+                  className="w-full px-4 py-3 border border-rule rounded-[4px] focus:ring-2 focus:ring-ink focus:border-transparent transition-colors resize-none"
                   maxLength={500}
                 />
               </div>
@@ -458,7 +458,7 @@ export default function GroupSettingsPage() {
                 <button
                   type="submit"
                   disabled={saving || !groupName.trim()}
-                  className="cursor-pointer px-6 py-3 bg-emerald-600 text-white rounded-lg font-medium hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center space-x-2"
+                  className="cursor-pointer px-6 py-3 bg-ink text-white rounded-[4px] font-medium hover:bg-ink disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center space-x-2"
                 >
                   {saving ? (
                     <>
@@ -479,12 +479,12 @@ export default function GroupSettingsPage() {
           </div>
 
           {/* Members Management */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+          <div className="bg-white rounded-[4px] border border-rule p-6">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-semibold text-gray-900">Members ({group.members.length})</h2>
+              <h2 className="text-xl font-semibold text-ink">Members ({group.members.length})</h2>
               <button
                 onClick={() => setShowAddMembers(!showAddMembers)}
-                className="cursor-pointer px-4 py-2 bg-emerald-600 text-white rounded-lg font-medium hover:bg-emerald-700 transition-colors flex items-center space-x-2"
+                className="cursor-pointer px-4 py-2 bg-ink text-white rounded-[4px] font-medium hover:bg-ink transition-colors flex items-center space-x-2"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
@@ -495,31 +495,31 @@ export default function GroupSettingsPage() {
 
             {/* Add Members Section */}
             {showAddMembers && (
-              <div className="mb-6 p-4 bg-gray-50 rounded-lg">
+              <div className="mb-6 p-4 bg-[#edf2f5] rounded-[4px]">
                 <div className="mb-4">
                   <input
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder="Search users to add..."
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-rule rounded-[4px] focus:ring-2 focus:ring-ink focus:border-transparent"
                   />
                 </div>
 
                 {searchQuery && (
-                  <div className="max-h-48 overflow-y-auto border border-gray-200 rounded-lg">
+                  <div className="max-h-48 overflow-y-auto border border-rule rounded-[4px]">
                     {searchLoading ? (
                       <div className="p-4 text-center">
-                        <div className="animate-spin rounded-full h-6 w-6 border-2 border-emerald-600 border-t-transparent mx-auto"></div>
+                        <div className="animate-spin rounded-full h-6 w-6 border-2 border-ink border-t-transparent mx-auto"></div>
                       </div>
                     ) : searchResults.length === 0 ? (
-                      <div className="p-4 text-center text-gray-500">
+                      <div className="p-4 text-center text-graphite">
                         No users found
                       </div>
                     ) : (
                       <div className="divide-y divide-gray-200">
                         {searchResults.map((user) => (
-                          <div key={user.id} className="flex items-center justify-between p-3 hover:bg-gray-50">
+                          <div key={user.id} className="flex items-center justify-between p-3 hover:bg-[#edf2f5]">
                             <div className="flex items-center space-x-3">
                               {user.image ? (
                                 <Image
@@ -535,13 +535,13 @@ export default function GroupSettingsPage() {
                                 </div>
                               )}
                               <div>
-                                <p className="text-sm font-semibold text-gray-900">{user.name}</p>
-                                <p className="text-xs text-gray-500">{user.email}</p>
+                                <p className="text-sm font-semibold text-ink">{user.name}</p>
+                                <p className="text-xs text-graphite">{user.email}</p>
                               </div>
                             </div>
                             <button
                               onClick={() => handleAddMember(user.id)}
-                              className="cursor-pointer px-3 py-1 bg-emerald-600 text-white text-sm rounded font-medium hover:bg-emerald-700 transition-colors"
+                              className="cursor-pointer px-3 py-1 bg-ink text-white text-sm rounded font-medium hover:bg-ink transition-colors"
                             >
                               Add
                             </button>
@@ -557,7 +557,7 @@ export default function GroupSettingsPage() {
             {/* Members List */}
             <div className="space-y-3">
               {group.members.map((member) => (
-                <div key={member.user.id} className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50">
+                <div key={member.user.id} className="flex items-center justify-between p-4 border border-rule rounded-[4px] hover:bg-[#edf2f5]">
                   <div className="flex items-center space-x-4">
                     {member.user.image ? (
                       <Image
@@ -565,29 +565,25 @@ export default function GroupSettingsPage() {
                         alt={member.user.name || 'User'}
                         width={48}
                         height={48}
-                        className="w-12 h-12 rounded-full border border-gray-200"
+                        className="w-12 h-12 rounded-full border border-rule"
                       />
                     ) : (
-                      <div className="w-12 h-12 bg-gradient-to-br from-gray-500 to-gray-600 text-white rounded-full flex items-center justify-center font-medium">
+                      <div className="w-12 h-12 bg-ink text-white rounded-full flex items-center justify-center font-medium">
                         {member.user.name?.[0]?.toUpperCase() || '?'}
                       </div>
                     )}
                     <div>
-                      <p className="font-semibold text-gray-900">
+                      <p className="font-semibold text-ink">
                         {member.user.name || 'Unnamed User'}
                         {member.user.id === currentUser?.id && ' (You)'}
                         {member.user.id === group.createdBy.id && ' (Creator)'}
                       </p>
-                      <p className="text-sm text-gray-500">{member.user.email}</p>
+                      <p className="text-sm text-graphite">{member.user.email}</p>
                       <div className="flex items-center space-x-2 mt-1">
-                        <span className={`text-xs px-2 py-0.5 rounded ${
-                          member.role === 'ADMIN' ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-600'
-                        }`}>
+                        <span className={`text-xs px-2 py-0.5 rounded ${ member.role === 'ADMIN' ? 'bg-[#edf2f5] text-ink' : 'bg-[#edf2f5] text-graphite' }`}>
                           {member.role}
                         </span>
-                        <span className={`text-xs px-2 py-0.5 rounded ${
-                          member.user.role === 'TEACHER' ? 'bg-teal-100 text-teal-800' : 'bg-purple-100 text-purple-800'
-                        }`}>
+                        <span className={`text-xs px-2 py-0.5 rounded ${ member.user.role === 'TEACHER' ? 'border border-ink text-ink' : 'border border-rule text-graphite' }`}>
                           {member.user.role}
                         </span>
                       </div>
@@ -601,7 +597,7 @@ export default function GroupSettingsPage() {
                       <select
                         value={member.role}
                         onChange={(e) => handleChangeRole(member.user.id, e.target.value as 'ADMIN' | 'MEMBER')}
-                        className="cursor-pointer text-sm border border-gray-300 rounded px-2 py-1 focus:ring-2 focus:ring-emerald-500"
+                        className="cursor-pointer text-sm border border-rule rounded px-2 py-1 focus:ring-2 focus:ring-ink"
                       >
                         <option value="MEMBER">Member</option>
                         <option value="ADMIN">Admin</option>
@@ -610,7 +606,7 @@ export default function GroupSettingsPage() {
                       {/* Remove Button */}
                       <button
                         onClick={() => handleRemoveMember(member.user.id)}
-                        className="cursor-pointer p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                        className="cursor-pointer p-2 text-mark hover:bg-[#fdf3f2] rounded-[4px] transition-colors"
                         title="Remove member"
                       >
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -625,19 +621,19 @@ export default function GroupSettingsPage() {
           </div>
 
           {/* Danger Zone */}
-          <div className="bg-white rounded-xl shadow-sm border border-red-200 p-6">
-            <h2 className="text-xl font-semibold text-red-600 mb-6">Danger Zone</h2>
+          <div className="bg-white rounded-[4px] border border-mark p-6">
+            <h2 className="text-xl font-semibold text-mark mb-6">Danger Zone</h2>
             
             <div className="space-y-4">
               {/* Clear Messages */}
-              <div className="flex items-center justify-between p-4 border border-red-200 rounded-lg">
+              <div className="flex items-center justify-between p-4 border border-mark rounded-[4px]">
                 <div>
-                  <h3 className="font-medium text-gray-900">Clear All Messages</h3>
-                  <p className="text-sm text-gray-500">Permanently delete all messages in this group</p>
+                  <h3 className="font-medium text-ink">Clear All Messages</h3>
+                  <p className="text-sm text-graphite">Permanently delete all messages in this group</p>
                 </div>
                 <button
                   onClick={handleClearMessages}
-                  className="cursor-pointer px-4 py-2 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 transition-colors"
+                  className="cursor-pointer px-4 py-2 bg-mark text-white rounded-[4px] font-medium hover:bg-mark transition-colors"
                 >
                   Clear Messages
                 </button>
@@ -645,14 +641,14 @@ export default function GroupSettingsPage() {
 
               {/* Delete Group */}
               {isCreator && (
-                <div className="flex items-center justify-between p-4 border border-red-200 rounded-lg">
+                <div className="flex items-center justify-between p-4 border border-mark rounded-[4px]">
                   <div>
-                    <h3 className="font-medium text-gray-900">Delete Group</h3>
-                    <p className="text-sm text-gray-500">Permanently delete this group and all its data</p>
+                    <h3 className="font-medium text-ink">Delete Group</h3>
+                    <p className="text-sm text-graphite">Permanently delete this group and all its data</p>
                   </div>
                   <button
                     onClick={() => setShowDeleteConfirm(true)}
-                    className="cursor-pointer px-4 py-2 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 transition-colors"
+                    className="cursor-pointer px-4 py-2 bg-mark text-white rounded-[4px] font-medium hover:bg-mark transition-colors"
                   >
                     Delete Group
                   </button>
@@ -665,15 +661,15 @@ export default function GroupSettingsPage() {
         {/* Delete Confirmation Modal */}
         {showDeleteConfirm && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 px-4">
-            <div className="bg-white rounded-xl p-6 max-w-md w-full">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Delete Group</h3>
-              <p className="text-gray-600 mb-6">
+            <div className="bg-white rounded-[4px] p-6 max-w-md w-full">
+              <h3 className="text-lg font-semibold text-ink mb-4">Delete Group</h3>
+              <p className="text-graphite mb-6">
                 Are you sure you want to delete this group? This action cannot be undone and all messages will be permanently lost.
               </p>
               <div className="flex space-x-4">
                 <button
                   onClick={() => setShowDeleteConfirm(false)}
-                  className="cursor-pointer flex-1 px-4 py-2 text-gray-700 bg-gray-200 rounded-lg font-medium hover:bg-gray-300 transition-colors"
+                  className="cursor-pointer flex-1 px-4 py-2 text-ink bg-[#edf2f5] rounded-[4px] font-medium hover:bg-gray-300 transition-colors"
                 >
                   Cancel
                 </button>
@@ -682,7 +678,7 @@ export default function GroupSettingsPage() {
                     handleDeleteGroup();
                     setShowDeleteConfirm(false);
                   }}
-                  className="cursor-pointer flex-1 px-4 py-2 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 transition-colors"
+                  className="cursor-pointer flex-1 px-4 py-2 bg-mark text-white rounded-[4px] font-medium hover:bg-mark transition-colors"
                 >
                   Delete
                 </button>

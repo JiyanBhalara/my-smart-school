@@ -32,7 +32,7 @@ export default function SupabaseImage({
   if (error || !src) {
     return (
       <div 
-        className={`bg-gray-100 border-2 border-dashed border-gray-300 rounded flex items-center justify-center ${className}`}
+        className={`bg-gray-100 border-2 border-dashed border-rule rounded flex items-center justify-center ${className}`}
         style={{ width: width || '100%', height: height || 200 }}
       >
         <div className="text-gray-500 text-center p-4">
@@ -58,7 +58,7 @@ export default function SupabaseImage({
           className={`absolute inset-0 bg-gray-200 animate-pulse rounded flex items-center justify-center z-10 ${className}`}
           style={{ width: width || '100%', height: height || 'auto' }}
         >
-          <div className="w-6 h-6 border-2 border-gray-400 border-t-transparent rounded-full animate-spin" />
+          <div className="w-6 h-6 border-2 border-rule border-t-transparent rounded-full animate-spin" />
         </div>
       )}
       

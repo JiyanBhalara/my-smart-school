@@ -33,17 +33,17 @@ export default async function AllVideosPage({ params }: Props) {
   const isAuthor = isTeacher && session.user?.id === lesson.authorId;
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-gray-50 to-white">
+    <main className="min-h-screen bg-sheet">
       {/* Header */}
-      <div className="bg-gradient-to-r from-purple-600 via-purple-700 to-purple-800 text-white">
+      <div className="bg-ink text-white">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           {/* Breadcrumb */}
           <nav className="mb-8">
             <Link
               href={`/lessons/${lesson.id}`}
-              className="cursor-pointer text-white/80 hover:text-white transition-colors duration-200 text-sm font-medium flex items-center gap-2 group"
+              className="cursor-pointer text-graphite hover:text-white transition-colors duration-200 text-sm font-medium flex items-center gap-2 group"
             >
-              <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform duration-200" />
+              <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-colors duration-200" />
               Back to Lesson
             </Link>
           </nav>
@@ -52,8 +52,8 @@ export default async function AllVideosPage({ params }: Props) {
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
             <div>
               <h1 className="text-3xl lg:text-4xl font-bold mb-2">All Videos</h1>
-              <p className="text-xl text-purple-100 mb-4">{lesson.title}</p>
-              <div className="flex items-center gap-4 text-purple-200">
+              <p className="text-xl text-ink mb-4">{lesson.title}</p>
+              <div className="flex items-center gap-4 text-ink">
                 <div className="flex items-center gap-2">
                   <Video size={20} />
                   <span>{lesson.videos.length} video{lesson.videos.length === 1 ? '' : 's'}</span>
@@ -81,11 +81,11 @@ export default async function AllVideosPage({ params }: Props) {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         {lesson.videos.length === 0 ? (
           <div className="text-center py-16">
-            <div className="w-24 h-24 mx-auto mb-6 bg-gradient-to-br from-purple-100 to-purple-200 rounded-2xl flex items-center justify-center">
-              <Video size={36} className="text-purple-400" />
+            <div className="w-24 h-24 mx-auto mb-6 bg-sheet rounded-[4px] flex items-center justify-center">
+              <Video size={36} className="text-ink" />
             </div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-3">No Videos Yet</h2>
-            <p className="text-gray-600 mb-8 max-w-lg mx-auto">
+            <h2 className="text-2xl font-bold text-ink mb-3">No Videos Yet</h2>
+            <p className="text-graphite mb-8 max-w-lg mx-auto">
               This lesson doesn&apos;t have any videos uploaded yet.
               {isAuthor && " Upload the first video to get started!"}
             </p>
@@ -99,7 +99,7 @@ export default async function AllVideosPage({ params }: Props) {
             {lesson.videos.map((video, index) => (
               <div key={video.id} className="relative">
                 {/* Video Number Badge */}
-                <div className="absolute -top-4 -left-4 z-10 w-8 h-8 bg-purple-600 text-white rounded-full flex items-center justify-center text-sm font-bold shadow-lg">
+                <div className="absolute -top-4 -left-4 z-10 w-8 h-8 bg-ink text-white rounded-full flex items-center justify-center text-sm font-bold">
                   {index + 1}
                 </div>
                 
@@ -127,7 +127,7 @@ export default async function AllVideosPage({ params }: Props) {
         <div className="text-center mt-16">
           <Link
             href={`/lessons/${lesson.id}`}
-            className="cursor-pointer inline-flex items-center gap-2 px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-xl transition-colors"
+            className="cursor-pointer inline-flex items-center gap-2 px-6 py-3 bg-[#edf2f5] hover:bg-[#edf2f5] text-ink font-medium rounded-[4px] transition-colors"
           >
             <ArrowLeft size={18} />
             Back to Lesson Overview

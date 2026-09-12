@@ -52,7 +52,7 @@ export default function LessonActionsClient({
         <div className="space-y-3">
           <Link
             href={`/teacher/lessons/${lessonId}/edit`}
-            className="cursor-pointer w-full inline-flex items-center justify-center gap-3 px-4 py-3 bg-white/20 text-white font-semibold rounded-[4px] hover:bg-white/30 transition-colors border border-white/30"
+            className="cursor-pointer w-full inline-flex items-center justify-center gap-3 px-4 py-3 bg-ink/20 text-white font-semibold rounded-[4px] hover:bg-ink/30 transition-colors border border-ink"
           >
             <Edit size={18} />
             <span>Edit Lesson</span>

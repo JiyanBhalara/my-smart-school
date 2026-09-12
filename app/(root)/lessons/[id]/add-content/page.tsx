@@ -220,10 +220,10 @@ export default function AddContentPage() {
 
   if (status === "loading" || loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-[#edf2f5] flex items-center justify-center">
         <div className="flex items-center gap-3">
-          <Loader2 className="h-6 w-6 animate-spin text-indigo-600" />
-          <span className="text-gray-600">Loading...</span>
+          <Loader2 className="h-6 w-6 animate-spin text-ink" />
+          <span className="text-graphite">Loading...</span>
         </div>
       </div>
     );
@@ -231,14 +231,14 @@ export default function AddContentPage() {
 
   if (error && !lesson) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-[#edf2f5] flex items-center justify-center">
         <div className="text-center">
-          <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Error</h2>
-          <p className="text-gray-600 mb-4">{error}</p>
+          <AlertCircle className="h-12 w-12 text-mark mx-auto mb-4" />
+          <h2 className="text-2xl font-bold text-ink mb-2">Error</h2>
+          <p className="text-graphite mb-4">{error}</p>
           <Link
             href="/lessons"
-            className="cursor-pointer inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700"
+            className="cursor-pointer inline-flex items-center gap-2 px-4 py-2 bg-ink text-white rounded-[4px] hover:bg-ink"
           >
             <ArrowLeft className="h-4 w-4" />
             Back to Lessons
@@ -249,44 +249,44 @@ export default function AddContentPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 pt-20">
+    <div className="min-h-screen bg-[#edf2f5] pt-20">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="mb-8">
           <Link
             href={`/lessons/${lessonId}`}
-            className="cursor-pointer inline-flex items-center gap-2 text-indigo-600 hover:text-indigo-700 font-medium mb-4"
+            className="cursor-pointer inline-flex items-center gap-2 text-ink hover:text-ink font-medium mb-4"
           >
             <ArrowLeft className="h-4 w-4" />
             Back to Lesson
           </Link>
-          <h1 className="text-3xl font-bold text-gray-900">Add Content</h1>
-          <p className="text-gray-600 mt-2">
+          <h1 className="text-3xl font-bold text-ink">Add Content</h1>
+          <p className="text-graphite mt-2">
             Add new content to &quot;{lesson?.title}&quot;
           </p>
         </div>
 
         {/* Error Alert */}
         {error && (
-          <div className="mb-6 bg-red-50 border border-red-200 rounded-lg p-4">
+          <div className="mb-6 bg-[#fdf3f2] border border-mark rounded-[4px] p-4">
             <div className="flex items-center gap-3">
-              <AlertCircle className="h-5 w-5 text-red-600 flex-shrink-0" />
-              <p className="text-red-700">{error}</p>
+              <AlertCircle className="h-5 w-5 text-mark flex-shrink-0" />
+              <p className="text-mark">{error}</p>
             </div>
           </div>
         )}
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+        <form onSubmit={handleSubmit} className="bg-white rounded-[4px] border border-rule overflow-hidden">
           {/* Header */}
-          <div className="px-8 py-6 border-b border-gray-200 bg-gradient-to-r from-gray-50 to-white">
-            <h2 className="text-xl font-semibold text-gray-900">Content Details</h2>
+          <div className="px-8 py-6 border-b border-rule bg-sheet">
+            <h2 className="text-xl font-semibold text-ink">Content Details</h2>
           </div>
 
           <div className="p-8 space-y-8">
             {/* Title */}
             <div>
-              <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="title" className="block text-sm font-medium text-ink mb-2">
                 Content Title *
               </label>
               <input
@@ -295,39 +295,35 @@ export default function AddContentPage() {
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 required
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
+                className="w-full px-4 py-3 border border-rule rounded-[4px] focus:ring-2 focus:ring-ink focus:border-ink transition-colors"
                 placeholder="Enter content title"
               />
             </div>
 
             {/* Content Type Selection */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-4">
+              <label className="block text-sm font-medium text-ink mb-4">
                 Content Type
               </label>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* Markdown Option */}
                 <div
-                  className={`relative border-2 rounded-lg p-4 cursor-pointer transition-all ${
-                    contentType === "MARKDOWN" && !uploadedFile
-                      ? "border-indigo-500 bg-indigo-50"
-                      : "border-gray-200 hover:border-gray-300"
-                  }`}
+                  className={`relative border-2 rounded-[4px] p-4 cursor-pointer transition-all ${ contentType === "MARKDOWN" && !uploadedFile ? "border-ink bg-[#edf2f5]" : "border-rule hover:border-rule" }`}
                   onClick={() => {
                     setContentType("MARKDOWN");
                     clearUploadedFile();
                   }}
                 >
                   <div className="flex items-center gap-3">
-                    <FileText className="h-6 w-6 text-indigo-600" />
+                    <FileText className="h-6 w-6 text-ink" />
                     <div>
-                      <h3 className="font-medium text-gray-900">Text Content</h3>
-                      <p className="text-sm text-gray-500">Write content with markdown support</p>
+                      <h3 className="font-medium text-ink">Text Content</h3>
+                      <p className="text-sm text-graphite">Write content with markdown support</p>
                     </div>
                   </div>
                   {contentType === "MARKDOWN" && !uploadedFile && (
                     <div className="absolute top-2 right-2">
-                      <div className="w-4 h-4 bg-indigo-600 rounded-full flex items-center justify-center">
+                      <div className="w-4 h-4 bg-ink rounded-full flex items-center justify-center">
                         <div className="w-2 h-2 bg-white rounded-full"></div>
                       </div>
                     </div>
@@ -336,23 +332,19 @@ export default function AddContentPage() {
 
                 {/* File Upload Option */}
                 <div
-                  className={`relative border-2 rounded-lg p-4 cursor-pointer transition-all ${
-                    uploadedFile
-                      ? "border-indigo-500 bg-indigo-50"
-                      : "border-gray-200 hover:border-gray-300"
-                  }`}
+                  className={`relative border-2 rounded-[4px] p-4 cursor-pointer transition-all ${ uploadedFile ? "border-ink bg-[#edf2f5]" : "border-rule hover:border-rule" }`}
                   onClick={() => fileInputRef.current?.click()}
                 >
                   <div className="flex items-center gap-3">
-                    <Upload className="h-6 w-6 text-indigo-600" />
+                    <Upload className="h-6 w-6 text-ink" />
                     <div>
-                      <h3 className="font-medium text-gray-900">File Upload</h3>
-                      <p className="text-sm text-gray-500">Upload PDF, DOC, PPT, or images</p>
+                      <h3 className="font-medium text-ink">File Upload</h3>
+                      <p className="text-sm text-graphite">Upload PDF, DOC, PPT, or images</p>
                     </div>
                   </div>
                   {uploadedFile && (
                     <div className="absolute top-2 right-2">
-                      <div className="w-4 h-4 bg-indigo-600 rounded-full flex items-center justify-center">
+                      <div className="w-4 h-4 bg-ink rounded-full flex items-center justify-center">
                         <div className="w-2 h-2 bg-white rounded-full"></div>
                       </div>
                     </div>
@@ -372,13 +364,13 @@ export default function AddContentPage() {
 
             {/* Uploaded File Display */}
             {uploadedFile && (
-              <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+              <div className="bg-[#edf2f5] rounded-[4px] p-4 border border-rule">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     {getFileIcon(uploadedFile.type)}
                     <div>
-                      <h4 className="font-medium text-gray-900">{uploadedFile.name}</h4>
-                      <p className="text-sm text-gray-500">
+                      <h4 className="font-medium text-ink">{uploadedFile.name}</h4>
+                      <p className="text-sm text-graphite">
                         {formatFileSize(uploadedFile.size)} • {uploadedFile.type}
                       </p>
                     </div>
@@ -386,9 +378,9 @@ export default function AddContentPage() {
                   <button
                     type="button"
                     onClick={clearUploadedFile}
-                    className="cursor-pointer p-1 hover:bg-gray-200 rounded-lg transition-colors"
+                    className="cursor-pointer p-1 hover:bg-[#edf2f5] rounded-[4px] transition-colors"
                   >
-                    <X className="h-4 w-4 text-gray-500" />
+                    <X className="h-4 w-4 text-graphite" />
                   </button>
                 </div>
               </div>
@@ -396,10 +388,10 @@ export default function AddContentPage() {
 
             {/* Upload Progress */}
             {uploading && (
-              <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
+              <div className="bg-[#edf2f5] rounded-[4px] p-4 border border-ink">
                 <div className="flex items-center gap-3">
-                  <Loader2 className="h-5 w-5 animate-spin text-blue-600" />
-                  <span className="text-blue-700">Uploading file...</span>
+                  <Loader2 className="h-5 w-5 animate-spin text-ink" />
+                  <span className="text-ink">Uploading file...</span>
                 </div>
               </div>
             )}
@@ -407,12 +399,12 @@ export default function AddContentPage() {
             {/* Markdown Editor */}
             {contentType === "MARKDOWN" && !uploadedFile && (
               <div>
-                <label htmlFor="markdown" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="markdown" className="block text-sm font-medium text-ink mb-2">
                   Content *
                 </label>
-                <div className="border border-gray-300 rounded-lg overflow-hidden">
-                  <div className="bg-gray-50 px-4 py-2 border-b border-gray-200">
-                    <p className="text-xs text-gray-600">
+                <div className="border border-rule rounded-[4px] overflow-hidden">
+                  <div className="bg-[#edf2f5] px-4 py-2 border-b border-rule">
+                    <p className="text-xs text-graphite">
                       Supports <strong>**bold**</strong>, <em>*italic*</em>, # headings, - lists, and more
                     </p>
                   </div>
@@ -422,7 +414,7 @@ export default function AddContentPage() {
                     value={markdown}
                     onChange={(e) => setMarkdown(e.target.value)}
                     required={contentType === "MARKDOWN"}
-                    className="w-full px-4 py-3 border-0 focus:ring-2 focus:ring-indigo-500 resize-none"
+                    className="w-full px-4 py-3 border-0 focus:ring-2 focus:ring-ink resize-none"
                     placeholder="Write your content here... You can use markdown formatting"
                     rows={10}
                     style={{ minHeight: "200px" }}
@@ -433,17 +425,17 @@ export default function AddContentPage() {
           </div>
 
           {/* Footer */}
-          <div className="px-8 py-6 bg-gray-50 border-t border-gray-200 flex justify-end gap-4">
+          <div className="px-8 py-6 bg-[#edf2f5] border-t border-rule flex justify-end gap-4">
             <Link
               href={`/lessons/${lessonId}`}
-              className="cursor-pointer px-6 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 font-medium transition-colors"
+              className="cursor-pointer px-6 py-2 text-ink bg-white border border-rule rounded-[4px] hover:bg-[#edf2f5] font-medium transition-colors"
             >
               Cancel
             </Link>
             <button
               type="submit"
               disabled={saving || uploading}
-              className="cursor-pointer inline-flex items-center gap-2 px-6 py-2 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700 disabled:opacity-50 transition-colors"
+              className="cursor-pointer inline-flex items-center gap-2 px-6 py-2 bg-ink text-white font-medium rounded-[4px] hover:bg-ink disabled:opacity-50 transition-colors"
             >
               {saving ? (
                 <>

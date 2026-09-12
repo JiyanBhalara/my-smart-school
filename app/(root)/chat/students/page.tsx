@@ -50,8 +50,8 @@ export default function StudentListPage() {
     if (!hasUnread) return null;
     
     return (
-      <div className="absolute -top-1 -right-1 bg-red-500 rounded-full h-4 w-4 animate-pulse flex items-center justify-center">
-        <div className="bg-red-500 rounded-full h-3 w-3"></div>
+      <div className="absolute -top-1 -right-1 bg-mark rounded-full h-4 w-4 flex items-center justify-center">
+        <div className="bg-mark rounded-full h-3 w-3"></div>
       </div>
     );
   };
@@ -170,11 +170,11 @@ export default function StudentListPage() {
 
   if (status === 'loading' || loading) {
     return (
-      <div className="min-h-screen bg-gray-50 pt-20">
+      <div className="min-h-screen bg-[#edf2f5] pt-20">
         <div className="max-w-6xl mx-auto px-4 py-8">
           <div className="flex items-center justify-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-            <span className="ml-2 text-gray-600">Loading students...</span>
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-ink"></div>
+            <span className="ml-2 text-graphite">Loading students...</span>
           </div>
         </div>
       </div>
@@ -183,10 +183,10 @@ export default function StudentListPage() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-50 pt-20">
+      <div className="min-h-screen bg-[#edf2f5] pt-20">
         <div className="max-w-6xl mx-auto px-4 py-8">
-          <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-            <p className="text-red-600">Error: {error}</p>
+          <div className="bg-[#fdf3f2] border border-mark rounded-[4px] p-4">
+            <p className="text-mark">Error: {error}</p>
           </div>
         </div>
       </div>
@@ -194,15 +194,15 @@ export default function StudentListPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 pt-20">
+    <div className="min-h-screen bg-[#edf2f5] pt-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:py-8">
         {/* Back to Home Button */}
         <div className="mb-6">
           <Link
             href="/"
-            className="cursor-pointer inline-flex items-center gap-2 text-sm sm:text-base text-slate-600 hover:text-slate-900 font-medium px-3 py-2 rounded-lg hover:bg-white/60 transition-all duration-200 group"
+            className="cursor-pointer inline-flex items-center gap-2 text-sm sm:text-base text-graphite hover:text-ink font-medium px-3 py-2 rounded-[4px] hover:bg-white/60 transition-colors group"
           >
-            <Home size={16} className="group-hover:scale-110 transition-transform duration-200" />
+            <Home size={16} className="transition-colors duration-200" />
             <span className="hidden sm:inline">Back to Home</span>
             <span className="sm:hidden">Home</span>
           </Link>
@@ -210,8 +210,8 @@ export default function StudentListPage() {
 
         {/* Header */}
         <div className="mb-6 lg:mb-8">
-          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-2">Student Directory</h1>
-          <p className="text-sm sm:text-base text-gray-600">Connect and chat with your students</p>
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-ink mb-2">Student Directory</h1>
+          <p className="text-sm sm:text-base text-graphite">Connect and chat with your students</p>
         </div>
 
         {/* Search Bar */}
@@ -222,11 +222,11 @@ export default function StudentListPage() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search students by name..."
-              className="w-full pl-10 pr-10 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-900 placeholder-slate-400 transition-colors duration-200 text-sm sm:text-base"
+              className="w-full pl-10 pr-10 py-3 border border-rule rounded-[4px] focus:ring-2 focus:ring-ink focus:border-transparent text-ink placeholder-slate-400 transition-colors duration-200 text-sm sm:text-base"
               onFocus={() => searchQuery.length >= 2 && setShowSearchResults(true)}
             />
             <svg 
-              className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-400" 
+              className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-graphite" 
               fill="none" 
               stroke="currentColor" 
               viewBox="0 0 24 24"
@@ -234,8 +234,8 @@ export default function StudentListPage() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
             {searchLoading && (
-              <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-                <div className="animate-spin rounded-full h-5 w-5 border-2 border-slate-300 border-t-blue-600"></div>
+              <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                <div className="animate-spin rounded-full h-5 w-5 border-2 border-rule border-t-ink"></div>
               </div>
             )}
             {searchQuery && (
@@ -244,7 +244,7 @@ export default function StudentListPage() {
                   setSearchQuery('');
                   setShowSearchResults(false);
                 }}
-                className="cursor-pointer absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                className="cursor-pointer absolute right-3 top-1/2 -translate-y-1/2 text-graphite hover:text-graphite"
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -256,7 +256,7 @@ export default function StudentListPage() {
 
         {/* Results Header */}
         <div className="mb-6">
-          <p className="text-sm sm:text-base text-gray-600">
+          <p className="text-sm sm:text-base text-graphite">
             {showSearchResults 
               ? `Search results for "${searchQuery}" (${displayedStudents.length} found)`
               : `All Students (${displayedStudents.length} total)`
@@ -270,10 +270,10 @@ export default function StudentListPage() {
             <svg className="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
             </svg>
-            <h3 className="text-lg font-medium text-gray-900 mb-2">
+            <h3 className="text-lg font-medium text-ink mb-2">
               {showSearchResults ? 'No matching students found' : 'No students found'}
             </h3>
-            <p className="text-gray-500 text-sm sm:text-base max-w-md mx-auto">
+            <p className="text-graphite text-sm sm:text-base max-w-md mx-auto">
               {showSearchResults 
                 ? 'Try adjusting your search terms or browse all students below.'
                 : 'There are currently no students registered in the system.'
@@ -288,7 +288,7 @@ export default function StudentListPage() {
               return (
                 <div
                   key={student.id}
-                  className="relative bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6 hover:shadow-lg transition-all duration-200 hover:border-blue-200"
+                  className="relative bg-white rounded-[4px] border border-rule p-4 sm:p-6 transition-colors hover:border-ink"
                 >
                   <UnreadBadge userId={student.id} />
                   
@@ -300,26 +300,26 @@ export default function StudentListPage() {
                         alt={student.name || 'Student'}
                         width={48}
                         height={48}
-                        className="w-10 h-10 sm:w-12 sm:h-12 rounded-full border-2 border-blue-200 flex-shrink-0"
+                        className="w-10 h-10 sm:w-12 sm:h-12 rounded-full border-2 border-ink flex-shrink-0"
                       />
                     ) : (
-                      <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center flex-shrink-0">
+                      <div className="w-10 h-10 sm:w-12 sm:h-12 bg-sheet rounded-full flex items-center justify-center flex-shrink-0">
                         <svg className="w-5 h-5 sm:w-6 sm:h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
                           <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
                         </svg>
                       </div>
                     )}
                     <div className="ml-3 flex-1 min-w-0">
-                      <h3 className="font-semibold text-gray-900 truncate text-sm sm:text-base">
+                      <h3 className="font-semibold text-ink truncate text-sm sm:text-base">
                         {student.name || 'Unnamed Student'}
                       </h3>
-                      <p className="text-xs sm:text-sm text-gray-500 truncate">{student.email}</p>
+                      <p className="text-xs sm:text-sm text-graphite truncate">{student.email}</p>
                     </div>
                   </div>
 
                   {/* Role Badge */}
                   <div className="mb-4">
-                    <span className="inline-flex items-center px-2 sm:px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                    <span className="inline-flex items-center px-2 sm:px-3 py-1 rounded-full text-xs font-medium bg-[#edf2f5] text-ink">
                       <svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 24 24">
                         <path d="M12 14l9-5-9-5-9 5 9 5z" />
                         <path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
@@ -331,11 +331,7 @@ export default function StudentListPage() {
                   {/* Chat Button */}
                   <button
                     onClick={() => handleStartChat(student.id)}
-                    className={`cursor-pointer w-full flex items-center justify-center space-x-2 px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg font-medium transition-all duration-200 text-sm sm:text-base ${
-                      existingConversation
-                        ? 'bg-green-600 hover:bg-green-700 text-white shadow-sm hover:shadow-md'
-                        : 'bg-purple-600 hover:bg-purple-700 text-white shadow-sm hover:shadow-md'
-                    }`}
+                    className={`cursor-pointer w-full flex items-center justify-center space-x-2 px-3 sm:px-4 py-2.5 sm:py-3 rounded-[4px] font-medium transition-colors text-sm sm:text-base ${ existingConversation ? 'border border-rule bg-sheet text-ink hover:border-ink' : 'bg-ink text-white hover:bg-[#01243a]' }`}
                   >
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path

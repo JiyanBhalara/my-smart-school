@@ -287,9 +287,7 @@ export default function QuizTaker({ lessonId, quizId, quiz }: QuizTakerProps) {
                 <div className="margin flex items-baseline justify-end gap-2 pt-[2px]">
                   <span className="text-[11px] text-graphite tabular">{index + 1}</span>
                   <span
-                    className={`text-[15px] font-semibold ${
-                      result.isCorrect ? "text-ink" : "text-mark"
-                    }`}
+                    className={`text-[15px] font-semibold ${ result.isCorrect ? "text-ink" : "text-mark" }`}
                     aria-hidden
                   >
                     {result.isCorrect ? "✓" : "✗"}
@@ -344,9 +342,7 @@ export default function QuizTaker({ lessonId, quizId, quiz }: QuizTakerProps) {
             </h1>
             {timeLeft !== null && (
               <p
-                className={`text-[15px] tabular ${
-                  timeLeft < 60 ? "font-semibold text-mark" : "text-graphite"
-                }`}
+                className={`text-[15px] tabular ${ timeLeft < 60 ? "font-semibold text-mark" : "text-graphite" }`}
                 aria-live={timeLeft < 60 ? "assertive" : "off"}
               >
                 {formatTime(timeLeft)} left
@@ -410,11 +406,7 @@ export default function QuizTaker({ lessonId, quizId, quiz }: QuizTakerProps) {
                 return (
                   <label
                     key={option.id}
-                    className={`flex cursor-pointer items-baseline gap-3 border-b border-rule py-3 pl-3 transition-colors ${
-                      selected
-                        ? "border-l-2 border-l-ink bg-sheet pl-[10px]"
-                        : "border-l-2 border-l-transparent hover:bg-sheet"
-                    }`}
+                    className={`flex cursor-pointer items-baseline gap-3 border-b border-rule py-3 pl-3 transition-colors ${ selected ? "border-l-2 border-l-ink bg-sheet pl-[10px]" : "border-l-2 border-l-transparent hover:bg-sheet" }`}
                   >
                     <input
                       type="radio"
@@ -492,13 +484,7 @@ export default function QuizTaker({ lessonId, quizId, quiz }: QuizTakerProps) {
                     onClick={() => setCurrentQuestion(index)}
                     aria-current={current ? "true" : undefined}
                     aria-label={`Question ${index + 1}${answered ? ", answered" : ", not answered"}`}
-                    className={`h-8 w-8 rounded-[2px] border text-[13px] tabular transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink ${
-                      current
-                        ? "border-ink bg-ink font-semibold text-white"
-                        : answered
-                          ? "border-ink bg-transparent font-medium text-ink"
-                          : "border-rule bg-transparent text-graphite hover:border-ink"
-                    }`}
+                    className={`h-8 w-8 rounded-[2px] border text-[13px] tabular transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink ${ current ? "border-ink bg-ink font-semibold text-white" : answered ? "border-ink bg-transparent font-medium text-ink" : "border-rule bg-transparent text-graphite hover:border-ink" }`}
                   >
                     {index + 1}
                   </button>

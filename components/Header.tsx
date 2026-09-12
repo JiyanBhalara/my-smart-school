@@ -198,8 +198,8 @@ export default function Header() {
 
                 {/* Chat Dropdown Menu - FIXED positioning and z-index */}
                 {showChatDropdown && (
-                  <div className="absolute top-full left-0 mt-2 w-64 bg-white rounded-xl shadow-2xl border border-gray-100 py-2 z-[60] animate-in slide-in-from-top-5 duration-200">
-                    <div className="px-4 py-3 border-b border-gray-100">
+                  <div className="absolute top-full left-0 mt-2 w-64 bg-white rounded-xl shadow-2xl border border-rule py-2 z-[60] animate-in slide-in-from-top-5 duration-200">
+                    <div className="px-4 py-3 border-b border-rule">
                       <h3 className="text-sm font-semibold text-gray-900">Communication</h3>
                       <p className="text-xs text-gray-500">Stay connected with your peers</p>
                     </div>
@@ -308,8 +308,8 @@ export default function Header() {
 
                 {/* Courses Dropdown Menu - FIXED */}
                 {showCoursesDropdown && (
-                  <div className="absolute top-full left-0 mt-2 w-64 bg-white rounded-xl shadow-2xl border border-gray-100 py-2 z-[60] animate-in slide-in-from-top-5 duration-200">
-                    <div className="px-4 py-3 border-b border-gray-100">
+                  <div className="absolute top-full left-0 mt-2 w-64 bg-white rounded-xl shadow-2xl border border-rule py-2 z-[60] animate-in slide-in-from-top-5 duration-200">
+                    <div className="px-4 py-3 border-b border-rule">
                       <h3 className="text-sm font-semibold text-gray-900">Learning</h3>
                       <p className="text-xs text-gray-500">Explore and manage courses</p>
                     </div>
@@ -394,7 +394,7 @@ export default function Header() {
                         alt={session.user.name || 'User'}
                         width={40}
                         height={40}
-                        className="w-full h-full rounded-full border-2 border-gray-200 object-cover"
+                        className="w-full h-full rounded-full border-2 border-rule object-cover"
                       />
                     ) : (
                       <div className="w-full h-full bg-gradient-to-br from-gray-500 to-gray-600 rounded-full flex items-center justify-center text-white font-semibold text-sm lg:text-base">
@@ -447,7 +447,7 @@ export default function Header() {
 
       {/* Mobile Menu - IMPROVED */}
       {!mounted ? null : isMobileMenuOpen && (
-        <div className="lg:hidden border-t border-gray-200 bg-white animate-in slide-in-from-top duration-300">
+        <div className="lg:hidden border-t border-rule bg-white animate-in slide-in-from-top duration-300">
           <div className="px-4 py-6 space-y-6 max-h-[calc(100vh-4rem)] overflow-y-auto">
             
             {isLoggedIn && (
@@ -585,7 +585,7 @@ export default function Header() {
 
             {/* Mobile Auth Section */}
             {!isLoggedIn ? (
-              <div className="space-y-3 pt-4 border-t border-gray-200">
+              <div className="space-y-3 pt-4 border-t border-rule">
                 <Link
                   href="/login"
                   onClick={() => setIsMobileMenuOpen(false)}
@@ -602,7 +602,7 @@ export default function Header() {
                 </Link>
               </div>
             ) : (
-              <div className="pt-4 border-t border-gray-200">
+              <div className="pt-4 border-t border-rule">
                 <div className="flex items-center gap-3 mb-4 border-y border-rule p-4">
                   {session.user?.image ? (
                     <Image
