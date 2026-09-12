@@ -21,6 +21,7 @@ import {
   toErrorResponse,
   HttpError,
 } from "@/lib/auth-guard";
+import { videoUploadPayloadSchema } from "@/lib/validation";
 
 const MAX_SIZE = 750 * 1024 * 1024; // 750MB
 
@@ -49,20 +50,18 @@ export async function POST(
         const teacher = await requireRole("TEACHER");
         await requireLessonAuthor(lessonId, teacher.id);
 
-        let parsed: { title?: unknown; description?: unknown };
+        let raw: unknown;
         try {
-          parsed = JSON.parse(clientPayload ?? "{}");
+          raw = JSON.parse(clientPayload ?? "{}");
         } catch {
           throw new HttpError(400, "Invalid clientPayload");
         }
 
-        const title = typeof parsed.title === "string" ? parsed.title.trim() : "";
-        const description =
-          typeof parsed.description === "string" ? parsed.description.trim() : "";
-
-        if (!title) {
-          throw new HttpError(400, "Title required.");
+        const payload = videoUploadPayloadSchema.safeParse(raw);
+        if (!payload.success) {
+          throw new HttpError(400, "Invalid video title or description");
         }
+        const { title, description } = payload.data;
 
         const tokenPayload: VideoTokenPayload = {
           lessonId,

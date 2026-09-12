@@ -183,6 +183,16 @@ export const updateVideoSchema = z.object({
   description: longText.nullish(),
 });
 
+/**
+ * The `clientPayload` the browser sends to the Blob token route. It is a JSON
+ * string nested inside handleUpload's own body, so it is parsed separately --
+ * but it is still untrusted input that ends up in the database.
+ */
+export const videoUploadPayloadSchema = z.object({
+  title: z.string().trim().min(1).max(300),
+  description: z.string().trim().max(20_000).optional().default(""),
+});
+
 /* ------------------------------------------------------------------ *
  * quizzes
  * ------------------------------------------------------------------ */
