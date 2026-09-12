@@ -245,10 +245,8 @@ export async function POST(request: NextRequest) {
       errorMessage = "Upload timed out. Please try with a smaller file.";
     }
     
-    return NextResponse.json({ 
-      error: errorMessage,
-      details: (error as { message?: string }).message 
-    }, { status: 500 });
+    // Full detail stays in the server log; the client gets the mapped message only.
+    return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
 }
 

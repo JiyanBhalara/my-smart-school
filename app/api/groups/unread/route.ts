@@ -36,24 +36,31 @@ export async function GET() {
       }
     });
 
+    // One aggregate query for every group at once, instead of a count() per
+    // membership. Each group has its own lastReadAt cutoff, which groupBy
+    // cannot express, so the cutoff is joined in from group_members and the
+    // counting happens in the database.
+    const counts = await prisma.$queryRaw<
+      { groupId: string; unreadCount: number }[]
+    >`
+      SELECT gm."groupId"       AS "groupId",
+             COUNT(*)::int      AS "unreadCount"
+      FROM "group_messages" gm
+      JOIN "group_members" mem
+        ON mem."groupId" = gm."groupId"
+       AND mem."userId"  = ${user.id}
+      WHERE gm."senderId" <> ${user.id}
+        AND gm."createdAt" > COALESCE(mem."lastReadAt", TIMESTAMP 'epoch')
+      GROUP BY gm."groupId"
+    `;
+
+    const countByGroup = new Map(counts.map((r) => [r.groupId, r.unreadCount]));
+
     let totalUnread = 0;
     const groupsWithUnread = [];
 
     for (const membership of userGroups) {
-      const lastReadAt = membership.lastReadAt || new Date(0); // If never read, use epoch
-      
-      // Count messages in this group that came after user's last read
-      const unreadCount = await prisma.groupMessage.count({
-        where: {
-          groupId: membership.groupId,
-          createdAt: {
-            gt: lastReadAt
-          },
-          senderId: {
-            not: user.id // Don't count own messages as unread
-          }
-        }
-      });
+      const unreadCount = countByGroup.get(membership.groupId) ?? 0;
 
       if (unreadCount > 0) {
         totalUnread += unreadCount;

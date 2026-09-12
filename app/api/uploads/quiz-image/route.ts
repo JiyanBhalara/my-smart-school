@@ -162,8 +162,7 @@ export async function POST(req: NextRequest) {
       console.error("Upload error after retries:", uploadError);
       return NextResponse.json(
         {
-          error: `Upload failed after retries: ${uploadError.message}`, // Fixed: removed escaped backticks
-          details: uploadError,
+          error: "Upload failed. Please try again.",
         },
         { status: 500 }
       );
@@ -196,8 +195,7 @@ export async function POST(req: NextRequest) {
       console.error("Signed URL error:", signedUrlError);
       return NextResponse.json(
         {
-          error: `Failed to create signed URL: ${signedUrlError.message}`, // Fixed: removed escaped backticks
-          details: signedUrlError,
+          error: "Could not prepare the uploaded image. Please try again.",
         },
         { status: 500 }
       );
@@ -235,7 +233,8 @@ export async function POST(req: NextRequest) {
     }
     
     return NextResponse.json(
-      { error: errorMessage, details: (e as { message?: string }).message },
+      // Full detail stays in the server log; the client gets the mapped message only.
+      { error: errorMessage },
       { status: 500 }
     );
   }
