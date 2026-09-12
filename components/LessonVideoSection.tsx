@@ -57,72 +57,45 @@ export default function LessonVideoSection({ lessonId, isAuthor }: LessonVideoSe
   }
 
   return (
-    <section className="bg-white rounded-[4px] border border-rule overflow-hidden">
-      {/* Section Header */}
-      <div className="bg-sheet border-b border-rule px-6 sm:px-8 py-6">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div className="flex items-center gap-4">
-            <div className="p-3 bg-[#edf2f5] rounded-[4px] border border-ink">
-              <Video size={28} className="text-ink" />
-            </div>
-            <div>
-              <h2 className="text-2xl lg:text-3xl font-bold text-ink">Lesson Videos</h2>
-              <p className="text-graphite mt-1">
-                {videos.length === 0
-                  ? "No videos available yet"
-                  : `${videos.length} video${videos.length === 1 ? "" : "s"} available`}
-              </p>
-            </div>
-          </div>
-
-          {/* Action Buttons - Only for authors */}
-          {isAuthor && (
-            <div className="flex flex-col sm:flex-row gap-3">
-              <button
-                onClick={() => setShowUploadModal(true)}
-                className="cursor-pointer inline-flex items-center justify-center gap-2 px-4 py-2 bg-ink text-white font-semibold rounded-[4px] hover:bg-ink transition-colors"
-              >
-                <Plus size={16} />
-                <span className="hidden sm:inline">Upload Video</span>
-                <span className="sm:hidden">Upload</span>
-              </button>
-              
-              {/* Delete All Videos Button - Only show if videos exist */}
-              {videos.length > 0 && (
-                <DeleteAllVideosButton 
-                  lessonId={lessonId} 
-                  videoCount={videos.length}
-                  onDeleted={fetchVideos} // Refresh videos after deletion
-                  variant="compact" // Use compact variant for this context
-                />
-              )}
-            </div>
-          )}
-        </div>
+    <section>
+      <div className="flex flex-wrap items-baseline justify-between gap-3 border-b border-rule pb-3">
+        <h2 className="text-[20px] font-semibold tracking-[-0.01em] text-ink">Videos</h2>
+        <p className="text-[13px] text-graphite tabular">
+          {videos.length === 0
+            ? "None yet"
+            : `${videos.length} ${videos.length === 1 ? "video" : "videos"}`}
+        </p>
       </div>
 
+      {isAuthor && (
+        <div className="flex flex-wrap justify-end gap-3 pt-3">
+          <button
+            onClick={() => setShowUploadModal(true)}
+            className="inline-flex h-8 items-center gap-1.5 rounded-[4px] border border-rule bg-sheet px-3 text-[13px] font-medium text-ink transition-colors hover:border-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
+          >
+            <Plus size={14} />
+            Upload a video
+          </button>
+          {videos.length > 0 && (
+            <DeleteAllVideosButton
+              lessonId={lessonId}
+              videoCount={videos.length}
+              onDeleted={fetchVideos}
+              variant="compact"
+            />
+          )}
+        </div>
+      )}
+
       {/* Content */}
-      <div className="p-6 sm:p-8">
+      <div>
         {videos.length === 0 ? (
-          <div className="text-center py-16">
-            <div className="w-24 h-24 mx-auto mb-6 bg-sheet rounded-[4px] flex items-center justify-center">
-              <Video size={36} className="text-ink" />
-            </div>
-            <h3 className="text-xl font-bold text-ink mb-3">No Videos Available</h3>
-            <p className="text-graphite mb-8 max-w-lg mx-auto leading-relaxed">
-              Educational videos for this lesson haven&apos;t been uploaded yet.
-              {isAuthor && " You can upload the first video to get started!"}
+          <div className="max-w-md py-8">
+            <p className="text-[15px] leading-relaxed text-graphite">
+              {isAuthor
+                ? "No videos on this lesson yet. MP4 up to 750MB; the upload goes straight from your browser to storage."
+                : "No videos on this lesson yet. When your teacher uploads one it will appear here."}
             </p>
-            
-            {isAuthor && (
-              <button
-                onClick={() => setShowUploadModal(true)}
-                className="cursor-pointer inline-flex items-center gap-2 px-6 py-3 bg-ink text-white font-semibold rounded-[4px] hover:bg-ink transition-colors"
-              >
-                <Plus size={18} />
-                Upload First Video
-              </button>
-            )}
           </div>
         ) : (
           <div className="space-y-8">

@@ -280,7 +280,7 @@ export default function ChatPage() {
                 className="w-10 h-10 lg:w-12 lg:h-12 rounded-full border border-rule"
               />
             ) : (
-              <div className="w-10 h-10 lg:w-12 lg:h-12 bg-sheet rounded-full flex items-center justify-center">
+              <div className="w-10 h-10 lg:w-12 lg:h-12 bg-ink rounded-full flex items-center justify-center">
                 <svg className="w-5 h-5 lg:w-6 lg:h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
                 </svg>
@@ -311,7 +311,7 @@ export default function ChatPage() {
         <main className="flex-1 overflow-y-auto p-4 lg:p-6 space-y-4 bg-[#edf2f5]">
           {messages.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full space-y-4 text-center">
-              <div className="w-16 h-16 bg-sheet rounded-full flex items-center justify-center">
+              <div className="w-16 h-16 bg-ink rounded-full flex items-center justify-center">
                 <svg className="w-8 h-8 text-graphite" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
                 </svg>

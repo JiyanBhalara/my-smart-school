@@ -13,7 +13,6 @@ import {
   Trash2,
   Plus,
   Loader2,
-  AlertCircle,
   BookOpen,
   X,
   Save,
@@ -187,87 +186,53 @@ export default function LessonContentSection({
 
   if (loading) {
     return (
-      <section className="bg-white rounded-[4px] border border-rule overflow-hidden">
-        <div className="bg-sheet border-b border-rule px-8 py-8">
-          <div className="flex items-center gap-4">
-            <div className="p-3 bg-[#edf2f5] rounded-[4px]">
-              <BookOpen size={28} className="text-ink" />
-            </div>
-            <div>
-              <h2 className="text-2xl lg:text-3xl font-bold text-ink">Lesson Content</h2>
-              <p className="text-graphite mt-1">Loading content...</p>
-            </div>
-          </div>
+      <section>
+        <div className="flex flex-wrap items-baseline justify-between gap-3 border-b border-rule pb-3">
+          <h2 className="text-[20px] font-semibold tracking-[-0.01em] text-ink">Material</h2>
         </div>
-        <div className="p-8 flex items-center justify-center">
-          <Loader2 className="h-6 w-6 animate-spin text-ink" />
-          <span className="ml-2 text-graphite">Loading content...</span>
-        </div>
+        <p className="py-6 text-[14px] text-graphite">Loading material</p>
       </section>
     );
   }
 
   return (
-    <section className="bg-white rounded-[4px] border border-rule overflow-hidden">
-      {/* Section Header */}
-      <div className="bg-sheet border-b border-rule px-8 py-8">
-        <div className="flex items-center gap-4 justify-between">
-          <div className="flex items-center gap-4">
-            <div className="p-3 bg-[#edf2f5] rounded-[4px] border border-ink">
-              <BookOpen size={28} className="text-ink" />
-            </div>
-            <div>
-              <h2 className="text-2xl lg:text-3xl font-bold text-ink">Lesson Content</h2>
-              <p className="text-graphite mt-1">
-                {contents.length === 0
-                  ? "No content available yet"
-                  : `${contents.length} content item${contents.length === 1 ? "" : "s"} available`}
-              </p>
-            </div>
-          </div>
-
-          {/* Add Content Button - Only for lesson author and teacher */}
-          {isAuthor && isTeacher && (
-            <Link
-              href={`/lessons/${lessonId}/add-content`}
-              className="cursor-pointer inline-flex items-center gap-2 px-4 py-2 bg-ink text-white font-semibold rounded-[4px] hover:bg-ink transition-colors"
-            >
-              <Plus size={16} />
-              <span>Add Content</span>
-            </Link>
-          )}
-        </div>
+    <section>
+      <div className="flex flex-wrap items-baseline justify-between gap-3 border-b border-rule pb-3">
+        <h2 className="text-[20px] font-semibold tracking-[-0.01em] text-ink">Material</h2>
+        <p className="text-[13px] text-graphite tabular">
+          {contents.length === 0
+            ? "None yet"
+            : `${contents.length} ${contents.length === 1 ? "item" : "items"}`}
+        </p>
       </div>
 
-      {/* Content */}
-      <div className="p-8">
-        {error && (
-          <div className="mb-6 bg-[#fdf3f2] border border-mark rounded-[4px] p-4">
-            <div className="flex items-center gap-3">
-              <AlertCircle className="h-5 w-5 text-mark flex-shrink-0" />
-              <p className="text-mark">{error}</p>
-            </div>
-          </div>
-        )}
+      {isAuthor && isTeacher && (
+        <div className="flex justify-end pt-3">
+          <Link
+            href={`/lessons/${lessonId}/add-content`}
+            className="inline-flex h-8 items-center gap-1.5 rounded-[4px] border border-rule bg-sheet px-3 text-[13px] font-medium text-ink transition-colors hover:border-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
+          >
+            <Plus size={14} />
+            Add material
+          </Link>
+        </div>
+      )}
 
-        {contents.length === 0 ? (
-          <div className="text-center py-16">
-            <div className="w-24 h-24 mx-auto mb-6 bg-sheet rounded-[4px] flex items-center justify-center">
-              <BookOpen size={36} className="text-graphite" />
-            </div>
-            <h3 className="text-xl font-bold text-ink mb-3">No Content Available</h3>
-            <p className="text-graphite mb-8 max-w-lg mx-auto leading-relaxed">
-              Additional lesson content hasn&apos;t been added yet. {isAuthor && isTeacher ? "Click the 'Add Content' button above to get started." : "Check back later for materials and resources."}
+      <div>
+        {error ? (
+          <div className="max-w-md border-l-2 border-mark py-4 pl-4">
+            <p className="text-[15px] text-ink">The material did not load</p>
+            <p className="mt-1 text-[14px] text-graphite">
+              {error.replace(/\.?$/, ".")} Reload the page to try again.
             </p>
-            {!isAuthor || !isTeacher ? (
-              <Link
-                href="/lessons"
-                className="cursor-pointer inline-flex items-center gap-2 px-6 py-3 text-ink hover:text-white bg-[#edf2f5] hover:bg-ink font-semibold rounded-[4px] transition-colors border border-ink hover:border-ink"
-              >
-                <BookOpen size={18} />
-                Browse Other Lessons
-              </Link>
-            ) : null}
+          </div>
+        ) : contents.length === 0 ? (
+          <div className="max-w-md py-8">
+            <p className="text-[15px] leading-relaxed text-graphite">
+              {isAuthor && isTeacher
+                ? "No written material or files on this lesson yet. Add notes, a PDF, slides or an image; students see them in the order you add them."
+                : "No material on this lesson yet. When your teacher adds notes or files they will appear here."}
+            </p>
           </div>
         ) : (
           <div className="space-y-6">

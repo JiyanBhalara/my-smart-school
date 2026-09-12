@@ -41,7 +41,7 @@ export default async function AllVideosPage({ params }: Props) {
           <nav className="mb-8">
             <Link
               href={`/lessons/${lesson.id}`}
-              className="cursor-pointer text-graphite hover:text-white transition-colors duration-200 text-sm font-medium flex items-center gap-2 group"
+              className="cursor-pointer text-graphite hover:text-ink transition-colors duration-200 text-sm font-medium flex items-center gap-2 group"
             >
               <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-colors duration-200" />
               Back to Lesson

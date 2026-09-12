@@ -397,7 +397,7 @@ export default function Header() {
                         className="w-full h-full rounded-full border-2 border-rule object-cover"
                       />
                     ) : (
-                      <div className="w-full h-full bg-sheet rounded-full flex items-center justify-center text-white font-semibold text-sm lg:text-base">
+                      <div className="w-full h-full bg-ink rounded-full flex items-center justify-center text-white font-semibold text-sm lg:text-base">
                         {session.user?.name?.[0]?.toUpperCase() || 'U'}
                       </div>
                     )}

@@ -117,17 +117,14 @@ export default function NewLessonPage() {
       <div className="max-w-4xl mx-auto mb-8">
         <button
           onClick={() => router.back()}
-          className="cursor-pointer mt-5 cursor-pointer flex items-center gap-2 text-white hover:text-mark transition-colors duration-200 mb-6"
+          className="cursor-pointer mt-5 cursor-pointer flex items-center gap-2 text-graphite hover:text-ink transition-colors duration-200 mb-6"
         >
           <ArrowLeft className="w-5 h-5" />
           <span className="font-medium">Back to Lessons</span>
         </button>
         
         <div className="text-center">
-          <div className="inline-flex items-center justify-center w-20 h-20 bg-sheet rounded-[4px] mb-6">
-            <Upload className="w-10 h-10 text-white" />
-          </div>
-          <h1 className="text-3xl sm:text-4xl font-bold text-white mb-3">
+          <h1 className="text-[30px] font-bold leading-[34px] tracking-[-0.02em] text-ink mb-2">
             Upload New Lesson
           </h1>
           <p className="text-graphite text-lg max-w-2xl mx-auto">
@@ -140,7 +137,7 @@ export default function NewLessonPage() {
       <div className="max-w-3xl mx-auto">
         <div className="bg-white rounded-[4px] border border-rule overflow-hidden">
           <div className="bg-sheet p-6">
-            <h2 className="text-xl font-semibold text-white">Lesson Details</h2>
+            <h2 className="text-[20px] font-semibold tracking-[-0.01em] text-ink">Lesson details</h2>
             <p className="text-graphite text-sm mt-1">Fill in the information about your lesson</p>
           </div>
           

@@ -47,24 +47,24 @@ export default function LessonActionsClient({
 
   return (
     <>
-      <div className="bg-white/10 backdrop-blur-sm rounded-[4px] p-6 border border-white/20">
-        <h3 className="text-lg font-semibold text-white mb-4">Lesson Actions</h3>
-        <div className="space-y-3">
-          <Link
-            href={`/teacher/lessons/${lessonId}/edit`}
-            className="cursor-pointer w-full inline-flex items-center justify-center gap-3 px-4 py-3 bg-ink text-white font-semibold rounded-[4px] hover:bg-ink transition-colors border border-ink"
-          >
-            <Edit size={18} />
-            <span>Edit Lesson</span>
-          </Link>
-          <button
-            onClick={() => setShowDeleteModal(true)}
-            className="cursor-pointer w-full inline-flex items-center justify-center gap-3 px-4 py-3 bg-mark text-white font-semibold rounded-[4px] hover:bg-mark transition-colors border border-mark"
-          >
-            <Trash2 size={18} />
-            <span>Delete Lesson</span>
-          </button>
-        </div>
+      {/* Two buttons that name themselves need no heading above them, and a
+          destructive action should not be the loudest thing on the page:
+          delete is a quiet link that opens a confirm dialog. */}
+      <div className="flex flex-wrap items-center gap-4">
+        <Link
+          href={`/teacher/lessons/${lessonId}/edit`}
+          className="inline-flex h-9 items-center gap-2 rounded-[4px] border border-rule bg-sheet px-4 text-[14px] font-medium text-ink transition-colors hover:border-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
+        >
+          <Edit size={15} />
+          Edit lesson
+        </Link>
+        <button
+          onClick={() => setShowDeleteModal(true)}
+          className="inline-flex items-center gap-1.5 text-[14px] text-mark underline decoration-transparent underline-offset-[3px] transition-colors hover:decoration-mark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
+        >
+          <Trash2 size={14} />
+          Delete lesson
+        </button>
       </div>
 
       {/* Delete Confirmation Modal */}

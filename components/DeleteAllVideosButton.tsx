@@ -146,8 +146,8 @@ export default function DeleteAllVideosButton({
 
   // Different button styles based on variant
   const buttonClasses = variant === 'compact' 
-    ? "cursor-pointer inline-flex items-center justify-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg transition-colors"
-    : "cursor-pointer inline-flex items-center gap-2 px-4 py-2.5 bg-red-600 hover:bg-red-700 text-white font-medium rounded-lg transition-colors";
+    ? "cursor-pointer inline-flex items-center justify-center gap-2 px-4 py-2 bg-mark hover:bg-[#8f1e18] text-white font-semibold rounded-lg transition-colors"
+    : "cursor-pointer inline-flex items-center gap-2 px-4 py-2.5 bg-mark hover:bg-[#8f1e18] text-white font-medium rounded-lg transition-colors";
 
   return (
     <>

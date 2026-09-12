@@ -391,7 +391,7 @@ export default function GroupSettingsPage() {
           <div className="mt-4">
             <button
               onClick={() => router.push(`/groups/${groupId}`)}
-              className="cursor-pointer px-4 py-2 bg-yellow-600 text-white rounded-[4px] font-medium hover:bg-yellow-700 transition-colors"
+              className="cursor-pointer px-4 py-2 bg-ink text-white rounded-[4px] font-medium hover:bg-[#01243a] transition-colors"
             >
               Back to Group Chat
             </button>
@@ -530,7 +530,7 @@ export default function GroupSettingsPage() {
                                   className="w-8 h-8 rounded-full"
                                 />
                               ) : (
-                                <div className="w-8 h-8 bg-gray-400 text-white rounded-full flex items-center justify-center text-sm font-medium">
+                                <div className="w-8 h-8 bg-graphite text-white rounded-full flex items-center justify-center text-sm font-medium">
                                   {user.name?.[0]?.toUpperCase() || '?'}
                                 </div>
                               )}
