@@ -2,6 +2,7 @@
 
 import { useState, ChangeEvent, FormEvent } from 'react';
 import { X, Upload, AlertCircle } from 'lucide-react';
+import { upload } from '@vercel/blob/client';
 import { useUpload } from '@/contexts/UploadContext';
 
 interface VideoUploadModalProps {
@@ -16,7 +17,8 @@ export default function VideoUploadModal({ lessonId, onClose, onUploaded }: Vide
   const [description, setDescription] = useState('');
   const [error, setError] = useState('');
   const [uploading, setUploading] = useState(false);
-  
+  const [progress, setProgress] = useState(0);
+
   const { addUpload, updateProgress, removeUpload } = useUpload();
   const maxSize = 750 * 1024 * 1024; // 750MB
 
@@ -42,93 +44,52 @@ export default function VideoUploadModal({ lessonId, onClose, onUploaded }: Vide
     }
   }
 
-  // Poll for upload completion
-  const pollUploadStatus = async (videoId: string) => {
-    let attempts = 0;
-    const maxAttempts = 120; // 10 minutes max (120 * 5 seconds)
-    
-    const checkStatus = async () => {
-      try {
-        const response = await fetch(`/api/lessons/${lessonId}/videos`);
-        if (response.ok) {
-          const data = await response.json();
-          const video = data.videos.find((v: { id: string; uploadStatus: string }) => v.id === videoId);
-          
-          if (video?.uploadStatus === 'COMPLETED') {
-            updateProgress(videoId, 'Upload completed! 🎉');
-            setTimeout(() => removeUpload(videoId), 5000);
-            onUploaded?.();
-            return;
-          } else if (video?.uploadStatus === 'FAILED') {
-            updateProgress(videoId, 'Upload failed ❌');
-            setTimeout(() => removeUpload(videoId), 10000);
-            return;
-          }
-        }
-        
-        // Continue polling if still uploading
-        attempts++;
-        if (attempts < maxAttempts) {
-          if (attempts < 6) {
-            updateProgress(videoId, 'Uploading to Internet Archive...');
-          } else {
-            updateProgress(videoId, 'Processing on Internet Archive... (this may take several minutes)');
-          }
-          setTimeout(checkStatus, 5000); // Check every 5 seconds
-        } else {
-          updateProgress(videoId, 'Upload taking longer than expected. Check back later.');
-          setTimeout(() => removeUpload(videoId), 30000);
-        }
-      } catch (error) {
-        console.error('Status check failed:', error);
-        attempts++;
-        if (attempts < maxAttempts) {
-          setTimeout(checkStatus, 10000); // Retry in 10 seconds on error
-        }
-      }
-    };
-    
-    setTimeout(checkStatus, 3000); // Start checking after 3 seconds
-  };
-
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
-    
+
     if (!file || !title.trim()) {
       setError('Please select a file and enter a title.');
       return;
     }
 
     setUploading(true);
+    setProgress(0);
     setError('');
 
-    try {
-      const formData = new FormData();
-      formData.append('file', file);
-      formData.append('title', title.trim());
-      formData.append('description', description.trim());
+    // The LessonVideo row is created server-side once Blob storage confirms the
+    // upload, so there is no video id yet -- use a client-side key for the toast.
+    const toastKey = `upload-${Date.now()}`;
+    addUpload(toastKey, title.trim());
 
-      const response = await fetch(`/api/lessons/${lessonId}/videos/upload`, {
-        method: 'POST',
-        body: formData,
+    try {
+      // Straight from the browser to Blob storage. The file never passes
+      // through the serverless function, so the 4.5MB body cap does not apply.
+      await upload(file.name, file, {
+        access: 'public',
+        handleUploadUrl: `/api/lessons/${lessonId}/videos/upload`,
+        contentType: 'video/mp4',
+        clientPayload: JSON.stringify({
+          title: title.trim(),
+          description: description.trim(),
+        }),
+        onUploadProgress: ({ percentage }) => {
+          setProgress(percentage);
+          updateProgress(toastKey, `Uploading... ${Math.round(percentage)}%`);
+        },
       });
 
-      const result = await response.json();
-
-      if (response.ok) {
-        // Add to upload context for persistent toast
-        addUpload(result.videoId, title.trim());
-        
-        // Start polling for status
-        pollUploadStatus(result.videoId);
-        
-        onClose();
-      } else {
-        setError(result.error || 'Upload failed. Please try again.');
-      }
+      updateProgress(toastKey, 'Upload completed! 🎉');
+      setTimeout(() => removeUpload(toastKey), 5000);
+      onUploaded?.();
+      onClose();
     } catch (error) {
       console.error('Upload error:', error);
-      setError('Network error. Please check your connection and try again.');
+      removeUpload(toastKey);
+      setError(
+        error instanceof Error
+          ? error.message
+          : 'Upload failed. Please check your connection and try again.'
+      );
     } finally {
       setUploading(false);
     }
@@ -222,15 +183,36 @@ export default function VideoUploadModal({ lessonId, onClose, onUploaded }: Vide
             </div>
           )}
 
+          {/* Live upload progress */}
+          {uploading && (
+            <div className="bg-purple-50 border border-purple-200 rounded-lg p-3">
+              <div className="flex items-center justify-between text-sm text-purple-800 mb-2">
+                <span className="font-medium">Uploading…</span>
+                <span className="tabular-nums">{Math.round(progress)}%</span>
+              </div>
+              <div
+                className="h-2 w-full bg-purple-100 rounded-full overflow-hidden"
+                role="progressbar"
+                aria-valuenow={Math.round(progress)}
+                aria-valuemin={0}
+                aria-valuemax={100}
+              >
+                <div
+                  className="h-full bg-purple-600 transition-[width] duration-200"
+                  style={{ width: `${progress}%` }}
+                />
+              </div>
+            </div>
+          )}
+
           {/* Upload Info */}
-          {!error && (
+          {!error && !uploading && (
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
               <div className="text-sm text-blue-700">
                 <div className="font-medium mb-1">Upload Process:</div>
                 <ul className="text-xs space-y-1 list-disc list-inside ml-2">
-                  <li>Video will be uploaded to Internet Archive</li>
-                  <li>Processing may take several minutes</li>
-                  <li>You&apos;ll get a notification when upload completes</li>
+                  <li>Video uploads straight to storage from your browser</li>
+                  <li>Progress is shown live below</li>
                   <li>Keep this tab open during upload</li>
                 </ul>
               </div>
@@ -244,7 +226,7 @@ export default function VideoUploadModal({ lessonId, onClose, onUploaded }: Vide
               disabled={!file || !title.trim() || uploading}
               className="cursor-pointer flex-1 bg-purple-600 text-white font-semibold py-2.5 px-4 rounded-lg hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm"
             >
-              {uploading ? 'Starting Upload...' : 'Upload Video'}
+              {uploading ? `Uploading… ${Math.round(progress)}%` : 'Upload Video'}
             </button>
             <button
               type="button"

@@ -2,8 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/app/utils/authOptions";
 import prisma from "@/lib/prisma";
-import { spawn } from "child_process";
-import { join } from "path";
+import { del } from "@vercel/blob";
 
 export async function DELETE(
   req: NextRequest,
@@ -41,47 +40,24 @@ export async function DELETE(
 
     console.log(`🗑️ Starting bulk deletion of ${lesson.videos.length} videos for lesson ${lessonId}`);
 
-    // STEP 1: Delete from Internet Archive (in parallel)
-    const iaDeletePromises = lesson.videos.map(video => {
-      return new Promise((resolve) => {
-        console.log(`🗑️ Deleting from IA: ${video.archiveIdentifier}`);
-        
-        const deleteScript = join(process.cwd(), "scripts", "delete_from_ia.py");
-        
-        const pythonProcess = spawn("python", [
-          deleteScript,
-          "--identifier",
-          video.archiveIdentifier
-        ], {
-          stdio: ["ignore", "pipe", "pipe"],
-          shell: true,
-        });
+    // STEP 1: remove the stored objects. Await these -- unlike the old
+    // fire-and-forget Python spawn, a failure here is logged but never blocks
+    // the row deletion, since an orphaned blob is recoverable and a row
+    // pointing at a missing object is not.
+    const blobUrls = lesson.videos
+      .map((video) => video.blobUrl)
+      .filter((url): url is string => Boolean(url));
 
-        pythonProcess.stdout?.on("data", (data) => {
-          console.log(`IA Delete stdout: ${data.toString().trim()}`);
-        });
+    if (blobUrls.length > 0) {
+      try {
+        await del(blobUrls, { token: process.env.BLOB_READ_WRITE_TOKEN });
+        console.log(`✅ Deleted ${blobUrls.length} blobs for lesson ${lessonId}`);
+      } catch (blobError) {
+        console.error(`❌ Failed to delete some blobs for lesson ${lessonId}:`, blobError);
+      }
+    }
 
-        pythonProcess.stderr?.on("data", (data) => {
-          console.error(`IA Delete stderr: ${data.toString().trim()}`);
-        });
-
-        pythonProcess.on("close", (code) => {
-          if (code === 0) {
-            console.log(`✅ Successfully deleted ${video.archiveIdentifier} from IA`);
-          } else {
-            console.error(`❌ Failed to delete ${video.archiveIdentifier} from IA (exit code: ${code})`);
-          }
-          resolve(code);
-        });
-
-        pythonProcess.on("error", (error) => {
-          console.error(`❌ Error deleting ${video.archiveIdentifier} from IA:`, error);
-          resolve(1);
-        });
-      });
-    });
-
-    // STEP 2: Delete from database (don't wait for IA deletion to complete)
+    // STEP 2: Delete from database
     const deleteResult = await prisma.lessonVideo.deleteMany({
       where: {
         lessonId: lessonId,
@@ -91,17 +67,10 @@ export async function DELETE(
 
     console.log(`✅ Deleted ${deleteResult.count} videos from database`);
 
-    // Start IA deletion in background (don't await)
-    Promise.all(iaDeletePromises).then(() => {
-      console.log(`✅ Completed Internet Archive deletion for lesson ${lessonId}`);
-    }).catch(error => {
-      console.error(`❌ Some Internet Archive deletions failed:`, error);
-    });
-
-    return NextResponse.json({ 
-      success: true, 
+    return NextResponse.json({
+      success: true,
       deletedCount: deleteResult.count,
-      message: `Successfully deleted ${deleteResult.count} videos from database. Internet Archive deletion in progress.`
+      message: `Successfully deleted ${deleteResult.count} videos.`
     });
 
   } catch (error) {

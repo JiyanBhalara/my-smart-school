@@ -7,9 +7,8 @@ interface VideoCardProps {
     id: string;
     title: string;
     description?: string;
-    archiveIdentifier: string;
-    archiveUrl: string;
-    directVideoUrl: string;
+    blobUrl: string;
+    blobPathname: string;
     fileSize: number;
     duration?: number;
     createdAt: string;
@@ -83,7 +82,7 @@ function DeleteConfirmModal({ isOpen, onConfirm, onCancel, loading }: DeleteConf
           </div>
           
           <p className="text-gray-600 mb-6">
-            Are you sure you want to delete this video? This action cannot be undone and the video will be permanently removed from the Internet Archive.
+            Are you sure you want to delete this video? This action cannot be undone and the video file will be permanently removed from storage.
           </p>
           
           <div className="flex gap-3">
@@ -221,12 +220,12 @@ export default function VideoCard({ video, lessonId, isAuthor, onUpdate }: Video
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-lg transition-all duration-300 transform hover:scale-[1.02]">
         {/* Video Player */}
         <div className="relative bg-black">
-          <iframe
-            src={`https://archive.org/embed/${video.archiveIdentifier}`}
+          <video
+            src={video.blobUrl}
             className="w-full h-48 sm:h-64 md:h-72 lg:h-80"
-            allowFullScreen
+            controls
+            preload="metadata"
             title={video.title}
-            loading="lazy"
           />
         </div>
 
@@ -333,16 +332,16 @@ export default function VideoCard({ video, lessonId, isAuthor, onUpdate }: Video
           {!isEditing && (
             <div className="flex flex-col sm:flex-row gap-3">
               <a
-                href={video.archiveUrl}
+                href={video.blobUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium text-sm"
               >
                 <Play size={16} />
-                <span>View on Archive.org</span>
+                <span>Open in new tab</span>
               </a>
               <a
-                href={video.directVideoUrl}
+                href={video.blobUrl}
                 download
                 target="_blank"
                 rel="noopener noreferrer"

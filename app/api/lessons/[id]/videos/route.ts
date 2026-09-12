@@ -5,6 +5,7 @@ import {
   requireLessonAccess,
   toErrorResponse,
 } from '@/lib/auth-guard';
+import { serializeVideos } from '@/lib/serialize';
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
@@ -26,9 +27,8 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
         id: true,
         title: true,
         description: true,
-        archiveIdentifier: true,
-        archiveUrl: true,
-        directVideoUrl: true,
+        blobUrl: true,
+        blobPathname: true,
         fileSize: true,
         duration: true,
         uploadStatus: true,
@@ -36,13 +36,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
       }
     });
 
-    // Convert BigInt to string for JSON serialization
-    const serializedVideos = videos.map(video => ({
-      ...video,
-      fileSize: video.fileSize.toString()
-    }));
-
-    return NextResponse.json({ videos: serializedVideos });
+    return NextResponse.json({ videos: serializeVideos(videos) });
   } catch (error) {
     const guardResponse = toErrorResponse(error);
     if (guardResponse) return guardResponse;

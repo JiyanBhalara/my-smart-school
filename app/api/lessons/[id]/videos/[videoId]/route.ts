@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from "next-auth/next";
 import { authOptions } from '@/app/utils/authOptions';
 import prisma from '@/lib/prisma';
-import { spawn } from 'child_process';
+import { del } from '@vercel/blob';
+import { serializeVideo } from '@/lib/serialize';
 
 // UPDATE video title/description
 export async function PUT(
@@ -37,13 +38,7 @@ export async function PUT(
       data: { title: title.trim(), description: description?.trim() || null }
     });
 
-    // Convert BigInt to string for JSON serialization
-    const serializedVideo = {
-      ...updatedVideo,
-      fileSize: updatedVideo.fileSize.toString()
-    };
-
-    return NextResponse.json({ video: serializedVideo });
+    return NextResponse.json({ video: serializeVideo(updatedVideo) });
   } catch (error) {
     console.error('Error updating video:', error);
     return NextResponse.json({ error: 'Failed to update video' }, { status: 500 });
@@ -72,12 +67,14 @@ export async function DELETE(
       return NextResponse.json({ error: 'Video not found or unauthorized' }, { status: 404 });
     }
 
-    // Delete from Internet Archive (spawn Python script)
-    if (video.archiveIdentifier) {
-      spawn('python3', [
-        './scripts/delete_from_ia.py',
-        '--identifier', video.archiveIdentifier
-      ], { detached: true });
+    // Remove the stored object, then the row. A failure here must not block the
+    // delete -- an orphaned blob is recoverable, a row pointing at nothing is not.
+    if (video.blobPathname) {
+      try {
+        await del(video.blobUrl, { token: process.env.BLOB_READ_WRITE_TOKEN });
+      } catch (blobError) {
+        console.error('Failed to delete blob for video', videoId, blobError);
+      }
     }
 
     // Delete from database

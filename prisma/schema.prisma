@@ -403,9 +403,8 @@ model LessonVideo {
   authorId          String
   title             String
   description       String?     @db.Text
-  archiveIdentifier String      @unique  // Internet Archive item identifier
-  archiveUrl        String      // Full IA video URL for embedding/viewing  
-  directVideoUrl    String      // Direct MP4 URL for downloading
+  blobUrl           String      // Public Vercel Blob URL used for playback
+  blobPathname      String      // Blob pathname, needed to delete the object
   fileSize          BigInt      // File size in bytes (using BigInt for large files)
   duration          Int?        // Video duration in seconds (optional)
   uploadStatus      UploadStatus @default(UPLOADING)

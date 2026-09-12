@@ -1,22 +1,34 @@
+// app/api/lessons/[id]/videos/upload/route.ts
+//
+// Token route for client-side direct uploads to Vercel Blob.
+//
+// The browser sends the file straight to Blob storage; this route only issues a
+// short-lived upload token and then records the result. Nothing streams through
+// the serverless function, so the 4.5MB request body cap, the function memory
+// ceiling and the execution timeout all stop applying.
+//
+// Authorization lives in onBeforeGenerateToken: no token is issued unless the
+// caller is a TEACHER who authored this lesson. The LessonVideo row is created
+// in onUploadCompleted, which Vercel Blob calls with a signed payload -- the
+// client has no endpoint it can call to mark a video complete.
+
 import { NextRequest, NextResponse } from "next/server";
+import { handleUpload, type HandleUploadBody } from "@vercel/blob/client";
 import prisma from "@/lib/prisma";
-import { put } from '@vercel/blob';
 import {
   requireRole,
   requireLessonAuthor,
   toErrorResponse,
+  HttpError,
 } from "@/lib/auth-guard";
 
-// 750MB upload limit
-const MAX_SIZE = 750 * 1024 * 1024;
+const MAX_SIZE = 750 * 1024 * 1024; // 750MB
 
-// Environment-based logging
-const isDevelopment = process.env.NODE_ENV === 'development';
-
-const log = {
-  debug: (msg: string) => isDevelopment && console.log(msg),
-  info: (msg: string) => console.log(msg),
-  error: (msg: string) => console.error(msg)
+type VideoTokenPayload = {
+  lessonId: string;
+  authorId: string;
+  title: string;
+  description: string;
 };
 
 export async function POST(
@@ -24,118 +36,94 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id: lessonId } = await params;
-
-  // Require TEACHER role *and* authorship of this specific lesson, so a teacher
-  // cannot add videos to another teacher's lesson.
-  let session;
-  try {
-    session = await requireRole("TEACHER");
-    await requireLessonAuthor(lessonId, session.id);
-  } catch (error) {
-    const guardResponse = toErrorResponse(error);
-    if (guardResponse) return guardResponse;
-    throw error;
-  }
-
-  const data = await req.formData();
-  const file = data.get("file") as File;
-  const title = String(data.get("title") || "");
-  const description = String(data.get("description") || "");
-
-  // Essential validation logging
-  log.info(`📤 Starting video upload: ${file?.name} (${Math.round((file?.size || 0) / 1024 / 1024)}MB)`);
-
-  if (!file || file.type !== "video/mp4") {
-    return NextResponse.json({ error: "Only MP4 allowed." }, { status: 400 });
-  }
-  if (file.size > MAX_SIZE) {
-    return NextResponse.json(
-      { error: "File must be less than 750MB." },
-      { status: 400 }
-    );
-  }
-  if (!title.trim()) {
-    return NextResponse.json({ error: "Title required." }, { status: 400 });
-  }
+  const body = (await req.json()) as HandleUploadBody;
 
   try {
-    // Convert file to buffer
-    const buffer = Buffer.from(await file.arrayBuffer());
+    const jsonResponse = await handleUpload({
+      body,
+      request: req,
+      token: process.env.BLOB_READ_WRITE_TOKEN,
 
-    // Save DB entry as UPLOADING first
-    const video = await prisma.lessonVideo.create({
-      data: {
-        lessonId,
-        authorId: session.id,
-        title,
-        description,
-        fileSize: BigInt(file.size),
-        uploadStatus: "UPLOADING",
-        archiveIdentifier: `temp_${Date.now()}_${Math.random()
-          .toString(36)
-          .substring(7)}`,
-        archiveUrl: "",
-        directVideoUrl: "",
+      onBeforeGenerateToken: async (_pathname, clientPayload) => {
+        // Authorize before handing out an upload token.
+        const teacher = await requireRole("TEACHER");
+        await requireLessonAuthor(lessonId, teacher.id);
+
+        let parsed: { title?: unknown; description?: unknown };
+        try {
+          parsed = JSON.parse(clientPayload ?? "{}");
+        } catch {
+          throw new HttpError(400, "Invalid clientPayload");
+        }
+
+        const title = typeof parsed.title === "string" ? parsed.title.trim() : "";
+        const description =
+          typeof parsed.description === "string" ? parsed.description.trim() : "";
+
+        if (!title) {
+          throw new HttpError(400, "Title required.");
+        }
+
+        const tokenPayload: VideoTokenPayload = {
+          lessonId,
+          authorId: teacher.id,
+          title,
+          description,
+        };
+
+        return {
+          // Enforced by Blob storage itself, not just by the browser.
+          allowedContentTypes: ["video/mp4"],
+          maximumSizeInBytes: MAX_SIZE,
+          addRandomSuffix: true,
+          tokenPayload: JSON.stringify(tokenPayload),
+        };
+      },
+
+      onUploadCompleted: async ({ blob, tokenPayload }) => {
+        // Called by Vercel Blob once the object is stored. The payload is the
+        // one we signed above, so the title/lesson/author cannot be forged.
+        if (!tokenPayload) {
+          throw new Error("Missing token payload on completed upload");
+        }
+
+        const payload = JSON.parse(tokenPayload) as VideoTokenPayload;
+
+        await prisma.lessonVideo.create({
+          data: {
+            lessonId: payload.lessonId,
+            authorId: payload.authorId,
+            title: payload.title,
+            description: payload.description,
+            blobUrl: blob.url,
+            blobPathname: blob.pathname,
+            // `blob` carries no size, so read it back from the stored object.
+            fileSize: BigInt(await contentLengthOf(blob.url)),
+            uploadStatus: "COMPLETED",
+          },
+        });
       },
     });
 
-    log.info(`📝 Video record created: ${video.id}`);
-
-    try {
-      // Create sanitized filename like your original script
-      const sanitizedFileName = `${Date.now()}_${file.name.replace(/[^a-zA-Z0-9.-]/g, "_")}`;
-      
-      // Upload file to Vercel Blob for temporary access
-      const blob = await put(sanitizedFileName, buffer, {
-        access: 'public',
-        token: process.env.BLOB_READ_WRITE_TOKEN,
-      });
-
-      log.debug(`✅ File uploaded to blob: ${blob.url}`);
-
-      const uploadResponse = await fetch(`${process.env.NEXTAUTH_URL}/python/upload-to-ia`, {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({
-    fileUrl: blob.url,
-    videoid: video.id,
-    title: title.trim(),
-    description: description.trim(),
-    callbackUrl: `${process.env.NEXTAUTH_URL}/api/video/${video.id}/status`
-  })
-});
-
-      if (!uploadResponse.ok) {
-        const errorText = await uploadResponse.text();
-        throw new Error(`Upload service failed: ${errorText}`);
-      }
-
-      log.info(`🚀 Upload process started for video: ${video.id}`);
-      
-    } catch (serviceError) {
-      log.error(`❌ Error calling upload service: ${serviceError}`);
-
-      // Update video status to FAILED
-      await prisma.lessonVideo.update({
-        where: { id: video.id },
-        data: { uploadStatus: "FAILED" },
-      });
-
-      return NextResponse.json(
-        { 
-          error: "Failed to start upload process.",
-          details: serviceError instanceof Error ? serviceError.message : String(serviceError)
-        },
-        { status: 500 }
-      );
-    }
-
-    return NextResponse.json({ success: true, videoId: video.id });
+    return NextResponse.json(jsonResponse);
   } catch (error) {
-    log.error(`❌ Upload error: ${error}`);
+    const guardResponse = toErrorResponse(error);
+    if (guardResponse) return guardResponse;
+
+    console.error("Video upload token error:", error);
     return NextResponse.json(
       { error: "Failed to process upload" },
       { status: 500 }
     );
+  }
+}
+
+/** Reads the stored object's size without downloading it. */
+async function contentLengthOf(url: string): Promise<number> {
+  try {
+    const res = await fetch(url, { method: "HEAD" });
+    return Number(res.headers.get("content-length") ?? 0);
+  } catch {
+    return 0;
   }
 }

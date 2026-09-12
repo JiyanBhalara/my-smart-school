@@ -14,9 +14,8 @@ interface Video {
   id: string;
   title: string;
   description?: string;
-  archiveIdentifier: string;
-  archiveUrl: string;
-  directVideoUrl: string;
+  blobUrl: string;
+  blobPathname: string;
   fileSize: number;
   duration?: number;
   createdAt: string;
