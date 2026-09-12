@@ -73,6 +73,10 @@ export async function GET(request: NextRequest, { params }: Props) {
           },
         },
         studentNotes: {
+          // Only the requesting teacher's own notes. Keeps this consistent with
+          // notes/route.ts, which already scopes by teacherId, so one teacher
+          // cannot read another teacher's private notes about a student.
+          where: { teacherId: session.user.id },
           select: {
             id: true,
             note: true,

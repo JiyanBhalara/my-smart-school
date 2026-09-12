@@ -1,20 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth/next';
-import { authOptions } from '@/app/utils/authOptions';
 import prisma from '@/lib/prisma';
+import {
+  requireSession,
+  requireLessonAccess,
+  toErrorResponse,
+} from '@/lib/auth-guard';
 
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> } // Fixed: params should be Promise
 ) {
   try {
-    const session = await getServerSession(authOptions);
-    
-    if (!session) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
     const { id } = await params; // Await params
+
+    // Authenticate, then authorize against this lesson (author, or published)
+    const user = await requireSession();
+    await requireLessonAccess(id, user.id);
 
     const lesson = await prisma.lesson.findUnique({
       where: { id: id },
@@ -41,6 +42,9 @@ export async function GET(
 
     return NextResponse.json(lesson);
   } catch (error) {
+    const guardResponse = toErrorResponse(error);
+    if (guardResponse) return guardResponse;
+
     console.error('Error fetching lesson:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }

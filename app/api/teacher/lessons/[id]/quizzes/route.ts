@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth/next';
-import { authOptions } from '@/app/utils/authOptions';
+import {
+  requireRole,
+  requireLessonAuthor,
+  toErrorResponse,
+} from '@/lib/auth-guard';
 import prisma from '@/lib/prisma';
 
 interface QuizOption {
@@ -21,13 +24,12 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> } // Fixed: params should be Promise
 ) {
   try {
-    const session = await getServerSession(authOptions);
-    
-    if (!session || session.user.role !== 'TEACHER') {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
     const { id } = await params; // Await params
+
+    // Require TEACHER role *and* authorship of this lesson, so a teacher cannot
+    // attach a quiz to another teacher's lesson.
+    const session = await requireRole('TEACHER');
+    await requireLessonAuthor(id, session.id);
 
     const { 
       title, 
@@ -50,7 +52,7 @@ export async function POST(
         timeLimit,
         maxAttempts,
         lessonId: id, // Use awaited id
-        authorId: session.user.id,
+        authorId: session.id,
         questions: {
           create: questions.map((q: QuizQuestion, index: number) => ({
             questionText: q.text,
@@ -79,6 +81,9 @@ export async function POST(
 
     return NextResponse.json(quiz);
   } catch (error) {
+    const guardResponse = toErrorResponse(error);
+    if (guardResponse) return guardResponse;
+
     console.error('Error creating quiz:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }

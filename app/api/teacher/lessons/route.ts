@@ -1,17 +1,18 @@
 // app/api/teacher/lessons/route.ts
 import { NextRequest, NextResponse } from "next/server";
-import { getToken } from "next-auth/jwt";
 import prisma from "@/lib/prisma";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
+import { requireRole, toErrorResponse } from "@/lib/auth-guard";
 
 export async function POST(req: NextRequest) {
-  // 1️⃣ Authenticate via JWT
-  const token = await getToken({ 
-    req, 
-    secret: process.env.NEXTAUTH_SECRET // Fixed: removed escaped underscore
-  });
-  if (!token?.id) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  // 1️⃣ Authenticate and require the TEACHER role
+  let teacher;
+  try {
+    teacher = await requireRole("TEACHER");
+  } catch (error) {
+    const guardResponse = toErrorResponse(error);
+    if (guardResponse) return guardResponse;
+    throw error;
   }
 
   // 2️⃣ Parse the incoming multipart form
@@ -24,7 +25,7 @@ export async function POST(req: NextRequest) {
   }
 
   // 3️⃣ Upload file to Supabase Storage
-  const path = `${token.id}/${Date.now()}-${file.name}`; // Fixed: removed escaped backtick
+  const path = `${teacher.id}/${Date.now()}-${file.name}`; // Fixed: removed escaped backtick
   const { error: uploadError } = await supabaseAdmin
     .storage
     .from("lessons")
@@ -49,7 +50,7 @@ export async function POST(req: NextRequest) {
       subject,
       type,
       fileUrl: path,
-      authorId: token.id as string,
+      authorId: teacher.id,
       tags: {
         create: tags.map((tagName) => ({
           tag: {

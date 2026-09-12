@@ -1,8 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/app/utils/authOptions";
 import prisma from "@/lib/prisma";
 import { put } from '@vercel/blob';
+import {
+  requireRole,
+  requireLessonAuthor,
+  toErrorResponse,
+} from "@/lib/auth-guard";
 
 // 750MB upload limit
 const MAX_SIZE = 750 * 1024 * 1024;
@@ -20,12 +23,19 @@ export async function POST(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const session = await getServerSession(authOptions);
-  if (!session || session.user.role !== "TEACHER") {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
   const { id: lessonId } = await params;
+
+  // Require TEACHER role *and* authorship of this specific lesson, so a teacher
+  // cannot add videos to another teacher's lesson.
+  let session;
+  try {
+    session = await requireRole("TEACHER");
+    await requireLessonAuthor(lessonId, session.id);
+  } catch (error) {
+    const guardResponse = toErrorResponse(error);
+    if (guardResponse) return guardResponse;
+    throw error;
+  }
 
   const data = await req.formData();
   const file = data.get("file") as File;
@@ -56,7 +66,7 @@ export async function POST(
     const video = await prisma.lessonVideo.create({
       data: {
         lessonId,
-        authorId: session.user.id,
+        authorId: session.id,
         title,
         description,
         fileSize: BigInt(file.size),
