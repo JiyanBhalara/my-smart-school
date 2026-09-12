@@ -290,7 +290,7 @@ export default function StudentReportPage() {
             href={isTeacher ? "/reports/students" : "/reports/my-report"}
             className="cursor-pointer inline-flex items-center gap-2 text-ink hover:text-ink font-medium mb-4 sm:mb-6 group"
           >
-            <ArrowLeftIcon className="h-4 w-4 group-hover:-translate-x-1 transition-" />
+            <ArrowLeftIcon className="h-4 w-4 group-hover:-translate-x-1 transition-colors" />
             <span className="text-sm sm:text-base">
               {isTeacher ? 'Back to All Students' : 'Back to My Report'}
             </span>

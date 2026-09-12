@@ -415,7 +415,7 @@ export default function GroupSettingsPage() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
               </svg>
             </button>
-            <h1 className="text-3xl font-bold text-navy">Group Settings</h1>
+            <h1 className="text-3xl font-bold text-ink">Group Settings</h1>
           </div>
           <p className="text-graphite">Manage your group settings and members</p>
         </div>

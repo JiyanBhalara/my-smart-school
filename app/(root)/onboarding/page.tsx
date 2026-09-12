@@ -53,16 +53,16 @@ export default function Onboarding() {
           style={{ backgroundColor: '#8ECAE6' }}>
       {/* Background decoration */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/4 left-1/4 w-32 h-32 rounded-full opacity-10 animate-pulse"
+        <div className="absolute top-1/4 left-1/4 w-32 h-32 rounded-full opacity-10"
              style={{ backgroundColor: '#023047' }}></div>
-        <div className="absolute bottom-1/4 right-1/4 w-24 h-24 rounded-full opacity-10 animate-pulse delay-1000"
+        <div className="absolute bottom-1/4 right-1/4 w-24 h-24 rounded-full opacity-10 delay-1000"
              style={{ backgroundColor: '#FFB703' }}></div>
       </div>
 
       <div className="relative w-full max-w-md">
         {/* Header section */}
         <div className="text-center mb-8 animate-fadeIn">
-          <div className="w-16 h-16 mx-auto mb-4 rounded-2xl flex items-center justify-center shadow-lg transform hover:scale-105 transition-transform duration-200"
+          <div className="w-16 h-16 mx-auto mb-4 rounded-[4px] flex items-center justify-center transition- duration-200"
                style={{ backgroundColor: '#023047' }}>
             <svg className="w-8 h-8" style={{ color: '#8ECAE6' }} fill="currentColor" viewBox="0 0 20 20">
               <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
@@ -79,10 +79,10 @@ export default function Onboarding() {
         {/* Form container */}
         <form
           onSubmit={handleSubmit}
-          className="bg-white rounded-2xl shadow-2xl p-6 sm:p-8 space-y-6 transform hover:shadow-3xl transition-shadow duration-300 animate-slideUp"
+          className="bg-white rounded-[4px] p-6 sm:p-8 space-y-6 -3xl transition- duration-300 animate-slideUp"
         >
           {error && (
-            <div className="p-4 rounded-xl text-sm text-center animate-shake"
+            <div className="p-4 rounded-[4px] text-sm text-center animate-shake"
                  style={{ backgroundColor: '#FB8500', color: 'white' }}>
               {error}
             </div>
@@ -96,7 +96,7 @@ export default function Onboarding() {
             <input
               type="date"
               required
-              className="text-slate-900 w-full rounded-xl border-2 p-3 text-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-opacity-50 hover:border-opacity-70"
+              className="text-ink w-full rounded-[4px] border-2 p-3 text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-opacity-50 hover:border-opacity-70"
               style={{ 
                 borderColor: '#219EBC'
               }}
@@ -116,7 +116,7 @@ export default function Onboarding() {
               type="text"
               required
               placeholder="Enter your school name"
-              className="text-slate-900 w-full rounded-xl border-2 p-3 text-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-opacity-50 hover:border-opacity-70 placeholder-gray-400"
+              className="text-ink w-full rounded-[4px] border-2 p-3 text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-opacity-50 hover:border-opacity-70 placeholder-gray-400"
               style={{ 
                 borderColor: '#219EBC',
               }}
@@ -148,14 +148,7 @@ export default function Onboarding() {
                     }
                     className="sr-only"
                   />
-                  <div className={`
-                    p-4 rounded-xl border-2 text-center transition-all duration-200 
-                    group-hover:scale-105 group-hover:shadow-md
-                    ${form.role === value 
-                      ? 'border-[#023047] shadow-lg' 
-                      : 'border-gray-200 hover:border-[#219EBC]'
-                    }
-                  `}
+                  <div className={`p-4 rounded-[4px] border-2 text-center transition-colors ${form.role === value ? 'border-[#023047] ' : 'border-rule hover:border-[#219EBC]' }`}
                   style={{
                     backgroundColor: form.role === value ? '#8ECAE6' : 'white',
                     color: form.role === value ? '#023047' : '#666'
@@ -172,7 +165,7 @@ export default function Onboarding() {
           <button
             type="submit"
             disabled={loading}
-            className="cursor-pointer w-full py-4 px-6 rounded-xl font-semibold text-white text-sm transition-all duration-200 transform hover:scale-105 hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none focus:outline-none focus:ring-4 focus:ring-opacity-50"
+            className="cursor-pointer w-full py-4 px-6 rounded-[4px] font-semibold text-white text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:-none focus:outline-none focus:ring-4 focus:ring-opacity-50"
             style={{ 
               backgroundColor: loading ? '#219EBC' : '#023047',
             }}

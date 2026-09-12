@@ -116,7 +116,7 @@ export default function GroupsPage() {
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-navy mb-2">Groups</h1>
+            <h1 className="text-3xl font-bold text-ink mb-2">Groups</h1>
             <p className="text-graphite">Connect with your learning community</p>
           </div>
           

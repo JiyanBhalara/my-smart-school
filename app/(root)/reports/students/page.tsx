@@ -319,7 +319,7 @@ export default function StudentListPage() {
                     {/* Action Button */}
                     <Link
                       href={`/reports/students/${student.id}`}
-                      className="cursor-pointer w-full inline-flex items-center justify-center gap-2 px-4 py-3 bg-sheet text-white font-medium rounded-[4px] transition-colors focus:outline-none focus:ring-2 focus:ring-ink focus:ring-offset-2"
+                      className="cursor-pointer w-full inline-flex items-center justify-center gap-2 px-4 py-3 bg-ink text-white font-medium rounded-[4px] transition-colors focus:outline-none focus:ring-2 focus:ring-ink focus:ring-offset-2"
                     >
                       <EyeIcon className="h-4 w-4" />
                       View Report

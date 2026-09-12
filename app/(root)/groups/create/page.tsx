@@ -167,7 +167,7 @@ export default function CreateGroupPage() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
               </svg>
             </button>
-            <h1 className="text-3xl font-bold text-navy">Create New Group</h1>
+            <h1 className="text-3xl font-bold text-ink">Create New Group</h1>
           </div>
           <p className="text-graphite">Build your learning community by creating a group and adding members.</p>
         </div>

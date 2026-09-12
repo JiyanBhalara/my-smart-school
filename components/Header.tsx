@@ -374,13 +374,13 @@ export default function Header() {
                   href="/login"
                   className="cursor-pointer text-gray-600 hover:text-gray-900 font-medium transition-colors duration-200"
                 >
-                  Login
+                  Sign in
                 </Link>
                 <Link
                   href="/signup"
                   className="cursor-pointer inline-flex h-9 items-center rounded-[4px] bg-ink px-4 text-[14px] font-medium text-white transition-colors hover:bg-[#01243a] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
                 >
-                  Sign Up
+                  Create account
                 </Link>
               </>
             ) : (
@@ -591,7 +591,7 @@ export default function Header() {
                   onClick={() => setIsMobileMenuOpen(false)}
                   className="cursor-pointer block w-full text-center py-3 text-gray-600 hover:text-gray-900 font-medium rounded-lg hover:bg-gray-50 transition-colors"
                 >
-                  Login to Your Account
+                  Sign in to your account
                 </Link>
                 <Link
                   href="/signup"
