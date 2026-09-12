@@ -201,7 +201,7 @@ export default function MyReportPage() {
 
   if (error || !reportData) {
     return (
-      <div className="ruled-page mx-auto max-w-4xl px-5 py-10 sm:px-8">
+      <div className="ruled-page mx-auto max-w-4xl py-10">
         <div className="ruled">
           <div className="margin" aria-hidden />
           <div className="column max-w-md border-l-2 border-mark pl-4">
@@ -239,7 +239,7 @@ export default function MyReportPage() {
   ).length;
 
   return (
-    <div className="ruled-page mx-auto min-h-[calc(100vh-8rem)] max-w-4xl px-5 py-10 sm:px-8 lg:py-14">
+    <div className="ruled-page mx-auto min-h-[34rem] max-w-4xl py-10 lg:py-14">
       {/* Masthead. The mark is the one loud thing on this page. */}
       <header className="ruled pb-6">
         <div className="margin" aria-hidden />

@@ -65,7 +65,7 @@ export default async function LessonDetailPage({ params, searchParams }: Props) 
   const isAuthor = isTeacher && session.user?.id === lesson.authorId;
 
   return (
-    <main className="ruled-page mx-auto min-h-[calc(100vh-8rem)] max-w-4xl px-5 py-10 sm:px-8 lg:py-14">
+    <main className="ruled-page mx-auto min-h-[34rem] max-w-4xl py-10 lg:py-14">
       {/* Raised only when the download had nothing to give. Stated plainly,
           with the next step, rather than an apology. */}
       {noMaterial === "1" && (

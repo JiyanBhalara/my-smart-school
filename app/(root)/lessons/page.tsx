@@ -62,7 +62,7 @@ async function LessonsContent({ searchParams }: LessonsPageProps) {
   const filtering = Boolean(params.search || params.subject);
 
   return (
-    <div className="ruled-page mx-auto min-h-[calc(100vh-8rem)] max-w-4xl px-5 py-10 sm:px-8 lg:py-14">
+    <div className="ruled-page mx-auto min-h-[34rem] max-w-4xl py-10 lg:py-14">
       {/* Masthead. The count is the only number here, so it carries no
           decoration -- three stat cards would have been three boxes. */}
       <header className="ruled pb-6">

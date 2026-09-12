@@ -10,7 +10,7 @@ import Link from "next/link";
  */
 export default function Home() {
   return (
-    <div className="ruled-page mx-auto min-h-[calc(100vh-8rem)] max-w-3xl px-5 py-14 sm:px-8 lg:py-24">
+    <div className="ruled-page mx-auto min-h-[34rem] max-w-3xl py-14 lg:py-24">
       <header className="ruled pb-8">
         <div className="margin" aria-hidden />
         <div className="column">

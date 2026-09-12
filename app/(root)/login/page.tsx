@@ -45,7 +45,7 @@ export default function Login() {
   };
 
   return (
-    <div className="ruled-page mx-auto min-h-[calc(100vh-8rem)] max-w-md px-5 py-12 sm:px-8 lg:py-20">
+    <div className="ruled-page mx-auto min-h-[34rem] max-w-md py-12 lg:py-20">
       <header className="ruled pb-6">
         <div className="margin" aria-hidden />
         <div className="column">

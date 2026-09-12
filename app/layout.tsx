@@ -54,7 +54,7 @@ export default async function RootLayout({
           <UploadProvider>
             <div className="min-h-screen flex flex-col">
               <Header />
-              <main className="flex-1 mt-12">
+              <main className="flex-1 px-4 pb-12 pt-[5.5rem] sm:px-6">
                 {children}
               </main>
               <Footer />

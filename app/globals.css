@@ -53,9 +53,11 @@
 :root {
   /* --- the six --- */
   --ink: #023047;        /* text, headings, heavy rules, selection  13.1:1 */
-  --paper: #f7f9fa;      /* page ground, faintly cool                      */
-  --sheet: #ffffff;      /* raised surfaces, separated by rule not shadow  */
-  --rule: #c7d3db;       /* hairlines, table grid, dividers                */
+  /* The desk the page lies on. It has to carry real tone, or a white sheet
+     on a near-white ground reads as one undifferentiated field. */
+  --paper: #e4ebef;      /* ground behind the sheet                        */
+  --sheet: #ffffff;      /* the page itself                                */
+  --rule: #b4c4ce;       /* hairlines, table grid, dividers                */
   /* Control borders are UI components under WCAG 1.4.11 and need 3:1, which
      the hairline rule does not meet (1.5:1). Fields get their own, darker
      edge; the decorative grid keeps the lighter one. */
@@ -70,8 +72,12 @@
   --subject-4: #5f4b8b;
   --subject-5: #6b705c;
 
-  /* --- the margin --- */
+  /* --- the margin ---
+     The horizontal padding is a variable because the vertical rule is drawn
+     against the border box while the ruled grid sits inside the padding.
+     Hard-coding them separately put three different left edges on the page. */
   --gutter: 56px;
+  --page-pad: 20px;
 
   /* --- shadcn primitives inherit the system --- */
   --background: var(--paper);
@@ -93,6 +99,10 @@
   --input: var(--field);
   --ring: var(--ink);
   --radius: 4px;
+}
+
+@media (min-width: 640px) {
+  :root { --page-pad: 32px; }
 }
 
 @media (max-width: 1023px) {
@@ -158,14 +168,20 @@
      segments read as a rendering fault. One line, painted by the page. */
   .ruled-page {
     position: relative;
+    background: var(--sheet);
+    border: 1px solid var(--rule);
+    padding-left: var(--page-pad);
+    padding-right: var(--page-pad);
   }
 
+  /* Offset by the padding so the rule lands exactly on the grid's gutter
+     boundary rather than floating a padding-width to its left. */
   .ruled-page::before {
     content: "";
     position: absolute;
     top: 0;
     bottom: 0;
-    left: var(--gutter);
+    left: calc(var(--page-pad) + var(--gutter));
     width: 1px;
     background: var(--rule);
     pointer-events: none;
