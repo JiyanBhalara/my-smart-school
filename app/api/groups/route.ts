@@ -4,6 +4,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/utils/authOptions';
 import prisma from '@/lib/prisma'; // Fixed import - remove destructuring
+import { createGroupSchema, parseBody } from '@/lib/validation';
 
 export async function GET() {
   try {
@@ -70,7 +71,9 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Only teachers can create groups' }, { status: 403 });
     }
 
-    const { name, description, memberIds } = await request.json();
+    const parsed = parseBody(createGroupSchema, await request.json());
+    if (!parsed.ok) return parsed.response;
+    const { name, description, memberIds } = parsed.data;
     if (!name?.trim()) {
       return NextResponse.json({ error: 'Group name is required' }, { status: 400 });
     }

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/utils/authOptions'; // Adjust if needed
 import { prisma } from '@/lib/prisma';
+import { createConversationSchema, parseBody } from '@/lib/validation';
 
 export async function POST(request: NextRequest) {
   try {
@@ -11,7 +12,9 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { otherUserId, conversationId } = await request.json();
+    const parsed = parseBody(createConversationSchema, await request.json());
+    if (!parsed.ok) return parsed.response;
+    const { otherUserId, conversationId } = parsed.data;
 
     // Get current user
     const currentUser = await prisma.user.findUnique({

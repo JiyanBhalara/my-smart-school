@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/utils/authOptions';
 import prisma from '@/lib/prisma'; // Fixed import - remove destructuring
+import { addMembersSchema, parseBody, updateMemberRoleSchema } from '@/lib/validation';
 
 export async function GET(
   request: NextRequest, // Added request parameter
@@ -94,7 +95,9 @@ export async function POST(
       return NextResponse.json({ error: 'Only admins can add members' }, { status: 403 });
     }
 
-    const { userIds } = await request.json();
+    const parsed = parseBody(addMembersSchema, await request.json());
+    if (!parsed.ok) return parsed.response;
+    const { userIds } = parsed.data;
     if (!Array.isArray(userIds) || userIds.length === 0) {
       return NextResponse.json({ error: 'User IDs array is required' }, { status: 400 });
     }
@@ -185,7 +188,9 @@ export async function PUT(
       return NextResponse.json({ error: 'Only admins can change member roles' }, { status: 403 });
     }
 
-    const { userId, role } = await request.json();
+    const parsedRole = parseBody(updateMemberRoleSchema, await request.json());
+    if (!parsedRole.ok) return parsedRole.response;
+    const { userId, role } = parsedRole.data;
     if (!userId || !role || !['ADMIN', 'MEMBER'].includes(role)) {
       return NextResponse.json({ error: 'Valid userId and role required' }, { status: 400 });
     }

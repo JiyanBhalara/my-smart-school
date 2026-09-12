@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/app/utils/authOptions';
 import prisma from '@/lib/prisma';
+import { parseBody, studentNoteSchema } from '@/lib/validation';
 
 type Props = {
   params: Promise<{ studentId: string }>;
@@ -60,12 +61,9 @@ export async function POST(request: NextRequest, { params }: Props) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const body = await request.json();
-    const { note } = body;
-
-    if (!note || note.trim().length === 0) {
-      return NextResponse.json({ error: 'Note content is required' }, { status: 400 });
-    }
+    const parsed = parseBody(studentNoteSchema, await request.json());
+    if (!parsed.ok) return parsed.response;
+    const { note } = parsed.data;
 
     // Verify student exists
     const student = await prisma.user.findUnique({

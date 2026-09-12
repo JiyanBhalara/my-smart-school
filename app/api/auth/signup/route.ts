@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { createClient } from "@supabase/supabase-js";
 import bcrypt from "bcryptjs";
+import { parseBody, signupSchema } from '@/lib/validation';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!, // Fixed: removed escaped underscore
@@ -10,11 +11,9 @@ const supabase = createClient(
 );
 
 export async function POST(req: NextRequest) {
-  const { name, email, password } = await req.json();
-  
-  if (!email || !password) {
-    return NextResponse.json({ error: "Missing fields" }, { status: 400 });
-  }
+  const parsed = parseBody(signupSchema, await req.json());
+  if (!parsed.ok) return parsed.response;
+  const { name, email, password } = parsed.data;
 
   try {
     // 1️⃣ Prisma

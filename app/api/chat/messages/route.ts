@@ -3,6 +3,7 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/utils/authOptions'; // Adjust path as needed
 import { prisma } from '@/lib/prisma'; // Adjust path as needed
 import { supabaseAdmin } from '@/lib/supabaseAdmin'; // Add this import, adjust path as needed
+import { parseBody, sendMessageSchema } from '@/lib/validation';
 
 // GET messages for a conversation
 export async function GET(request: NextRequest) {
@@ -83,7 +84,9 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { conversationId, content, fileUrl, fileName, fileType, fileSize } = await request.json();
+    const parsed = parseBody(sendMessageSchema, await request.json());
+    if (!parsed.ok) return parsed.response;
+    const { conversationId, content, fileUrl, fileName, fileType, fileSize } = parsed.data;
 
     if (!conversationId) {
       return NextResponse.json({ error: 'Conversation ID is required' }, { status: 400 });

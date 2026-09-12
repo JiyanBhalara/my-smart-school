@@ -4,6 +4,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/utils/authOptions';
 import prisma from '@/lib/prisma'; // Fixed import - remove destructuring
+import { parseBody, pinMessageSchema } from '@/lib/validation';
 
 export async function POST(
   request: NextRequest,
@@ -38,7 +39,9 @@ export async function POST(
       return NextResponse.json({ error: 'Only admins can pin messages' }, { status: 403 });
     }
 
-    const { messageId } = await request.json();
+    const parsed = parseBody(pinMessageSchema, await request.json());
+    if (!parsed.ok) return parsed.response;
+    const { messageId } = parsed.data;
     if (!messageId) {
       return NextResponse.json({ error: 'Message ID is required' }, { status: 400 });
     }

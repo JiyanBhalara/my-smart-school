@@ -4,6 +4,7 @@ import { authOptions } from '@/app/utils/authOptions';
 import prisma from '@/lib/prisma';
 import { del } from '@vercel/blob';
 import { serializeVideo } from '@/lib/serialize';
+import { parseBody, updateVideoSchema } from '@/lib/validation';
 
 // UPDATE video title/description
 export async function PUT(
@@ -17,7 +18,9 @@ export async function PUT(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { title, description } = await req.json();
+    const parsed = parseBody(updateVideoSchema, await req.json());
+    if (!parsed.ok) return parsed.response;
+    const { title, description } = parsed.data;
 
     if (!title?.trim()) {
       return NextResponse.json({ error: 'Title is required' }, { status: 400 });

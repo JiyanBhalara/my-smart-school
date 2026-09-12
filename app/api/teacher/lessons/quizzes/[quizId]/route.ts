@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/app/utils/authOptions';
 import prisma from '@/lib/prisma';
+import { parseBody, quizSchema } from '@/lib/validation';
 
 interface QuizOption {
   text: string;
@@ -41,13 +42,9 @@ export async function PUT(
       }, { status: 404 });
     }
 
-    const { title, description, timeLimit, maxAttempts, questions }: {
-      title: string;
-      description?: string;
-      timeLimit?: number;
-      maxAttempts?: number;
-      questions: QuizQuestion[];
-    } = await request.json();
+    const parsed = parseBody(quizSchema, await request.json());
+    if (!parsed.ok) return parsed.response;
+    const { title, description, timeLimit, maxAttempts, questions } = parsed.data;
 
     // Delete existing questions and options
     await prisma.question.deleteMany({

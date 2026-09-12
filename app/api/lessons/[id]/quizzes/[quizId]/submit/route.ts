@@ -2,11 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/app/utils/authOptions';
 import prisma from '@/lib/prisma';
-
-interface SubmissionAnswer {
-  questionId: string;
-  optionId: string;
-}
+import { parseBody, submitQuizSchema } from '@/lib/validation';
 
 interface AnswerResult {
   questionId: string;
@@ -27,7 +23,9 @@ export async function POST(
     }
 
     const { quizId } = await params; // Await params
-    const { answers }: { answers: SubmissionAnswer[] } = await request.json();
+    const parsed = parseBody(submitQuizSchema, await request.json());
+    if (!parsed.ok) return parsed.response;
+    const { answers } = parsed.data;
 
     // Get quiz with questions and correct answers
     const quiz = await prisma.quiz.findUnique({

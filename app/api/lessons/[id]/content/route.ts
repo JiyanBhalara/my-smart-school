@@ -8,6 +8,7 @@ import {
   requireLessonAccess,
   toErrorResponse,
 } from "@/lib/auth-guard";
+import { createContentSchema, parseBody } from '@/lib/validation';
 
 // GET all content for a lesson
 export async function GET(
@@ -64,7 +65,9 @@ export async function POST(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { title, markdown, type, fileUrl, fileName } = await request.json();
+    const parsed = parseBody(createContentSchema, await request.json());
+    if (!parsed.ok) return parsed.response;
+    const { title, markdown, type, fileUrl, fileName } = parsed.data;
 
     // Validate required fields
     if (!title || !type) {

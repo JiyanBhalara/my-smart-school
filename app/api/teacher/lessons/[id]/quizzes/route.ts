@@ -5,6 +5,7 @@ import {
   toErrorResponse,
 } from '@/lib/auth-guard';
 import prisma from '@/lib/prisma';
+import { parseBody, quizSchema } from '@/lib/validation';
 
 interface QuizOption {
   text: string;
@@ -31,19 +32,9 @@ export async function POST(
     const session = await requireRole('TEACHER');
     await requireLessonAuthor(id, session.id);
 
-    const { 
-      title, 
-      description, 
-      timeLimit, 
-      maxAttempts, 
-      questions 
-    }: {
-      title: string;
-      description?: string;
-      timeLimit?: number;
-      maxAttempts?: number;
-      questions: QuizQuestion[];
-    } = await request.json();
+    const parsed = parseBody(quizSchema, await request.json());
+    if (!parsed.ok) return parsed.response;
+    const { title, description, timeLimit, maxAttempts, questions } = parsed.data;
 
     const quiz = await prisma.quiz.create({
       data: {

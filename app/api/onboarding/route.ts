@@ -2,6 +2,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getToken } from "next-auth/jwt";
 import prisma from "@/lib/prisma";
+import { onboardingSchema, parseBody } from '@/lib/validation';
 
 export async function POST(req: NextRequest) {
   const token = await getToken({ 
@@ -13,10 +14,9 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const { birthdate, school, role } = await req.json();
-  if (!birthdate || !school || !role) {
-    return NextResponse.json({ error: "Missing fields" }, { status: 400 });
-  }
+  const parsed = parseBody(onboardingSchema, await req.json());
+  if (!parsed.ok) return parsed.response;
+  const { birthdate, school, role } = parsed.data;
 
   // create the profile
   await prisma.profile.create({

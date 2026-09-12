@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/app/utils/authOptions';
 import prisma from '@/lib/prisma';
+import { parseBody, updateLessonSchema } from '@/lib/validation';
 
 // GET lesson for editing
 export async function GET(
@@ -57,7 +58,9 @@ export async function PUT(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { title, subject, type, tags, published } = await request.json();
+    const parsed = parseBody(updateLessonSchema, await request.json());
+    if (!parsed.ok) return parsed.response;
+    const { title, subject, type, tags, published } = parsed.data;
 
     // Verify lesson exists and user owns it
     const existingLesson = await prisma.lesson.findUnique({

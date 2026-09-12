@@ -4,6 +4,7 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/app/utils/authOptions";
 import prisma from "@/lib/prisma";
 import { createClient } from "@supabase/supabase-js";
+import { parseBody, updateContentSchema } from '@/lib/validation';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -23,7 +24,9 @@ export async function PUT(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { title, markdown } = await request.json();
+    const parsed = parseBody(updateContentSchema, await request.json());
+    if (!parsed.ok) return parsed.response;
+    const { title, markdown } = parsed.data;
 
     // Find existing content
     const existingContent = await prisma.lessonContent.findUnique({

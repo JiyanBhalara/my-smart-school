@@ -4,6 +4,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/utils/authOptions';
 import prisma from '@/lib/prisma'; // Fixed import - remove destructuring
+import { parseBody, updateGroupSchema } from '@/lib/validation';
 
 export async function GET(
   request: NextRequest,
@@ -98,14 +99,19 @@ export async function PUT(
       return NextResponse.json({ error: 'Only group admins can update' }, { status: 403 });
     }
 
-    const { name, description, pinnedMessageId } = await request.json();
+    const parsed = parseBody(updateGroupSchema, await request.json());
+    if (!parsed.ok) return parsed.response;
+    const { name, description, pinnedMessageId } = parsed.data;
     const data: {
       name?: string;
-      description?: string;
+      description?: string | null;
       pinnedMessageId?: string | null;
     } = {};
     if (name !== undefined) data.name = name.trim();
-    if (description !== undefined) data.description = description.trim();
+    // `description` is nullable in the schema; null clears it.
+    if (description !== undefined) {
+      data.description = description === null ? null : description.trim();
+    }
     if (pinnedMessageId !== undefined) data.pinnedMessageId = pinnedMessageId;
 
     const updated = await prisma.group.update({
