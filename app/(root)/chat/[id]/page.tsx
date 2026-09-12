@@ -229,7 +229,7 @@ export default function ChatPage() {
 
   if (status === 'loading' || loading) {
     return (
-      <div className="min-h-screen bg-[#edf2f5] pt-20 flex items-center justify-center">
+      <div className="sheet-page mx-auto w-full max-w-5xl py-10 bg-[#edf2f5] flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-4 border-rule border-t-slate-600 mx-auto"></div>
           <span className="mt-4 text-graphite font-medium text-lg">Loading chat...</span>
@@ -240,7 +240,7 @@ export default function ChatPage() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-[#edf2f5] pt-20 flex items-center justify-center px-4">
+      <div className="sheet-page mx-auto w-full max-w-5xl py-10 bg-[#edf2f5] flex items-center justify-center px-4">
         <div className="max-w-xl w-full bg-[#fdf3f2] border border-mark rounded-[4px] p-6">
           <div className="flex items-center space-x-3">
             <svg className="w-6 h-6 text-mark" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -254,7 +254,7 @@ export default function ChatPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#edf2f5] pt-20 px-4 lg:px-6 mb-7">
+    <div className="sheet-page mx-auto w-full max-w-5xl py-10 bg-[#edf2f5] px-4 lg:px-6 mb-7">
       {/* Back Button */}
       <div className="max-w-5xl mx-auto mb-4">
         <Link

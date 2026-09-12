@@ -123,14 +123,14 @@ export default function StudentListPage() {
 
   if (status === 'loading' || !session) {
     return (
-      <div className="min-h-screen bg-sheet pt-20 flex items-center justify-center">
+      <div className="sheet-page mx-auto w-full max-w-5xl py-10 flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-ink"></div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-sheet pt-20">
+    <div className="sheet-page mx-auto w-full max-w-5xl py-10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         
         {/* Header */}

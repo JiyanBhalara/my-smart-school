@@ -64,7 +64,7 @@ export default function TakeQuizPage({ params }: PageProps) {
 
   if (!session) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="sheet-page mx-auto w-full max-w-5xl py-10 flex items-center justify-center">
         <Card>
           <CardContent className="p-6">
             <p>Please sign in to take this quiz.</p>
@@ -76,7 +76,7 @@ export default function TakeQuizPage({ params }: PageProps) {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="sheet-page mx-auto w-full max-w-5xl py-10 flex items-center justify-center">
         <div>Loading quiz...</div>
       </div>
     );
@@ -84,7 +84,7 @@ export default function TakeQuizPage({ params }: PageProps) {
 
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="sheet-page mx-auto w-full max-w-5xl py-10 flex items-center justify-center">
         <Card>
           <CardContent className="p-6">
             <p className="text-red-600">{error}</p>
@@ -99,7 +99,7 @@ export default function TakeQuizPage({ params }: PageProps) {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="sheet-page mx-auto w-full max-w-5xl py-10 bg-gray-50">
       <QuizTaker 
         lessonId={lessonId} 
         quizId={quizId} 

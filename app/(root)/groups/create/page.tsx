@@ -144,7 +144,7 @@ export default function CreateGroupPage() {
 
   if (status === 'loading') {
     return (
-      <div className="min-h-screen bg-[#edf2f5] pt-20 flex items-center justify-center">
+      <div className="sheet-page mx-auto w-full max-w-5xl py-10 bg-[#edf2f5] flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-4 border-rule border-t-ink mx-auto"></div>
           <span className="mt-4 text-graphite font-medium text-lg">Loading...</span>
@@ -154,7 +154,7 @@ export default function CreateGroupPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#edf2f5] pt-20">
+    <div className="sheet-page mx-auto w-full max-w-5xl py-10 bg-[#edf2f5]">
       <div className="max-w-4xl mx-auto px-4 py-8">
         {/* Header */}
         <div className="mb-8">

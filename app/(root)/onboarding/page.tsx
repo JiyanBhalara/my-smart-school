@@ -49,7 +49,7 @@ export default function Onboarding() {
   }
 
   return (
-    <main className="min-h-screen flex items-center justify-center p-4 sm:p-6 lg:p-8" 
+    <main className="sheet-page mx-auto w-full max-w-5xl py-10 flex items-center justify-center p-4 sm:p-6 lg:p-8" 
           style={{ backgroundColor: '#023047' }}>
       {/* Background decoration */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">

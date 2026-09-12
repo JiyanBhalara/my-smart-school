@@ -220,7 +220,7 @@ export default function AddContentPage() {
 
   if (status === "loading" || loading) {
     return (
-      <div className="min-h-screen bg-[#edf2f5] flex items-center justify-center">
+      <div className="sheet-page mx-auto w-full max-w-5xl py-10 bg-[#edf2f5] flex items-center justify-center">
         <div className="flex items-center gap-3">
           <Loader2 className="h-6 w-6 animate-spin text-ink" />
           <span className="text-graphite">Loading...</span>
@@ -231,7 +231,7 @@ export default function AddContentPage() {
 
   if (error && !lesson) {
     return (
-      <div className="min-h-screen bg-[#edf2f5] flex items-center justify-center">
+      <div className="sheet-page mx-auto w-full max-w-5xl py-10 bg-[#edf2f5] flex items-center justify-center">
         <div className="text-center">
           <AlertCircle className="h-12 w-12 text-mark mx-auto mb-4" />
           <h2 className="text-2xl font-bold text-ink mb-2">Error</h2>
@@ -249,7 +249,7 @@ export default function AddContentPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#edf2f5] pt-20">
+    <div className="sheet-page mx-auto w-full max-w-5xl py-10 bg-[#edf2f5]">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="mb-8">

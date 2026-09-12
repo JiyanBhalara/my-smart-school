@@ -266,7 +266,7 @@ const handleSendMessage = async (e: React.FormEvent) => {
 
   if (status === 'loading' || loading) {
     return (
-      <div className="min-h-screen bg-[#edf2f5] pt-20 flex items-center justify-center">
+      <div className="sheet-page mx-auto w-full max-w-5xl py-10 bg-[#edf2f5] flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-4 border-rule border-t-ink mx-auto"></div>
           <span className="mt-4 text-graphite font-medium text-lg">Loading group...</span>
@@ -277,7 +277,7 @@ const handleSendMessage = async (e: React.FormEvent) => {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-[#edf2f5] pt-20 flex items-center justify-center px-4">
+      <div className="sheet-page mx-auto w-full max-w-5xl py-10 bg-[#edf2f5] flex items-center justify-center px-4">
         <div className="max-w-xl w-full bg-[#fdf3f2] border border-mark rounded-[4px] p-6">
           <div className="flex items-center space-x-3">
             <svg className="w-6 h-6 text-mark" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -292,14 +292,14 @@ const handleSendMessage = async (e: React.FormEvent) => {
 
   if (!group) {
     return (
-      <div className="min-h-screen bg-[#edf2f5] pt-20 flex items-center justify-center">
+      <div className="sheet-page mx-auto w-full max-w-5xl py-10 bg-[#edf2f5] flex items-center justify-center">
         <p className="text-graphite">Group not found</p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#edf2f5] pt-20 px-4 lg:px-6 mb-7">
+    <div className="sheet-page mx-auto w-full max-w-5xl py-10 bg-[#edf2f5] px-4 lg:px-6 mb-7">
       <div className="max-w-5xl mx-auto h-[calc(100vh-6rem)] bg-white rounded-[4px] border border-rule overflow-hidden flex flex-col">
         
         {/* Group Header */}

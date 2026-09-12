@@ -51,7 +51,7 @@ export default async function ContentDetailPage({ params }: Props) {
   const isAuthor = isTeacher && session.user?.id === content.lesson.authorId;
 
   return (
-    <main className="min-h-screen bg-[#edf2f5] pt-20">
+    <main className="sheet-page mx-auto w-full max-w-5xl py-10 bg-[#edf2f5]">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="mb-8">

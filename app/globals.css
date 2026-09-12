@@ -166,12 +166,18 @@
 
   /* The rule must be continuous down the whole page, not redrawn per block --
      segments read as a rendering fault. One line, painted by the page. */
+  /* Every screen is a sheet on the ground. `.ruled-page` is the same sheet
+     with the margin rule drawn on it. */
+  .sheet-page,
   .ruled-page {
-    position: relative;
     background: var(--sheet);
     border: 1px solid var(--rule);
     padding-left: var(--page-pad);
     padding-right: var(--page-pad);
+  }
+
+  .ruled-page {
+    position: relative;
   }
 
   /* Offset by the padding so the rule lands exactly on the grid's gutter

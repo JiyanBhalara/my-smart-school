@@ -128,7 +128,7 @@ export default async function QuizReportPage({ params }: Props) {
   };
 
   return (
-    <main className="min-h-screen bg-sheet">
+    <main className="sheet-page mx-auto w-full max-w-5xl py-10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Header */}
         <div className="mb-8">

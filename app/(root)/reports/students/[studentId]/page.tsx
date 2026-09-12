@@ -250,7 +250,7 @@ export default function StudentReportPage() {
 
   if (status === 'loading' || loading) {
     return (
-      <div className="min-h-screen bg-sheet pt-20 flex items-center justify-center">
+      <div className="sheet-page mx-auto w-full max-w-5xl py-10 flex items-center justify-center">
         <div className="text-center px-4">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-ink mx-auto mb-4"></div>
           <p className="text-graphite">Loading student report...</p>
@@ -261,7 +261,7 @@ export default function StudentReportPage() {
 
   if (error || !reportData) {
     return (
-      <div className="min-h-screen bg-sheet pt-20 flex items-center justify-center px-4">
+      <div className="sheet-page mx-auto w-full max-w-5xl py-10 flex items-center justify-center px-4">
         <div className="text-center max-w-md">
           <div className="bg-[#fdf3f2] rounded-full p-4 w-16 h-16 mx-auto mb-4">
             <UserIcon className="h-8 w-8 text-mark" />
@@ -281,7 +281,7 @@ export default function StudentReportPage() {
   }
 
   return (
-    <div className="min-h-screen bg-sheet pt-20">
+    <div className="sheet-page mx-auto w-full max-w-5xl py-10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
         
         {/* Header */}

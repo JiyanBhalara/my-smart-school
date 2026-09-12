@@ -37,7 +37,7 @@ export default async function AllQuizzesPage({ params }: { params: Promise<{ id:
   const isAuthor = isTeacher && session.user?.id === lesson.authorId;
 
   return (
-    <main className="min-h-screen bg-sheet">
+    <main className="sheet-page mx-auto w-full max-w-5xl py-10">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Header Section */}
         <div className="bg-white rounded-[4px] border border-rule overflow-hidden mb-8">

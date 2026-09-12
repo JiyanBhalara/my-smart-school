@@ -87,7 +87,7 @@ export default function GroupsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#edf2f5] pt-20">
+      <div className="sheet-page mx-auto w-full max-w-5xl py-10 bg-[#edf2f5]">
         <div className="max-w-6xl mx-auto px-4 py-8">
           <div className="flex items-center justify-center py-12">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-ink"></div>
@@ -100,7 +100,7 @@ export default function GroupsPage() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-[#edf2f5] pt-20">
+      <div className="sheet-page mx-auto w-full max-w-5xl py-10 bg-[#edf2f5]">
         <div className="max-w-6xl mx-auto px-4 py-8">
           <div className="bg-[#fdf3f2] border border-mark rounded-[4px] p-4">
             <p className="text-mark">Error: {error}</p>
@@ -111,7 +111,7 @@ export default function GroupsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#edf2f5] pt-20">
+    <div className="sheet-page mx-auto w-full max-w-5xl py-10 bg-[#edf2f5]">
       <div className="max-w-6xl mx-auto px-4 py-8">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">

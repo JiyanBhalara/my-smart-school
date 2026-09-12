@@ -24,7 +24,7 @@ export default async function LessonDetail({ params }: LessonDetailProps) {
   }
 
   return (
-    <main className="p-6">
+    <main className="sheet-page mx-auto w-full max-w-5xl py-10">
       <header className="mb-8">
         <h1 className="text-3xl font-bold">{lesson.title}</h1>
         <p className="text-graphite">

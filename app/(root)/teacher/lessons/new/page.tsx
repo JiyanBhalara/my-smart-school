@@ -105,14 +105,14 @@ export default function NewLessonPage() {
   // While session is loading, don't flash the form
   if (status === "loading") {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-sheet">
+      <div className="sheet-page mx-auto w-full max-w-5xl py-10 flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white"></div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-sheet p-4 sm:p-6 lg:p-8">
+    <div className="sheet-page mx-auto w-full max-w-5xl py-10 p-4 sm:p-6 lg:p-8">
       {/* Header */}
       <div className="max-w-4xl mx-auto mb-8">
         <button

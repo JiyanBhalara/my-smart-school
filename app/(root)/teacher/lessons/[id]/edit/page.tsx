@@ -123,7 +123,7 @@ export default function EditLessonPage() {
 
   if (status === 'loading' || loading) {
     return (
-      <div className="min-h-screen bg-[#edf2f5] flex items-center justify-center">
+      <div className="sheet-page mx-auto w-full max-w-5xl py-10 bg-[#edf2f5] flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-ink"></div>
       </div>
     );
@@ -131,7 +131,7 @@ export default function EditLessonPage() {
 
   if (error && !lesson) {
     return (
-      <div className="min-h-screen bg-[#edf2f5] flex items-center justify-center">
+      <div className="sheet-page mx-auto w-full max-w-5xl py-10 bg-[#edf2f5] flex items-center justify-center">
         <div className="text-center">
           <h2 className="text-2xl font-bold text-ink mb-2">Error Loading Lesson</h2>
           <p className="text-graphite mb-4">{error}</p>
@@ -148,7 +148,7 @@ export default function EditLessonPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#edf2f5] pt-20">
+    <div className="sheet-page mx-auto w-full max-w-5xl py-10 bg-[#edf2f5]">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="mb-8">

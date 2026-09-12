@@ -17,7 +17,7 @@ export default async function CreateQuizPage({ params }: PageProps) {
   const { id: lessonId } = await params;
 
   return (
-    <div className="container mx-auto py-6">
+    <div className="sheet-page mx-auto w-full max-w-5xl py-10">
       <QuizForm lessonId={lessonId} isEdit={false} />
     </div>
   );
