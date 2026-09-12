@@ -30,10 +30,10 @@ const newsreader = Newsreader({
 });
 
 export const metadata: Metadata = {
-  title: "My Smart Digital School",
+  title: "My Smart School",
   description: "An AI-driven platform for sustainable, personalized computer-science education. Empower every student with hands-on lessons, real-time analytics, and eco-friendly activities.",
   keywords: "education, AI, computer science, learning platform, sustainable education",
-  authors: [{ name: "My Smart Digital School" }],
+  authors: [{ name: "My Smart School" }],
   viewport: "width=device-width, initial-scale=1",
 };
 

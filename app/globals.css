@@ -149,8 +149,28 @@
     grid-template-columns: var(--gutter) minmax(0, 1fr);
   }
 
+  /* The rule must be continuous down the whole page, not redrawn per block --
+     segments read as a rendering fault. One line, painted by the page. */
+  .ruled-page {
+    position: relative;
+  }
+
+  .ruled-page::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: var(--gutter);
+    width: 1px;
+    background: var(--rule);
+    pointer-events: none;
+  }
+
+  @media (max-width: 639px) {
+    .ruled-page::before { display: none; }
+  }
+
   .ruled > .margin {
-    border-right: 1px solid var(--rule);
     padding-right: 12px;
     text-align: right;
     color: var(--graphite);

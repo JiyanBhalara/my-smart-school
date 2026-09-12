@@ -1,8 +1,8 @@
 import { Suspense } from "react";
 import prisma from "@/lib/prisma";
-import LessonCard from "@/components/LessonCard";
+import LessonRow from "@/components/LessonRow";
 import SearchAndFilter from "@/components/lessons/SearchAndFilter";
-import { GraduationCap, BookOpen, Users, Clock, Loader } from "lucide-react";
+import Link from "next/link";
 
 type LessonWithTags = {
   id: string;
@@ -55,185 +55,130 @@ async function LessonsContent({ searchParams }: LessonsPageProps) {
     select: { subject: true },
     orderBy: { subject: "asc" }
   });
-  
+
   const totalLessons = await prisma.lesson.count();
   const subjects = Array.from(new Set(allLessons.map(lesson => lesson.subject)));
   const filteredCount = lessons.length;
+  const filtering = Boolean(params.search || params.subject);
 
   return (
-    <>
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mt-8 lg:mt-12 max-w-4xl mx-auto">
-        <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 sm:p-6 border border-white/20 hover:bg-white/15 transition-all duration-300">
-          <div className="flex items-center justify-center mb-3">
-            <div className="p-2 bg-[#8ECAE6] rounded-full">
-              <BookOpen className="text-[#023047]" size={24} />
-            </div>
-          </div>
-          <div className="text-2xl sm:text-3xl font-bold text-[#FFB703] mb-1">{totalLessons}</div>
-          <div className="text-xs sm:text-sm text-gray-300">Total Lessons</div>
+    <div className="ruled-page mx-auto min-h-[calc(100vh-8rem)] max-w-4xl px-5 py-10 sm:px-8 lg:py-14">
+      {/* Masthead. The count is the only number here, so it carries no
+          decoration -- three stat cards would have been three boxes. */}
+      <header className="ruled pb-6">
+        <div className="margin" aria-hidden />
+        <div className="column">
+          <h1 className="text-[30px] font-bold leading-[34px] tracking-[-0.02em] text-ink">
+            Lessons
+          </h1>
+          <p className="mt-1 text-[14px] text-graphite tabular">
+            {filtering
+              ? `${filteredCount} of ${totalLessons} lessons`
+              : `${totalLessons} ${totalLessons === 1 ? "lesson" : "lessons"} across ${subjects.length} ${subjects.length === 1 ? "subject" : "subjects"}`}
+          </p>
         </div>
-        
-        <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 sm:p-6 border border-white/20 hover:bg-white/15 transition-all duration-300">
-          <div className="flex items-center justify-center mb-3">
-            <div className="p-2 bg-[#8ECAE6] rounded-full">
-              <Users className="text-[#023047]" size={24} />
-            </div>
-          </div>
-          <div className="text-2xl sm:text-3xl font-bold text-[#FFB703] mb-1">{subjects.length}</div>
-          <div className="text-xs sm:text-sm text-gray-300">Subjects</div>
-        </div>
-        
-        <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 sm:p-6 border border-white/20 hover:bg-white/15 transition-all duration-300 sm:col-span-2 lg:col-span-1">
-          <div className="flex items-center justify-center mb-3">
-            <div className="p-2 bg-[#8ECAE6] rounded-full">
-              <Clock className="text-[#023047]" size={24} />
-            </div>
-          </div>
-          <div className="text-2xl sm:text-3xl font-bold text-[#FFB703] mb-1">24/7</div>
-          <div className="text-xs sm:text-sm text-gray-300">Access</div>
+      </header>
+
+      <div className="ruled border-t-2 border-ink pt-5">
+        <div className="margin" aria-hidden />
+        <div className="column">
+          <SearchAndFilter
+            subjects={subjects}
+            currentSearch={params.search || ""}
+            currentSubject={params.subject || ""}
+          />
         </div>
       </div>
 
-      {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
-        {/* Enhanced Search and Filter Section */}
-        <div className="mb-8">
-          <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-4 sm:p-6 lg:p-8">
-            <div className="flex flex-col lg:flex-row gap-6 items-start lg:items-center justify-between mb-6">
-              <div className="flex items-center gap-3">
-                <div className="p-3 bg-gradient-to-br from-[#8ECAE6] to-[#219EBC] rounded-xl shadow-md">
-                  <BookOpen className="text-white" size={24} />
-                </div>
-                <div>
-                  <h2 className="text-2xl lg:text-3xl font-bold text-[#023047] mb-1">
-                    Lesson Library
-                  </h2>
-                  <p className="text-gray-600 text-sm lg:text-base">
-                    {params.search || params.subject ? (
-                      <>Showing {filteredCount} of {totalLessons} lessons</>
-                    ) : (
-                      <>{totalLessons} lessons available across {subjects.length} subjects</>
-                    )}
-                  </p>
-                </div>
-              </div>
-            </div>
-            
-            {/* Search and Filter Component */}
-            <SearchAndFilter 
-              subjects={subjects} 
-              currentSearch={params.search || ""}
-              currentSubject={params.subject || ""}
-            />
+      {lessons.length === 0 ? (
+        <div className="ruled mt-8 border-t border-rule pt-10">
+          <div className="margin" aria-hidden />
+          <div className="column max-w-md">
+            {filtering ? (
+              <>
+                <h2 className="text-[20px] font-semibold tracking-[-0.01em] text-ink">
+                  Nothing matched that
+                </h2>
+                <p className="mt-2 text-[15px] leading-relaxed text-graphite">
+                  No lesson matches{" "}
+                  {params.search ? <>the search &ldquo;{params.search}&rdquo;</> : null}
+                  {params.search && params.subject ? " in " : null}
+                  {params.subject ? <>{params.subject}</> : null}. Clear the
+                  filters to see everything.
+                </p>
+                <Link
+                  href="/lessons"
+                  className="mt-5 inline-flex h-9 items-center rounded-[4px] border border-ink px-4 text-[14px] font-medium text-ink transition-colors hover:bg-ink hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
+                >
+                  Clear filters
+                </Link>
+              </>
+            ) : (
+              <>
+                <h2 className="text-[20px] font-semibold tracking-[-0.01em] text-ink">
+                  No lessons yet
+                </h2>
+                <p className="mt-2 text-[15px] leading-relaxed text-graphite">
+                  Lessons you publish will be listed here, newest first. Start
+                  with a title and a subject; you can add materials, videos and
+                  quizzes afterwards.
+                </p>
+                <Link
+                  href="/teacher/lessons/new"
+                  className="mt-5 inline-flex h-9 items-center rounded-[4px] bg-ink px-4 text-[14px] font-medium text-white transition-colors hover:bg-[#01243a] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
+                >
+                  Write a lesson
+                </Link>
+              </>
+            )}
           </div>
         </div>
-
-        {/* Results Section */}
-        {lessons.length === 0 ? (
-          <div className="text-center py-12 lg:py-20">
-            <div className="mx-auto w-20 h-20 lg:w-24 lg:h-24 bg-gradient-to-br from-[#8ECAE6] to-[#219EBC] rounded-full flex items-center justify-center mb-6 shadow-lg">
-              <BookOpen size={32} className="text-white lg:w-10 lg:h-10" />
-            </div>
-            <h3 className="text-xl lg:text-2xl font-bold text-[#023047] mb-3">
-              {params.search || params.subject ? "No lessons found" : "No lessons published yet"}
-            </h3>
-            <p className="text-gray-600 mb-8 max-w-md mx-auto text-sm lg:text-base px-4">
-              {params.search || params.subject ? (
-                <>Try adjusting your search terms or filters to find what you&apos;re looking for.</>
-              ) : (
-                <>Start building your lesson library. Your educational content will be displayed here once you create your first lesson.</>
-              )}
-            </p>
-            {(!params.search && !params.subject) && (
-              <button className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-[#FFB703] to-[#FB8500] text-white font-medium rounded-lg hover:from-[#FB8500] hover:to-[#FFB703] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
-                <GraduationCap size={20} />
-                Create Your First Lesson
-              </button>
-            )}
-          </div>
-        ) : (
-          <>
-            {/* Active Filters Display */}
-            {(params.search || params.subject) && (
-              <div className="mb-6 flex flex-wrap gap-2">
-                {params.search && (
-                  <span className="inline-flex items-center gap-2 px-3 py-1 bg-[#8ECAE6] text-[#023047] rounded-full text-sm font-medium">
-                    Search: &quot;{params.search}&quot;
-                  </span>
-                )}
-                {params.subject && (
-                  <span className="inline-flex items-center gap-2 px-3 py-1 bg-[#FFB703] text-white rounded-full text-sm font-medium">
-                    Subject: {params.subject}
-                  </span>
-                )}
-              </div>
-            )}
-
-            {/* Lessons Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
-              {lessons.map((lesson, index) => (
-                <div 
-                  key={lesson.id} 
-                  className="animate-fade-in-up"
-                  style={{ animationDelay: `${index * 0.1}s` }}
+      ) : (
+        <div className="mt-8">
+          {filtering && (
+            <div className="ruled pb-3">
+              <div className="margin" aria-hidden />
+              <div className="column flex flex-wrap items-center gap-3 text-[13px] text-graphite">
+                {params.search && <span>Search &ldquo;{params.search}&rdquo;</span>}
+                {params.subject && <span>Subject {params.subject}</span>}
+                <Link
+                  href="/lessons"
+                  className="text-ink underline decoration-rule underline-offset-[3px] hover:decoration-ink"
                 >
-                  <LessonCard
-                    id={lesson.id}
-                    title={lesson.title}
-                    subject={lesson.subject}
-                    fileUrl={lesson.fileUrl}
-                    createdAt={lesson.createdAt}
-                    tags={lesson.tags}
-                  />
-                </div>
-              ))}
+                  Clear
+                </Link>
+              </div>
             </div>
-          </>
-        )}
-      </main>
-    </>
+          )}
+
+          <div className="border-b border-rule">
+            {lessons.map((lesson) => (
+              <LessonRow
+                key={lesson.id}
+                id={lesson.id}
+                title={lesson.title}
+                subject={lesson.subject}
+                createdAt={lesson.createdAt}
+                tags={lesson.tags}
+              />
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
   );
 }
 
 export default async function LessonsPage({ searchParams }: LessonsPageProps) {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
-      {/* Enhanced Header Section */}
-      <div className="bg-gradient-to-br from-[#023047] via-[#025066] to-[#219EBC] text-white relative overflow-hidden">
-        {/* Background Pattern */}
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute inset-0" style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-          }} />
+    <Suspense
+      fallback={
+        <div className="mx-auto max-w-4xl px-5 py-10 sm:px-8">
+          <p className="text-[14px] text-graphite">Loading lessons</p>
         </div>
-        
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-20">
-          <div className="text-center">
-            <div className="flex justify-center mb-6">
-              <div className="p-4 sm:p-6 bg-gradient-to-br from-[#8ECAE6] to-[#219EBC] rounded-2xl shadow-2xl transform hover:scale-105 transition-transform duration-300">
-                <GraduationCap size={48} className="text-white sm:w-12 sm:h-12 lg:w-16 lg:h-16" />
-              </div>
-            </div>
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold mb-4 lg:mb-6 bg-gradient-to-r from-white to-[#8ECAE6] bg-clip-text text-transparent">
-              Discover Knowledge
-            </h1>
-            <p className="text-lg sm:text-xl lg:text-2xl text-gray-200 mb-6 lg:mb-8 max-w-3xl mx-auto px-4 leading-relaxed">
-              Explore our comprehensive collection of educational resources designed to enhance your learning journey
-            </p>
-            
-            <Suspense 
-              fallback={
-                <div className="flex justify-center items-center py-8">
-                  <Loader className="animate-spin text-[#8ECAE6]" size={32} />
-                </div>
-              }
-            >
-              <LessonsContent searchParams={searchParams} />
-            </Suspense>
-          </div>
-        </div>
-      </div>
-    </div>
+      }
+    >
+      <LessonsContent searchParams={searchParams} />
+    </Suspense>
   );
 }
