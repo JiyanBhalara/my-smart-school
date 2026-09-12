@@ -17,11 +17,11 @@ export default function VideoUploadButton({
 }: VideoUploadButtonProps) {
   const [showUploadModal, setShowUploadModal] = useState(false);
 
-  const baseClasses = "cursor-pointer inline-flex items-center gap-2 font-semibold rounded-xl transition-colors shadow-md hover:shadow-lg";
+  const baseClasses = "cursor-pointer inline-flex items-center gap-2 font-medium rounded-[4px] transition-colors";
   
   const variantClasses = {
-    default: "px-4 py-2 text-ink text-white hover:text-ink",
-    primary: "px-6 py-3 text-ink text-white hover:text-ink"
+    default: "px-4 py-2 bg-ink text-white hover:bg-[#01243a]",
+    primary: "px-6 py-3 bg-ink text-white hover:bg-[#01243a]"
   };
 
   return (

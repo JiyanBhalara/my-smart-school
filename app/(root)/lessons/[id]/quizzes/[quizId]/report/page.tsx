@@ -134,7 +134,7 @@ export default async function QuizReportPage({ params }: Props) {
         <div className="mb-8">
           <Link
             href={`/lessons/${quiz.lesson.id}/quizzes`}
-            className="cursor-pointer inline-flex items-center gap-2 text-[#219EBC] hover:text-[#0077B6] font-medium mb-6 group"
+            className="cursor-pointer inline-flex items-center gap-2 text-ink hover:text-ink font-medium mb-6 group"
           >
             <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-colors" />
             Back to All Quizzes
@@ -235,19 +235,19 @@ export default async function QuizReportPage({ params }: Props) {
                 <table className="w-full">
                   <thead className="bg-[#edf2f5]">
                     <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-graphite uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-graphite tracking-[0.02em]">
                         Student
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-graphite uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-graphite tracking-[0.02em]">
                         Attempts
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-graphite uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-graphite tracking-[0.02em]">
                         Score
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-graphite uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-graphite tracking-[0.02em]">
                         Percentage
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-graphite uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-graphite tracking-[0.02em]">
                         Status
                       </th>
                     </tr>

@@ -52,14 +52,14 @@ export default function LessonActionsClient({
         <div className="space-y-3">
           <Link
             href={`/teacher/lessons/${lessonId}/edit`}
-            className="cursor-pointer w-full inline-flex items-center justify-center gap-3 px-4 py-3 bg-ink/20 text-white font-semibold rounded-[4px] hover:bg-ink/30 transition-colors border border-ink"
+            className="cursor-pointer w-full inline-flex items-center justify-center gap-3 px-4 py-3 bg-ink text-white font-semibold rounded-[4px] hover:bg-ink transition-colors border border-ink"
           >
             <Edit size={18} />
             <span>Edit Lesson</span>
           </Link>
           <button
             onClick={() => setShowDeleteModal(true)}
-            className="cursor-pointer w-full inline-flex items-center justify-center gap-3 px-4 py-3 bg-mark/80 text-white font-semibold rounded-[4px] hover:bg-mark/80 transition-colors border border-mark/30"
+            className="cursor-pointer w-full inline-flex items-center justify-center gap-3 px-4 py-3 bg-mark text-white font-semibold rounded-[4px] hover:bg-mark transition-colors border border-mark"
           >
             <Trash2 size={18} />
             <span>Delete Lesson</span>

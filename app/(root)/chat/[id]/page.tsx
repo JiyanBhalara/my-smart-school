@@ -330,11 +330,7 @@ export default function ChatPage() {
               return (
                 <div key={message.id} className={`flex ${isCurrentUser ? 'justify-end' : 'justify-start'}`}>
                   <div
-                    className={`max-w-xs rounded-[4px] px-3.5 py-2.5 lg:max-w-lg xl:max-w-xl ${
-                      isCurrentUser
-                        ? 'bg-ink text-white'
-                        : 'border border-rule bg-sheet text-ink'
-                    }`}
+                    className={`max-w-xs rounded-[4px] px-3.5 py-2.5 lg:max-w-lg xl:max-w-xl ${ isCurrentUser ? 'bg-ink text-white' : 'border border-rule bg-sheet text-ink' }`}
                   >
                     {message.content && (
                       <p className="whitespace-pre-wrap leading-relaxed text-sm lg:text-base">

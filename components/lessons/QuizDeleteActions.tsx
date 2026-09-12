@@ -83,7 +83,7 @@ export default function QuizDeleteActions({
         <button
           onClick={handleDelete}
           disabled={isDeleting}
-          className={`cursor-pointer inline-flex items-center gap-2 px-3 py-2 rounded-[4px] transition-colors font-medium focus:outline-none focus:ring-2 focus:ring-ink/50 ${ variant === 'single' ? 'text-mark hover:text-mark hover:bg-[#fdf3f2] text-sm' : 'bg-mark text-white hover:bg-mark ' }`}
+          className={`cursor-pointer inline-flex items-center gap-2 px-3 py-2 rounded-[4px] transition-colors font-medium focus:outline-none focus:ring-2 focus:ring-ink ${ variant === 'single' ? 'text-mark hover:text-mark hover:bg-[#fdf3f2] text-sm' : 'bg-mark text-white hover:bg-mark ' }`}
           title={variant === 'single' ? `Delete "${quizTitle}"` : `Delete all ${quizCount} quizzes`}
         >
           {isDeleting ? (

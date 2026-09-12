@@ -27,14 +27,14 @@ export default async function LessonDetail({ params }: LessonDetailProps) {
     <main className="p-6">
       <header className="mb-8">
         <h1 className="text-3xl font-bold">{lesson.title}</h1>
-        <p className="text-gray-600">
+        <p className="text-graphite">
           {lesson.subject} — {lesson.type.toUpperCase()}
         </p>
         <div className="flex flex-wrap gap-2 mt-2">
           {lesson.tags.map(({ tag }) => (
             <span
               key={tag.name}
-              className="bg-[#FFB703] text-[#023047] px-2 py-1 rounded-full text-sm"
+              className="bg-mark text-ink px-2 py-1 rounded-full text-sm"
             >
               {tag.name}
             </span>
@@ -43,7 +43,7 @@ export default async function LessonDetail({ params }: LessonDetailProps) {
         <Link
           href={lesson.fileUrl}
           target="_blank"
-          className="cursor-pointer inline-block mt-4 text-sm underline text-[#219EBC]"
+          className="cursor-pointer inline-block mt-4 text-sm underline text-ink"
         >
           Download / View File
         </Link>
@@ -54,14 +54,14 @@ export default async function LessonDetail({ params }: LessonDetailProps) {
           <h2 className="text-2xl font-semibold">Quizzes</h2>
           <Link
             href={`/teacher/lessons/${lesson.id}/quizzes/new`}
-            className="cursor-pointer bg-[#219EBC] text-white px-4 py-2 rounded"
+            className="cursor-pointer bg-ink text-white px-4 py-2 rounded"
           >
             + New Quiz
           </Link>
         </div>
 
         {lesson.quizzes.length === 0 ? (
-          <p className="mt-4 text-gray-500">
+          <p className="mt-4 text-graphite">
             No quizzes created for this lesson.
           </p>
         ) : (
@@ -69,15 +69,15 @@ export default async function LessonDetail({ params }: LessonDetailProps) {
             {lesson.quizzes.map((quiz) => (
               <li
                 key={quiz.id}
-                className="p-4 border rounded hover:shadow transition"
+                className="p-4 border rounded transition"
               >
                 <Link
                   href={`/teacher/lessons/${lesson.id}/quizzes/${quiz.id}`}
-                  className="cursor-pointer text-xl font-medium text-[#023047] hover:underline"
+                  className="cursor-pointer text-xl font-medium text-ink hover:underline"
                 >
                   {quiz.title}
                 </Link>
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-graphite">
                   Created on {quiz.createdAt.toLocaleDateString()}
                 </p>
               </li>

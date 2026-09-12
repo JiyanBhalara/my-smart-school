@@ -198,7 +198,7 @@ export default function Header() {
 
                 {/* Chat Dropdown Menu - FIXED positioning and z-index */}
                 {showChatDropdown && (
-                  <div className="absolute top-full left-0 mt-2 w-64 bg-white rounded-xl shadow-2xl border border-rule py-2 z-[60] animate-in slide-in-from-top-5 duration-200">
+                  <div className="absolute top-full left-0 mt-2 w-64 bg-white rounded-[4px] border border-rule py-2 z-[60] animate-in slide-in- duration-200">
                     <div className="px-4 py-3 border-b border-rule">
                       <h3 className="text-sm font-semibold text-gray-900">Communication</h3>
                       <p className="text-xs text-gray-500">Stay connected with your peers</p>
@@ -308,7 +308,7 @@ export default function Header() {
 
                 {/* Courses Dropdown Menu - FIXED */}
                 {showCoursesDropdown && (
-                  <div className="absolute top-full left-0 mt-2 w-64 bg-white rounded-xl shadow-2xl border border-rule py-2 z-[60] animate-in slide-in-from-top-5 duration-200">
+                  <div className="absolute top-full left-0 mt-2 w-64 bg-white rounded-[4px] border border-rule py-2 z-[60] animate-in slide-in- duration-200">
                     <div className="px-4 py-3 border-b border-rule">
                       <h3 className="text-sm font-semibold text-gray-900">Learning</h3>
                       <p className="text-xs text-gray-500">Explore and manage courses</p>
@@ -397,7 +397,7 @@ export default function Header() {
                         className="w-full h-full rounded-full border-2 border-rule object-cover"
                       />
                     ) : (
-                      <div className="w-full h-full bg-gradient-to-br from-gray-500 to-gray-600 rounded-full flex items-center justify-center text-white font-semibold text-sm lg:text-base">
+                      <div className="w-full h-full bg-sheet rounded-full flex items-center justify-center text-white font-semibold text-sm lg:text-base">
                         {session.user?.name?.[0]?.toUpperCase() || 'U'}
                       </div>
                     )}
@@ -415,7 +415,7 @@ export default function Header() {
                 {/* Logout */}
                 <button
                   onClick={() => signOut({ callbackUrl: '/' })}
-                  className="cursor-pointer flex items-center space-x-2 text-gray-600 hover:text-red-600 transition-colors duration-300 font-medium px-3 py-2 rounded-lg hover:bg-red-50"
+                  className="cursor-pointer flex items-center space-x-2 text-gray-600 hover:text-red-600 transition-colors duration-300 font-medium px-3 py-2 rounded-[4px] hover:bg-red-50"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
@@ -429,7 +429,7 @@ export default function Header() {
           {/* Mobile menu button */}
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="cursor-pointer lg:hidden flex items-center justify-center w-10 h-10 rounded-lg hover:bg-gray-100 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-gray-500"
+            className="cursor-pointer lg:hidden flex items-center justify-center w-10 h-10 rounded-[4px] hover:bg-gray-100 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-gray-500"
             aria-label="Toggle mobile menu"
           >
             {isMobileMenuOpen ? (
@@ -447,14 +447,14 @@ export default function Header() {
 
       {/* Mobile Menu - IMPROVED */}
       {!mounted ? null : isMobileMenuOpen && (
-        <div className="lg:hidden border-t border-rule bg-white animate-in slide-in-from-top duration-300">
+        <div className="lg:hidden border-t border-rule bg-white animate-in slide-in- duration-300">
           <div className="px-4 py-6 space-y-6 max-h-[calc(100vh-4rem)] overflow-y-auto">
             
             {isLoggedIn && (
               <>
                 {/* Mobile Chat Section */}
                 <div className="space-y-3">
-                  <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wide flex items-center">
+                  <h3 className="text-sm font-semibold text-gray-900 tracking-[0.02em] flex items-center">
                     <svg className="w-4 h-4 mr-2 text-ink" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
                     </svg>
@@ -502,7 +502,7 @@ export default function Header() {
                   <Link
                     href="/groups"
                     onClick={() => setIsMobileMenuOpen(false)}
-                    className="cursor-pointer relative flex items-center space-x-3 p-4 bg-[#edf2f5] rounded-xl hover:bg-[#edf2f5] transition-colors group"
+                    className="cursor-pointer relative flex items-center space-x-3 p-4 bg-[#edf2f5] rounded-[4px] hover:bg-[#edf2f5] transition-colors group"
                   >
                     <svg className="w-5 h-5 text-ink" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
@@ -519,7 +519,7 @@ export default function Header() {
 
                 {/* Mobile Courses Section */}
                 <div className="space-y-3">
-                  <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wide flex items-center">
+                  <h3 className="text-sm font-semibold text-gray-900 tracking-[0.02em] flex items-center">
                     <svg className="w-4 h-4 mr-2 text-ink" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                     </svg>
@@ -559,7 +559,7 @@ export default function Header() {
 
                 {/* Mobile Reports Section */}
                 <div className="space-y-3">
-                  <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wide flex items-center">
+                  <h3 className="text-sm font-semibold text-gray-900 tracking-[0.02em] flex items-center">
                     <svg className="w-4 h-4 mr-2 text-ink" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                     </svg>
@@ -589,7 +589,7 @@ export default function Header() {
                 <Link
                   href="/login"
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="cursor-pointer block w-full text-center py-3 text-gray-600 hover:text-gray-900 font-medium rounded-lg hover:bg-gray-50 transition-colors"
+                  className="cursor-pointer block w-full text-center py-3 text-gray-600 hover:text-gray-900 font-medium rounded-[4px] hover:bg-gray-50 transition-colors"
                 >
                   Sign in to your account
                 </Link>
@@ -610,7 +610,7 @@ export default function Header() {
                       alt={session.user.name || 'User'}
                       width={48}
                       height={48}
-                      className="w-12 h-12 rounded-full border-2 border-white shadow-sm object-cover"
+                      className="w-12 h-12 rounded-full border-2 border-white object-cover"
                     />
                   ) : (
                     <div className="flex h-12 w-12 items-center justify-center rounded-full bg-ink text-[17px] font-semibold text-white">
@@ -631,7 +631,7 @@ export default function Header() {
                     signOut({ callbackUrl: '/' });
                     setIsMobileMenuOpen(false);
                   }}
-                  className="cursor-pointer w-full flex items-center justify-center space-x-2 py-3 text-red-600 hover:text-red-700 font-medium rounded-lg hover:bg-red-50 transition-colors"
+                  className="cursor-pointer w-full flex items-center justify-center space-x-2 py-3 text-red-600 hover:text-red-700 font-medium rounded-[4px] hover:bg-red-50 transition-colors"
                 >
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />

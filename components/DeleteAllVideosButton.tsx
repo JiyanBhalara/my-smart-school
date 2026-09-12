@@ -18,7 +18,7 @@ interface ToastProps {
 
 function Toast({ message, type, onClose }: ToastProps) {
   return (
-    <div className="fixed top-4 right-4 z-50 animate-in slide-in-from-top-2 duration-300">
+    <div className="fixed top-4 right-4 z-50 animate-in slide-in- duration-300">
       <div className={`flex items-center gap-3 px-4 py-3 rounded-[4px] border max-w-sm ${ type === 'success' ? 'bg-[#edf2f5] border-ink text-ink' : 'bg-[#fdf3f2] border-mark text-mark' }`}>
         <div className="flex-shrink-0">
           {type === 'success' ? (

@@ -87,7 +87,7 @@ export default function Login() {
                 type="email"
                 required
                 autoComplete="email"
-                className="mt-1.5 h-10 w-full rounded-[4px] border border-rule bg-sheet px-3 text-[15px] text-ink placeholder:text-graphite/70 focus-visible:border-ink focus-visible:outline-2 focus-visible:outline-offset-[-1px] focus-visible:outline-ink"
+                className="mt-1.5 h-10 w-full rounded-[4px] border border-field bg-sheet px-3 text-[15px] text-ink placeholder:text-graphite/70 focus-visible:border-ink focus-visible:outline-2 focus-visible:outline-offset-[-1px] focus-visible:outline-ink"
               />
             </div>
 
@@ -104,7 +104,7 @@ export default function Login() {
                 type="password"
                 required
                 autoComplete="current-password"
-                className="mt-1.5 h-10 w-full rounded-[4px] border border-rule bg-sheet px-3 text-[15px] text-ink placeholder:text-graphite/70 focus-visible:border-ink focus-visible:outline-2 focus-visible:outline-offset-[-1px] focus-visible:outline-ink"
+                className="mt-1.5 h-10 w-full rounded-[4px] border border-field bg-sheet px-3 text-[15px] text-ink placeholder:text-graphite/70 focus-visible:border-ink focus-visible:outline-2 focus-visible:outline-offset-[-1px] focus-visible:outline-ink"
               />
             </div>
 

@@ -133,7 +133,7 @@ export default function VideoUploadModal({ lessonId, onClose, onUploaded }: Vide
               accept="video/mp4"
               onChange={handleFile}
               disabled={uploading}
-              className="w-full border border-rule rounded-[4px] px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ink disabled:opacity-50"
+              className="w-full border border-field rounded-[4px] px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ink disabled:opacity-50"
             />
             {file && (
               <div className="mt-2 text-sm text-graphite bg-[#edf2f5] p-3 rounded-[4px]">

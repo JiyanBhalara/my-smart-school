@@ -48,7 +48,7 @@ export default function UploadToast() {
         return (
           <div
             key={videoId}
-            className={`bg-white border rounded-[4px] p-3 sm:p-4 animate-in slide-in-from-bottom-2 duration-300 ${ isCompleted ? 'border-ink bg-[#edf2f5]' : isFailed ? 'border-mark bg-[#fdf3f2]' : 'border-ink' }`}
+            className={`bg-white border rounded-[4px] p-3 sm:p-4 animate-in slide-in- duration-300 ${ isCompleted ? 'border-ink bg-[#edf2f5]' : isFailed ? 'border-mark bg-[#fdf3f2]' : 'border-ink' }`}
           >
             <div className="flex items-start gap-2 sm:gap-3">
               <div className="flex-shrink-0">

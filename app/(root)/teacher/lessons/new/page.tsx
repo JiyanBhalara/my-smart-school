@@ -43,7 +43,7 @@ export default function NewLessonPage() {
       name: "Word Document",
       icon: <FileText className="w-8 h-8" />,
       description: ".doc, .docx",
-      color: "from-blue-500 to-blue-600"
+      color: "bg-ink"
     },
     {
       id: "pdf",
@@ -117,7 +117,7 @@ export default function NewLessonPage() {
       <div className="max-w-4xl mx-auto mb-8">
         <button
           onClick={() => router.back()}
-          className="cursor-pointer mt-5 cursor-pointer flex items-center gap-2 text-white hover:text-[#FFB703] transition-colors duration-200 mb-6"
+          className="cursor-pointer mt-5 cursor-pointer flex items-center gap-2 text-white hover:text-mark transition-colors duration-200 mb-6"
         >
           <ArrowLeft className="w-5 h-5" />
           <span className="font-medium">Back to Lessons</span>
@@ -157,8 +157,8 @@ export default function NewLessonPage() {
 
             {/* Title Input */}
             <div className="space-y-3">
-              <label className="flex items-center gap-2 text-base font-semibold text-[#023047]">
-                <BookOpen className="w-5 h-5 text-[#219EBC]" />
+              <label className="flex items-center gap-2 text-base font-semibold text-ink">
+                <BookOpen className="w-5 h-5 text-ink" />
                 Lesson Title
               </label>
               <input
@@ -166,15 +166,15 @@ export default function NewLessonPage() {
                 required
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                className="w-full px-5 py-4 border-2 border-rule rounded-[4px] focus:ring-2 focus:ring-[#219EBC] focus:border-[#219EBC] transition-colors bg-white text-[#023047] placeholder-gray-500 text-base"
+                className="w-full px-5 py-4 border-2 border-rule rounded-[4px] focus:ring-2 focus:ring-ink focus:border-ink transition-colors bg-white text-ink placeholder-gray-500 text-base"
                 placeholder="Enter a descriptive title for your lesson"
               />
             </div>
 
             {/* Subject Input */}
             <div className="space-y-3">
-              <label className="flex items-center gap-2 text-base font-semibold text-[#023047]">
-                <BookOpen className="w-5 h-5 text-[#219EBC]" />
+              <label className="flex items-center gap-2 text-base font-semibold text-ink">
+                <BookOpen className="w-5 h-5 text-ink" />
                 Subject
               </label>
               <input
@@ -182,15 +182,15 @@ export default function NewLessonPage() {
                 required
                 value={subject}
                 onChange={(e) => setSubject(e.target.value)}
-                className="w-full px-5 py-4 border-2 border-rule rounded-[4px] focus:ring-2 focus:ring-[#219EBC] focus:border-[#219EBC] transition-colors bg-white text-[#023047] placeholder-gray-500 text-base"
+                className="w-full px-5 py-4 border-2 border-rule rounded-[4px] focus:ring-2 focus:ring-ink focus:border-ink transition-colors bg-white text-ink placeholder-gray-500 text-base"
                 placeholder="e.g., Mathematics, Science, History"
               />
             </div>
 
             {/* File Type Selection */}
             <div className="space-y-4">
-              <label className="flex items-center gap-2 text-base font-semibold text-[#023047]">
-                <FileText className="w-5 h-5 text-[#219EBC]" />
+              <label className="flex items-center gap-2 text-base font-semibold text-ink">
+                <FileText className="w-5 h-5 text-ink" />
                 File Type
               </label>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -199,15 +199,15 @@ export default function NewLessonPage() {
                     key={fileType.id}
                     type="button"
                     onClick={() => setType(fileType.id)}
-                    className={`cursor-pointer relative p-6 rounded-[4px] border-2 transition-colors ${ type === fileType.id ? 'border-[#219EBC] bg-sheet ' : 'border-rule bg-white hover:border-[#8ECAE6] ' }`}
+                    className={`cursor-pointer relative p-6 rounded-[4px] border-2 transition-colors ${ type === fileType.id ? 'border-ink bg-sheet ' : 'border-rule bg-white hover:border-ink ' }`}
                   >
                     <div className={`inline-flex items-center justify-center w-16 h-16 rounded-[4px] ${fileType.color} mb-4 text-white`}>
                       {fileType.icon}
                     </div>
-                    <h3 className="font-semibold text-[#023047] text-lg mb-1">{fileType.name}</h3>
+                    <h3 className="font-semibold text-ink text-lg mb-1">{fileType.name}</h3>
                     <p className="text-graphite text-sm">{fileType.description}</p>
                     {type === fileType.id && (
-                      <div className="absolute top-3 right-3 w-6 h-6 bg-[#219EBC] rounded-full flex items-center justify-center">
+                      <div className="absolute top-3 right-3 w-6 h-6 bg-ink rounded-full flex items-center justify-center">
                         <Check className="w-4 h-4 text-white" />
                       </div>
                     )}
@@ -218,8 +218,8 @@ export default function NewLessonPage() {
 
             {/* Tags Input */}
             <div className="space-y-3">
-              <label className="flex items-center gap-2 text-base font-semibold text-[#023047]">
-                <Tag className="w-5 h-5 text-[#219EBC]" />
+              <label className="flex items-center gap-2 text-base font-semibold text-ink">
+                <Tag className="w-5 h-5 text-ink" />
                 Tags
                 <span className="text-graphite font-normal text-sm">(comma-separated)</span>
               </label>
@@ -227,7 +227,7 @@ export default function NewLessonPage() {
                 type="text"
                 value={tags}
                 onChange={(e) => setTags(e.target.value)}
-                className="w-full px-5 py-4 border-2 border-rule rounded-[4px] focus:ring-2 focus:ring-[#219EBC] focus:border-[#219EBC] transition-colors bg-white text-[#023047] placeholder-gray-500 text-base"
+                className="w-full px-5 py-4 border-2 border-rule rounded-[4px] focus:ring-2 focus:ring-ink focus:border-ink transition-colors bg-white text-ink placeholder-gray-500 text-base"
                 placeholder="photosynthesis, ecosystem, biology, grade-8"
               />
               <p className="text-sm text-graphite">
@@ -237,19 +237,19 @@ export default function NewLessonPage() {
 
             {/* File Upload */}
             <div className="space-y-3">
-              <label className="flex items-center gap-2 text-base font-semibold text-[#023047]">
-                <Upload className="w-5 h-5 text-[#219EBC]" />
+              <label className="flex items-center gap-2 text-base font-semibold text-ink">
+                <Upload className="w-5 h-5 text-ink" />
                 Upload File
               </label>
               <div className="relative">
-                <div className={`border-3 border-dashed rounded-[4px] p-8 text-center transition-colors ${ file ? 'border-ink bg-[#edf2f5]' : 'border-rule bg-[#edf2f5] hover:border-[#219EBC] hover:bg-[#8ECAE6]/10' }`}>
+                <div className={`border-3 border-dashed rounded-[4px] p-8 text-center transition-colors ${ file ? 'border-ink bg-[#edf2f5]' : 'border-rule bg-[#edf2f5] hover:border-ink hover:bg-ink' }`}>
                   {!file ? (
                     <div className="space-y-4">
                       <div className="w-16 h-16 mx-auto bg-sheet rounded-[4px] flex items-center justify-center">
                         <Upload className="w-8 h-8 text-white" />
                       </div>
                       <div>
-                        <p className="text-[#023047] font-medium text-lg mb-2">Choose your lesson file</p>
+                        <p className="text-ink font-medium text-lg mb-2">Choose your lesson file</p>
                         <p className="text-graphite text-sm">Drag and drop or click to browse</p>
                       </div>
                     </div>
@@ -259,7 +259,7 @@ export default function NewLessonPage() {
                         <Check className="w-6 h-6 text-white" />
                       </div>
                       <div className="text-left">
-                        <p className="font-semibold text-[#023047]">{file.name}</p>
+                        <p className="font-semibold text-ink">{file.name}</p>
                         <p className="text-graphite text-sm">
                           {(file.size / (1024 * 1024)).toFixed(2)} MB
                         </p>

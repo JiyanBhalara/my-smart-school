@@ -540,22 +540,22 @@ export default function StudentReportPage() {
                   <table className="w-full">
                     <thead className="bg-[#edf2f5]">
                       <tr>
-                        <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-graphite uppercase tracking-wider">
+                        <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-graphite tracking-[0.02em]">
                           Quiz & Lesson
                         </th>
-                        <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-graphite uppercase tracking-wider">
+                        <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-graphite tracking-[0.02em]">
                           Attempts
                         </th>
-                        <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-graphite uppercase tracking-wider">
+                        <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-graphite tracking-[0.02em]">
                           Latest
                         </th>
-                        <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-graphite uppercase tracking-wider">
+                        <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-graphite tracking-[0.02em]">
                           Best
                         </th>
-                        <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-graphite uppercase tracking-wider">
+                        <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-graphite tracking-[0.02em]">
                           Status
                         </th>
-                        <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-graphite uppercase tracking-wider hidden sm:table-cell">
+                        <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-graphite tracking-[0.02em] hidden sm:table-cell">
                           Date
                         </th>
                       </tr>

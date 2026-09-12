@@ -29,8 +29,8 @@ function Toast({ message, type, onClose }: ToastProps) {
   const isDeleteSuccess = message.includes('deleted successfully');
   
   return (
-    <div className="fixed top-4 right-4 z-50 animate-in slide-in-from-top-2 duration-300">
-      <div className={`flex items-center gap-3 px-4 py-3 rounded-lg shadow-lg border max-w-sm ${
+    <div className="fixed top-4 right-4 z-50 animate-in slide-in- duration-300">
+      <div className={`flex items-center gap-3 px-4 py-3 rounded-[4px] border max-w-sm ${
         type === 'success' 
           ? `bg-green-50 border-green-200 text-green-800 ${isDeleteSuccess ? 'ring-2 ring-green-300' : ''}` 
           : 'bg-red-50 border-red-200 text-red-800'

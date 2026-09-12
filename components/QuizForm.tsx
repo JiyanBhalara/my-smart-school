@@ -252,7 +252,7 @@ export default function QuizForm({ lessonId, initialData, isEdit = false }: Quiz
               <h1 className="text-xl font-semibold text-ink sm:text-2xl">
                 {isEdit ? 'Edit Quiz' : 'Create New Quiz'}
               </h1>
-              <p className="mt-1 text-sm text-ink/80">
+              <p className="mt-1 text-sm text-ink">
                 Build a multiple-choice quiz with images, points, and time limits.
               </p>
             </div>
@@ -499,7 +499,7 @@ export default function QuizForm({ lessonId, initialData, isEdit = false }: Quiz
                             name={`correct-${questionIndex}`}
                             checked={isActive}
                             onChange={() => setCorrectAnswer(questionIndex, optionIndex)}
-                            className="mt-2 h-4 w-4 accent-[#023047]"
+                            className="mt-2 h-4 w-4 accent-ink"
                             aria-label={`Mark option ${optionIndex + 1} as correct`}
                           />
 

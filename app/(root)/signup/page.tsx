@@ -168,9 +168,7 @@ export default function Signup() {
                     {[0, 1, 2, 3].map((i) => (
                       <span
                         key={i}
-                        className={`h-[3px] flex-1 ${
-                          i < passwordStrength ? "bg-ink" : "bg-rule"
-                        }`}
+                        className={`h-[3px] flex-1 ${ i < passwordStrength ? "bg-ink" : "bg-rule" }`}
                       />
                     ))}
                   </div>

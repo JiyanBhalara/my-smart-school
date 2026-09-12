@@ -37,6 +37,7 @@
   --color-paper: var(--paper);
   --color-sheet: var(--sheet);
   --color-rule: var(--rule);
+  --color-field: var(--field);
   --color-graphite: var(--graphite);
   --color-mark: var(--mark);
 
@@ -51,12 +52,16 @@
 
 :root {
   /* --- the six --- */
-  --ink: #023047;        /* text, headings, heavy rules, selection  15.1:1 */
+  --ink: #023047;        /* text, headings, heavy rules, selection  13.1:1 */
   --paper: #f7f9fa;      /* page ground, faintly cool                      */
   --sheet: #ffffff;      /* raised surfaces, separated by rule not shadow  */
   --rule: #c7d3db;       /* hairlines, table grid, dividers                */
-  --graphite: #5a6b77;   /* secondary text, labels                  4.8:1 */
-  --mark: #b3261e;       /* marks, scores, correct/incorrect        6.2:1 */
+  /* Control borders are UI components under WCAG 1.4.11 and need 3:1, which
+     the hairline rule does not meet (1.5:1). Fields get their own, darker
+     edge; the decorative grid keeps the lighter one. */
+  --field: #7b8f9e;      /* input/textarea/select borders            3.2:1 */
+  --graphite: #5a6b77;   /* secondary text, labels                   5.2:1 */
+  --mark: #b3261e;       /* marks, scores, correct/incorrect         6.2:1 */
 
   /* --- derived subject tints: margin tab only, never elsewhere --- */
   --subject-1: #2a6f97;
@@ -85,7 +90,7 @@
   --accent-foreground: var(--ink);
   --destructive: var(--mark);
   --border: var(--rule);
-  --input: var(--rule);
+  --input: var(--field);
   --ring: var(--ink);
   --radius: 4px;
 }

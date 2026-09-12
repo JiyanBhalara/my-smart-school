@@ -419,7 +419,7 @@ export default function QuizTaker({ lessonId, quizId, quiz }: QuizTakerProps) {
                           option.id
                         )
                       }
-                      className="mt-1 h-4 w-4 shrink-0 accent-[#023047] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
+                      className="mt-1 h-4 w-4 shrink-0 accent-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
                     />
                     <span className="w-4 shrink-0 text-[13px] font-medium text-graphite">
                       {String.fromCharCode(97 + optionIndex)}

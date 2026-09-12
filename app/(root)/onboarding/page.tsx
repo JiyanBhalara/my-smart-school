@@ -50,13 +50,13 @@ export default function Onboarding() {
 
   return (
     <main className="min-h-screen flex items-center justify-center p-4 sm:p-6 lg:p-8" 
-          style={{ backgroundColor: '#8ECAE6' }}>
+          style={{ backgroundColor: '#023047' }}>
       {/* Background decoration */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-1/4 left-1/4 w-32 h-32 rounded-full opacity-10"
              style={{ backgroundColor: '#023047' }}></div>
         <div className="absolute bottom-1/4 right-1/4 w-24 h-24 rounded-full opacity-10 delay-1000"
-             style={{ backgroundColor: '#FFB703' }}></div>
+             style={{ backgroundColor: '#b3261e' }}></div>
       </div>
 
       <div className="relative w-full max-w-md">
@@ -64,7 +64,7 @@ export default function Onboarding() {
         <div className="text-center mb-8 animate-fadeIn">
           <div className="w-16 h-16 mx-auto mb-4 rounded-[4px] flex items-center justify-center transition- duration-200"
                style={{ backgroundColor: '#023047' }}>
-            <svg className="w-8 h-8" style={{ color: '#8ECAE6' }} fill="currentColor" viewBox="0 0 20 20">
+            <svg className="w-8 h-8" style={{ color: '#023047' }} fill="currentColor" viewBox="0 0 20 20">
               <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
             </svg>
           </div>
@@ -83,7 +83,7 @@ export default function Onboarding() {
         >
           {error && (
             <div className="p-4 rounded-[4px] text-sm text-center animate-shake"
-                 style={{ backgroundColor: '#FB8500', color: 'white' }}>
+                 style={{ backgroundColor: '#b3261e', color: 'white' }}>
               {error}
             </div>
           )}
@@ -98,7 +98,7 @@ export default function Onboarding() {
               required
               className="text-ink w-full rounded-[4px] border-2 p-3 text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-opacity-50 hover:border-opacity-70"
               style={{ 
-                borderColor: '#219EBC'
+                borderColor: '#023047'
               }}
               value={form.birthdate}
               onChange={(e) =>
@@ -118,7 +118,7 @@ export default function Onboarding() {
               placeholder="Enter your school name"
               className="text-ink w-full rounded-[4px] border-2 p-3 text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-opacity-50 hover:border-opacity-70 placeholder-gray-400"
               style={{ 
-                borderColor: '#219EBC',
+                borderColor: '#023047',
               }}
               value={form.school}
               onChange={(e) =>
@@ -148,9 +148,9 @@ export default function Onboarding() {
                     }
                     className="sr-only"
                   />
-                  <div className={`p-4 rounded-[4px] border-2 text-center transition-colors ${form.role === value ? 'border-[#023047] ' : 'border-rule hover:border-[#219EBC]' }`}
+                  <div className={`p-4 rounded-[4px] border-2 text-center transition-colors ${form.role === value ? 'border-ink ' : 'border-rule hover:border-ink' }`}
                   style={{
-                    backgroundColor: form.role === value ? '#8ECAE6' : 'white',
+                    backgroundColor: form.role === value ? '#023047' : 'white',
                     color: form.role === value ? '#023047' : '#666'
                   }}>
                     <div className="text-2xl mb-2">{icon}</div>
@@ -167,7 +167,7 @@ export default function Onboarding() {
             disabled={loading}
             className="cursor-pointer w-full py-4 px-6 rounded-[4px] font-semibold text-white text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:-none focus:outline-none focus:ring-4 focus:ring-opacity-50"
             style={{ 
-              backgroundColor: loading ? '#219EBC' : '#023047',
+              backgroundColor: loading ? '#023047' : '#023047',
             }}
           >
             {loading ? (
@@ -228,10 +228,6 @@ export default function Onboarding() {
         
         input[type="date"]::-webkit-calendar-picker-indicator {
           filter: invert(0.3);
-        }
-        
-        .shadow-3xl {
-          box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
         }
       `}</style>
     </main>
