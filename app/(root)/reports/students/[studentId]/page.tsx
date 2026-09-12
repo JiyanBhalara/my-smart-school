@@ -202,24 +202,9 @@ export default function StudentReportPage() {
     return (names + names[names.length - 1]).toUpperCase();
   };
 
-  const getAvatarBgColor = (name: string | null) => {
-    if (!name) return 'bg-gray-500';
-    const colors = [
-      'bg-red-500', 'bg-blue-500', 'bg-green-500', 'bg-yellow-500',
-      'bg-purple-500', 'bg-pink-500', 'bg-indigo-500', 'bg-teal-500',
-      'bg-orange-500', 'bg-cyan-500', 'bg-lime-500', 'bg-emerald-500'
-    ];
-    const index = name.charCodeAt(0) % colors.length;
-    return colors[index];
-  };
+  const getAvatarBgColor = () => 'bg-ink';
 
-  const getScoreColor = (percentage: number) => {
-    if (percentage >= 90) return 'text-green-600';
-    if (percentage >= 80) return 'text-blue-600';
-    if (percentage >= 70) return 'text-yellow-600';
-    if (percentage >= 60) return 'text-orange-600';
-    return 'text-red-600';
-  };
+  const getScoreColor = () => 'text-mark';
 
   // Chart data
   const performanceChartData = reportData ? {
@@ -265,10 +250,10 @@ export default function StudentReportPage() {
 
   if (status === 'loading' || loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white pt-20 flex items-center justify-center">
+      <div className="min-h-screen bg-sheet pt-20 flex items-center justify-center">
         <div className="text-center px-4">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading student report...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-ink mx-auto mb-4"></div>
+          <p className="text-graphite">Loading student report...</p>
         </div>
       </div>
     );
@@ -276,16 +261,16 @@ export default function StudentReportPage() {
 
   if (error || !reportData) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white pt-20 flex items-center justify-center px-4">
+      <div className="min-h-screen bg-sheet pt-20 flex items-center justify-center px-4">
         <div className="text-center max-w-md">
-          <div className="bg-red-100 rounded-full p-4 w-16 h-16 mx-auto mb-4">
-            <UserIcon className="h-8 w-8 text-red-600" />
+          <div className="bg-[#fdf3f2] rounded-full p-4 w-16 h-16 mx-auto mb-4">
+            <UserIcon className="h-8 w-8 text-mark" />
           </div>
-          <h2 className="text-xl font-semibold text-gray-900 mb-2">Report Not Found</h2>
-          <p className="text-gray-600 mb-6">{error || 'Student report could not be loaded.'}</p>
+          <h2 className="text-xl font-semibold text-ink mb-2">Report Not Found</h2>
+          <p className="text-graphite mb-6">{error || 'Student report could not be loaded.'}</p>
           <Link
             href="/reports/students"
-            className="cursor-pointer inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 font-medium"
+            className="cursor-pointer inline-flex items-center gap-2 px-4 py-2 bg-ink text-white rounded-[4px] hover:bg-ink font-medium"
           >
             <ArrowLeftIcon className="h-4 w-4" />
             Back to Students
@@ -296,23 +281,23 @@ export default function StudentReportPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white pt-20">
+    <div className="min-h-screen bg-sheet pt-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
         
         {/* Header */}
         <div className="mb-6 sm:mb-8">
           <Link
             href={isTeacher ? "/reports/students" : "/reports/my-report"}
-            className="cursor-pointer inline-flex items-center gap-2 text-indigo-600 hover:text-indigo-700 font-medium mb-4 sm:mb-6 group"
+            className="cursor-pointer inline-flex items-center gap-2 text-ink hover:text-ink font-medium mb-4 sm:mb-6 group"
           >
-            <ArrowLeftIcon className="h-4 w-4 group-hover:-translate-x-1 transition-transform" />
+            <ArrowLeftIcon className="h-4 w-4 group-hover:-translate-x-1 transition-" />
             <span className="text-sm sm:text-base">
               {isTeacher ? 'Back to All Students' : 'Back to My Report'}
             </span>
           </Link>
 
           {/* Student Info Header */}
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-4 sm:p-6 mb-6 sm:mb-8">
+          <div className="bg-white rounded-[4px] border border-rule p-4 sm:p-6 mb-6 sm:mb-8">
             <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6">
               <div className="flex-shrink-0 self-center sm:self-auto">
                 {reportData.student.image ? (
@@ -321,23 +306,23 @@ export default function StudentReportPage() {
                     alt={reportData.student.name || 'Student'}
                     width={80}
                     height={80}
-                    className="w-16 h-16 sm:w-20 sm:h-20 rounded-full border-4 border-gray-200 object-cover"
+                    className="w-16 h-16 sm:w-20 sm:h-20 rounded-full border-4 border-rule object-cover"
                   />
                 ) : (
-                  <div className={`w-16 h-16 sm:w-20 sm:h-20 rounded-full flex items-center justify-center text-white font-bold text-lg sm:text-2xl ${getAvatarBgColor(reportData.student.name)} border-4 border-white shadow-lg`}>
+                  <div className={`w-16 h-16 sm:w-20 sm:h-20 rounded-full flex items-center justify-center text-white font-bold text-lg sm:text-2xl ${getAvatarBgColor()} border-4 border-white`}>
                     {getStudentInitials(reportData.student.name)}
                   </div>
                 )}
               </div>
               
               <div className="flex-1 text-center sm:text-left">
-                <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-2">
+                <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-ink mb-2">
                   {reportData.student.name || 'Unnamed Student'}
                 </h1>
-                <p className="text-gray-600 mb-1 text-sm sm:text-base break-all sm:break-normal">
+                <p className="text-graphite mb-1 text-sm sm:text-base break-all sm:break-normal">
                   {reportData.student.email}
                 </p>
-                <p className="text-xs sm:text-sm text-gray-500">
+                <p className="text-xs sm:text-sm text-graphite">
                   Student since {new Date(reportData.student.createdAt).toLocaleDateString('en-US', {
                     month: 'long',
                     year: 'numeric'
@@ -349,7 +334,7 @@ export default function StudentReportPage() {
                 <div className="flex justify-center sm:justify-start">
                   <button
                     onClick={() => setShowNoteForm(!showNoteForm)}
-                    className="cursor-pointer inline-flex items-center gap-2 px-3 py-2 sm:px-4 sm:py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 font-medium transition-colors text-sm sm:text-base"
+                    className="cursor-pointer inline-flex items-center gap-2 px-3 py-2 sm:px-4 sm:py-2 bg-ink text-white rounded-[4px] hover:bg-ink font-medium transition-colors text-sm sm:text-base"
                   >
                     <PencilSquareIcon className="h-4 w-4" />
                     <span className="hidden xs:inline">Add Note</span>
@@ -363,14 +348,14 @@ export default function StudentReportPage() {
 
         {/* Add Note Form */}
         {isTeacher && showNoteForm && (
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-4 sm:p-6 mb-6 sm:mb-8">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Add Teacher Note</h3>
+          <div className="bg-white rounded-[4px] border border-rule p-4 sm:p-6 mb-6 sm:mb-8">
+            <h3 className="text-lg font-semibold text-ink mb-4">Add Teacher Note</h3>
             <form onSubmit={handleAddNote} className="space-y-4">
               <textarea
                 value={newNote}
                 onChange={(e) => setNewNote(e.target.value)}
                 placeholder="Add a note about this student's performance, behavior, or progress..."
-                className="w-full p-3 sm:p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors resize-none text-sm sm:text-base"
+                className="w-full p-3 sm:p-4 border border-rule rounded-[4px] focus:ring-2 focus:ring-ink focus:border-ink transition-colors resize-none text-sm sm:text-base"
                 rows={4}
                 required
               />
@@ -381,14 +366,14 @@ export default function StudentReportPage() {
                     setShowNoteForm(false);
                     setNewNote('');
                   }}
-                  className="cursor-pointer px-4 sm:px-6 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 font-medium transition-colors text-sm sm:text-base"
+                  className="cursor-pointer px-4 sm:px-6 py-2 bg-[#edf2f5] text-ink rounded-[4px] hover:bg-[#edf2f5] font-medium transition-colors text-sm sm:text-base"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={addingNote || !newNote.trim()}
-                  className="cursor-pointer px-4 sm:px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm sm:text-base"
+                  className="cursor-pointer px-4 sm:px-6 py-2 bg-ink text-white rounded-[4px] hover:bg-ink font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm sm:text-base"
                 >
                   {addingNote ? 'Adding...' : 'Add Note'}
                 </button>
@@ -399,55 +384,55 @@ export default function StudentReportPage() {
 
         {/* Overall Statistics Cards */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 mb-6 sm:mb-8">
-          <div className="bg-white p-3 sm:p-6 rounded-2xl shadow-sm border border-gray-200">
+          <div className="bg-white p-3 sm:p-6 rounded-[4px] border border-rule">
             <div className="flex items-center gap-2 sm:gap-3 mb-2">
-              <div className="p-1.5 sm:p-2 bg-blue-100 rounded-lg">
-                <AcademicCapIcon className="h-4 w-4 sm:h-6 sm:w-6 text-blue-600" />
+              <div className="p-1.5 sm:p-2 bg-[#edf2f5] rounded-[4px]">
+                <AcademicCapIcon className="h-4 w-4 sm:h-6 sm:w-6 text-ink" />
               </div>
-              <span className="text-xs sm:text-sm font-medium text-gray-500">Quizzes</span>
+              <span className="text-xs sm:text-sm font-medium text-graphite">Quizzes</span>
             </div>
-            <p className="text-xl sm:text-3xl font-bold text-blue-600">{reportData.overallStats.totalQuizzesTaken}</p>
-            <p className="text-xs sm:text-sm text-gray-500 mt-1">{reportData.overallStats.totalAttempts} attempts</p>
+            <p className="text-xl sm:text-3xl font-bold text-ink">{reportData.overallStats.totalQuizzesTaken}</p>
+            <p className="text-xs sm:text-sm text-graphite mt-1">{reportData.overallStats.totalAttempts} attempts</p>
           </div>
 
-          <div className="bg-white p-3 sm:p-6 rounded-2xl shadow-sm border border-gray-200">
+          <div className="bg-white p-3 sm:p-6 rounded-[4px] border border-rule">
             <div className="flex items-center gap-2 sm:gap-3 mb-2">
-              <div className="p-1.5 sm:p-2 bg-green-100 rounded-lg">
-                <ChartBarIcon className="h-4 w-4 sm:h-6 sm:w-6 text-green-600" />
+              <div className="p-1.5 sm:p-2 bg-[#edf2f5] rounded-[4px]">
+                <ChartBarIcon className="h-4 w-4 sm:h-6 sm:w-6 text-ink" />
               </div>
-              <span className="text-xs sm:text-sm font-medium text-gray-500">Average</span>
+              <span className="text-xs sm:text-sm font-medium text-graphite">Average</span>
             </div>
-            <p className="text-xl sm:text-3xl font-bold text-green-600">{reportData.overallStats.averageScore.toFixed(1)}%</p>
-            <p className="text-xs sm:text-sm text-gray-500 mt-1">
+            <p className="text-xl sm:text-3xl font-bold text-ink">{reportData.overallStats.averageScore.toFixed(1)}%</p>
+            <p className="text-xs sm:text-sm text-graphite mt-1">
               {reportData.overallStats.totalPointsEarned}/{reportData.overallStats.totalPossiblePoints} points
             </p>
           </div>
 
-          <div className="bg-white p-3 sm:p-6 rounded-2xl shadow-sm border border-gray-200">
+          <div className="bg-white p-3 sm:p-6 rounded-[4px] border border-rule">
             <div className="flex items-center gap-2 sm:gap-3 mb-2">
-              <div className="p-1.5 sm:p-2 bg-purple-100 rounded-lg">
-                <TrophyIcon className="h-4 w-4 sm:h-6 sm:w-6 text-purple-600" />
+              <div className="p-1.5 sm:p-2 bg-[#edf2f5] rounded-[4px]">
+                <TrophyIcon className="h-4 w-4 sm:h-6 sm:w-6 text-ink" />
               </div>
-              <span className="text-xs sm:text-sm font-medium text-gray-500">Best</span>
+              <span className="text-xs sm:text-sm font-medium text-graphite">Best</span>
             </div>
-            <p className="text-xl sm:text-3xl font-bold text-purple-600">{reportData.overallStats.highestScore.toFixed(1)}%</p>
-            <p className="text-xs sm:text-sm text-gray-500 mt-1">Highest</p>
+            <p className="text-xl sm:text-3xl font-bold text-ink">{reportData.overallStats.highestScore.toFixed(1)}%</p>
+            <p className="text-xs sm:text-sm text-graphite mt-1">Highest</p>
           </div>
 
-          <div className="bg-white p-3 sm:p-6 rounded-2xl shadow-sm border border-gray-200">
+          <div className="bg-white p-3 sm:p-6 rounded-[4px] border border-rule">
             <div className="flex items-center gap-2 sm:gap-3 mb-2">
-              <div className="p-1.5 sm:p-2 bg-orange-100 rounded-lg">
-                <ClockIcon className="h-4 w-4 sm:h-6 sm:w-6 text-orange-600" />
+              <div className="p-1.5 sm:p-2 bg-[#edf2f5] rounded-[4px]">
+                <ClockIcon className="h-4 w-4 sm:h-6 sm:w-6 text-mark" />
               </div>
-              <span className="text-xs sm:text-sm font-medium text-gray-500">Pass Rate</span>
+              <span className="text-xs sm:text-sm font-medium text-graphite">Pass Rate</span>
             </div>
-            <p className="text-xl sm:text-3xl font-bold text-orange-600">
+            <p className="text-xl sm:text-3xl font-bold text-mark">
               {reportData.overallStats.totalQuizzesTaken > 0 
                 ? ((reportData.overallStats.passCount / reportData.overallStats.totalQuizzesTaken) * 100).toFixed(1)
                 : '0.0'
               }%
             </p>
-            <p className="text-xs sm:text-sm text-gray-500 mt-1">
+            <p className="text-xs sm:text-sm text-graphite mt-1">
               {reportData.overallStats.passCount} passed
             </p>
           </div>
@@ -459,8 +444,8 @@ export default function StudentReportPage() {
             
             {/* Performance Distribution Chart */}
             {performanceChartData && reportData.overallStats.totalQuizzesTaken > 0 && (
-              <div className="bg-white p-4 sm:p-6 rounded-2xl shadow-sm border border-gray-200">
-                <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-4">Performance Distribution</h3>
+              <div className="bg-white p-4 sm:p-6 rounded-[4px] border border-rule">
+                <h3 className="text-base sm:text-lg font-semibold text-ink mb-4">Performance Distribution</h3>
                 <div className="h-48 sm:h-64">
                   <Doughnut 
                     data={performanceChartData} 
@@ -496,8 +481,8 @@ export default function StudentReportPage() {
 
             {/* Progress Over Time Chart */}
             {progressChartData && reportData.overallStats.totalQuizzesTaken > 1 && (
-              <div className="bg-white p-4 sm:p-6 rounded-2xl shadow-sm border border-gray-200">
-                <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-4">Progress Over Time</h3>
+              <div className="bg-white p-4 sm:p-6 rounded-[4px] border border-rule">
+                <h3 className="text-base sm:text-lg font-semibold text-ink mb-4">Progress Over Time</h3>
                 <div className="h-48 sm:h-64">
                   <Line 
                     data={progressChartData}
@@ -537,10 +522,10 @@ export default function StudentReportPage() {
             )}
 
             {/* Quiz Results Table */}
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
-              <div className="px-4 sm:px-6 py-4 border-b border-gray-200">
-                <h3 className="text-base sm:text-lg font-semibold text-gray-900">Quiz History</h3>
-                <p className="text-xs sm:text-sm text-gray-500 mt-1">
+            <div className="bg-white rounded-[4px] border border-rule overflow-hidden">
+              <div className="px-4 sm:px-6 py-4 border-b border-rule">
+                <h3 className="text-base sm:text-lg font-semibold text-ink">Quiz History</h3>
+                <p className="text-xs sm:text-sm text-graphite mt-1">
                   Detailed breakdown of all quiz attempts
                 </p>
               </div>
@@ -548,80 +533,76 @@ export default function StudentReportPage() {
               {reportData.quizResults.length === 0 ? (
                 <div className="text-center py-8 sm:py-12">
                   <AcademicCapIcon className="h-8 sm:h-12 w-8 sm:w-12 text-gray-300 mx-auto mb-4" />
-                  <p className="text-gray-500 text-sm sm:text-base">No quizzes taken yet</p>
+                  <p className="text-graphite text-sm sm:text-base">No quizzes taken yet</p>
                 </div>
               ) : (
                 <div className="overflow-x-auto">
                   <table className="w-full">
-                    <thead className="bg-gray-50">
+                    <thead className="bg-[#edf2f5]">
                       <tr>
-                        <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-graphite uppercase tracking-wider">
                           Quiz & Lesson
                         </th>
-                        <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-graphite uppercase tracking-wider">
                           Attempts
                         </th>
-                        <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-graphite uppercase tracking-wider">
                           Latest
                         </th>
-                        <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-graphite uppercase tracking-wider">
                           Best
                         </th>
-                        <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-graphite uppercase tracking-wider">
                           Status
                         </th>
-                        <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">
+                        <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-graphite uppercase tracking-wider hidden sm:table-cell">
                           Date
                         </th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200">
                       {reportData.quizResults.map((result) => (
-                        <tr key={result.quiz.id} className="hover:bg-gray-50">
+                        <tr key={result.quiz.id} className="hover:bg-[#edf2f5]">
                           <td className="px-3 sm:px-6 py-4">
                             <div>
-                              <div className="text-xs sm:text-sm font-medium text-gray-900 line-clamp-2">
+                              <div className="text-xs sm:text-sm font-medium text-ink line-clamp-2">
                                 {result.quiz.title}
                               </div>
-                              <div className="text-xs text-gray-500 line-clamp-1">
+                              <div className="text-xs text-graphite line-clamp-1">
                                 {result.quiz.lesson.title}
                               </div>
                             </div>
                           </td>
                           <td className="px-3 sm:px-6 py-4 whitespace-nowrap">
-                            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-[#edf2f5] text-ink">
                               {result.totalAttempts}
                             </span>
                           </td>
                           <td className="px-3 sm:px-6 py-4 whitespace-nowrap">
-                            <div className="text-xs sm:text-sm font-medium text-gray-900">
+                            <div className="text-xs sm:text-sm font-medium text-ink">
                               {result.latestAttempt.score}/{result.latestAttempt.totalPoints}
                             </div>
-                            <div className={`text-xs sm:text-sm font-semibold ${getScoreColor(result.latestAttempt.percentage)}`}>
+                            <div className={`text-xs sm:text-sm font-semibold ${getScoreColor()}`}>
                               {result.latestAttempt.percentage.toFixed(1)}%
                             </div>
                           </td>
                           <td className="px-3 sm:px-6 py-4 whitespace-nowrap">
-                            <span className={`text-xs sm:text-sm font-semibold ${getScoreColor(result.bestScore)}`}>
+                            <span className={`text-xs sm:text-sm font-semibold ${getScoreColor()}`}>
                               {result.bestScore.toFixed(1)}%
                             </span>
                           </td>
                           <td className="px-3 sm:px-6 py-4 whitespace-nowrap">
                             {result.latestAttempt.passed !== null ? (
-                              <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                                result.latestAttempt.passed 
-                                  ? 'bg-green-100 text-green-800' 
-                                  : 'bg-red-100 text-red-800'
-                              }`}>
+                              <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${ result.latestAttempt.passed ? 'bg-[#edf2f5] text-ink' : 'bg-[#fdf3f2] text-mark' }`}>
                                 {result.latestAttempt.passed ? 'Pass' : 'Fail'}
                               </span>
                             ) : (
-                              <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">
+                              <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-[#edf2f5] text-ink">
                                 Done
                               </span>
                             )}
                           </td>
-                          <td className="px-3 sm:px-6 py-4 whitespace-nowrap text-xs sm:text-sm text-gray-500 hidden sm:table-cell">
+                          <td className="px-3 sm:px-6 py-4 whitespace-nowrap text-xs sm:text-sm text-graphite hidden sm:table-cell">
                             {new Date(result.latestAttempt.completedAt).toLocaleDateString('en-US', {
                               month: 'short',
                               day: 'numeric',
@@ -639,21 +620,21 @@ export default function StudentReportPage() {
 
           {/* Teacher Notes Section */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-4 sm:p-6">
-              <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-4">Teacher Notes</h3>
+            <div className="bg-white rounded-[4px] border border-rule p-4 sm:p-6">
+              <h3 className="text-base sm:text-lg font-semibold text-ink mb-4">Teacher Notes</h3>
               
               {reportData.notes.length === 0 ? (
                 <div className="text-center py-6 sm:py-8">
                   <PencilSquareIcon className="h-6 sm:h-8 w-6 sm:w-8 text-gray-300 mx-auto mb-3" />
-                  <p className="text-gray-500 text-xs sm:text-sm">No teacher notes yet</p>
+                  <p className="text-graphite text-xs sm:text-sm">No teacher notes yet</p>
                   {isTeacher && (
-                    <p className="text-xs text-gray-400 mt-1">Click &quot;Add Note&quot; to get started</p>
+                    <p className="text-xs text-graphite mt-1">Click &quot;Add Note&quot; to get started</p>
                   )}
                 </div>
               ) : (
                 <div className="space-y-4 max-h-80 sm:max-h-96 overflow-y-auto">
                   {reportData.notes.map((note) => (
-                    <div key={note.id} className="p-3 sm:p-4 bg-gray-50 rounded-lg border">
+                    <div key={note.id} className="p-3 sm:p-4 bg-[#edf2f5] rounded-[4px] border">
                       <div className="flex items-start gap-2 sm:gap-3 mb-2">
                         {note.teacher.image ? (
                           <Image
@@ -664,17 +645,17 @@ export default function StudentReportPage() {
                             className="w-6 h-6 sm:w-8 sm:h-8 rounded-full object-cover"
                           />
                         ) : (
-                          <div className="w-6 h-6 sm:w-8 sm:h-8 bg-indigo-500 rounded-full flex items-center justify-center">
+                          <div className="w-6 h-6 sm:w-8 sm:h-8 bg-ink rounded-full flex items-center justify-center">
                             <span className="text-white text-xs font-bold">
                               {note.teacher.name?.[0]?.toUpperCase() || 'T'}
                             </span>
                           </div>
                         )}
                         <div className="flex-1 min-w-0">
-                          <p className="text-xs sm:text-sm font-medium text-gray-900 truncate">
+                          <p className="text-xs sm:text-sm font-medium text-ink truncate">
                             {note.teacher.name || 'Teacher'}
                           </p>
-                          <p className="text-xs text-gray-500">
+                          <p className="text-xs text-graphite">
                             {new Date(note.createdAt).toLocaleDateString('en-US', {
                               month: 'short',
                               day: 'numeric',
@@ -685,7 +666,7 @@ export default function StudentReportPage() {
                           </p>
                         </div>
                       </div>
-                      <p className="text-xs sm:text-sm text-gray-700 leading-relaxed">{note.note}</p>
+                      <p className="text-xs sm:text-sm text-ink leading-relaxed">{note.note}</p>
                     </div>
                   ))}
                 </div>

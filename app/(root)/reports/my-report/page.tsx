@@ -5,19 +5,8 @@ import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import Image from 'next/image';
-import { 
-  ArrowLeftIcon, 
-  UserIcon, 
-  TrophyIcon, 
-  ChartBarIcon,
-  AcademicCapIcon,
-  CalendarIcon,
-  EyeIcon,
-  StarIcon,
-  FireIcon
-} from '@heroicons/react/24/outline';
-import { Doughnut, Line, Bar } from 'react-chartjs-2';
+import { Line } from 'react-chartjs-2';
+import { subjectCode, subjectTint } from '@/lib/subject';
 import {
   Chart as ChartJS,
   ArcElement,
@@ -154,609 +143,270 @@ export default function MyReportPage() {
     }
   }, [session]);
 
-  // Helper functions
-  const getStudentInitials = (name: string | null) => {
-    if (!name) return '?';
-    const names = name.trim().split(' ');
-    if (names.length === 1) {
-      return names[0][0].toUpperCase();
-    }
-    return (names[0][0] + names[names.length - 1][0]).toUpperCase();
-  };
-
-  const getScoreColor = (percentage: number) => {
-    if (percentage >= 90) return 'text-green-600';
-    if (percentage >= 80) return 'text-blue-600';
-    if (percentage >= 70) return 'text-yellow-600';
-    if (percentage >= 60) return 'text-orange-600';
-    return 'text-red-600';
-  };
-
-  const getPerformanceLevel = (percentage: number) => {
-    if (percentage >= 90) return { level: 'Excellent', color: 'text-green-600', icon: '🏆' };
-    if (percentage >= 80) return { level: 'Great', color: 'text-blue-600', icon: '⭐' };
-    if (percentage >= 70) return { level: 'Good', color: 'text-yellow-600', icon: '👍' };
-    if (percentage >= 60) return { level: 'Fair', color: 'text-orange-600', icon: '📈' };
-    return { level: 'Needs Improvement', color: 'text-red-600', icon: '💪' };
-  };
-
   // Chart data
-  const performanceChartData = reportData ? {
-    labels: ['Excellent', 'Great', 'Good', 'Fair', 'Needs Work'],
-    datasets: [{
-      data: [
-        reportData.quizResults.filter(q => q.latestAttempt.percentage >= 90).length,
-        reportData.quizResults.filter(q => q.latestAttempt.percentage >= 80 && q.latestAttempt.percentage < 90).length,
-        reportData.quizResults.filter(q => q.latestAttempt.percentage >= 70 && q.latestAttempt.percentage < 80).length,
-        reportData.quizResults.filter(q => q.latestAttempt.percentage >= 60 && q.latestAttempt.percentage < 70).length,
-        reportData.quizResults.filter(q => q.latestAttempt.percentage < 60).length,
-      ],
-      backgroundColor: [
-        '#10B981', // green
-        '#3B82F6', // blue
-        '#F59E0B', // yellow
-        '#F97316', // orange
-        '#EF4444', // red
-      ],
-      borderWidth: 0,
-    }],
-  } : null;
-
+  // Only one chart earns its place: change over time, which a table cannot
+  // show. The doughnut graded scores into five invented bands
+  // (Excellent/Great/Good/Fair/Needs Work) on a five-colour scale, and the
+  // subject bar chart repeated what the gradebook below already groups.
   const progressChartData = reportData && reportData.quizResults.length > 1 ? {
     labels: reportData.quizResults
+      .slice()
       .sort((a, b) => new Date(a.latestAttempt.completedAt).getTime() - new Date(b.latestAttempt.completedAt).getTime())
-      .map((result, index) => `Quiz ${index + 1}`),
+      .map((_, index) => `${index + 1}`),
     datasets: [{
-      label: 'Your Score',
+      label: 'Mark',
       data: reportData.quizResults
+        .slice()
         .sort((a, b) => new Date(a.latestAttempt.completedAt).getTime() - new Date(b.latestAttempt.completedAt).getTime())
         .map(result => result.latestAttempt.percentage),
-      borderColor: '#3B82F6',
-      backgroundColor: 'rgba(59, 130, 246, 0.1)',
-      borderWidth: 3,
-      fill: true,
-      tension: 0.4,
-      pointBackgroundColor: '#3B82F6',
-      pointBorderColor: '#ffffff',
-      pointBorderWidth: 2,
-      pointRadius: 6,
-    }],
-  } : null;
-
-  // Subject performance chart
-  const subjectData = reportData ? reportData.quizResults.reduce((acc, result) => {
-    const subject = result.quiz.lesson.subject;
-    if (!acc[subject]) {
-      acc[subject] = { scores: [], count: 0 };
-    }
-    acc[subject].scores.push(result.latestAttempt.percentage);
-    acc[subject].count++;
-    return acc;
-  }, {} as Record<string, { scores: number[], count: number }>) : {};
-
-  const subjectChartData = Object.keys(subjectData).length > 0 ? {
-    labels: Object.keys(subjectData),
-    datasets: [{
-      label: 'Average Score by Subject',
-      data: Object.values(subjectData).map(data => 
-        data.scores.reduce((a, b) => a + b, 0) / data.scores.length
-      ),
-      backgroundColor: [
-        'rgba(59, 130, 246, 0.8)',
-        'rgba(16, 185, 129, 0.8)',
-        'rgba(245, 158, 11, 0.8)',
-        'rgba(239, 68, 68, 0.8)',
-        'rgba(139, 92, 246, 0.8)',
-        'rgba(236, 72, 153, 0.8)',
-      ],
-      borderColor: [
-        'rgba(59, 130, 246, 1)',
-        'rgba(16, 185, 129, 1)',
-        'rgba(245, 158, 11, 1)',
-        'rgba(239, 68, 68, 1)',
-        'rgba(139, 92, 246, 1)',
-        'rgba(236, 72, 153, 1)',
-      ],
+      borderColor: '#023047',
+      backgroundColor: 'transparent',
       borderWidth: 2,
+      fill: false,
+      tension: 0,
+      pointBackgroundColor: '#023047',
+      pointBorderColor: '#ffffff',
+      pointBorderWidth: 1,
+      pointRadius: 3,
     }],
   } : null;
+
+  const progressChartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: {
+      y: {
+        min: 0,
+        max: 100,
+        border: { display: false },
+        grid: { color: '#c7d3db' },
+        ticks: { color: '#5a6b77', font: { size: 11 }, stepSize: 25 },
+      },
+      x: {
+        border: { display: false },
+        grid: { display: false },
+        ticks: { color: '#5a6b77', font: { size: 11 } },
+      },
+    },
+  };
 
   if (status === 'loading' || loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 pt-20 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading your performance report...</p>
-        </div>
+      <div className="mx-auto max-w-4xl px-5 py-10 sm:px-8">
+        <p className="text-[14px] text-graphite">Loading your report card</p>
       </div>
     );
   }
 
   if (error || !reportData) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 pt-20 flex items-center justify-center">
-        <div className="text-center max-w-md">
-          <div className="bg-red-100 rounded-full p-4 w-16 h-16 mx-auto mb-4">
-            <UserIcon className="h-8 w-8 text-red-600" />
+      <div className="ruled-page mx-auto max-w-4xl px-5 py-10 sm:px-8">
+        <div className="ruled">
+          <div className="margin" aria-hidden />
+          <div className="column max-w-md border-l-2 border-mark pl-4">
+            <h1 className="text-[20px] font-semibold tracking-[-0.01em] text-ink">
+              Your report card did not load
+            </h1>
+            <p className="mt-2 text-[15px] leading-relaxed text-graphite">
+              {error
+                ? error
+                : 'The server did not return your marks. This is usually temporary.'}{' '}
+              Reload the page to try again.
+            </p>
+            <div className="mt-5 flex flex-wrap gap-3">
+              <button
+                onClick={() => window.location.reload()}
+                className="inline-flex h-9 items-center rounded-[4px] bg-ink px-4 text-[14px] font-medium text-white transition-colors hover:bg-[#01243a] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
+              >
+                Reload
+              </button>
+              <Link
+                href="/lessons"
+                className="inline-flex h-9 items-center rounded-[4px] border border-ink px-4 text-[14px] font-medium text-ink transition-colors hover:bg-ink hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
+              >
+                Back to lessons
+              </Link>
+            </div>
           </div>
-          <h2 className="text-xl font-semibold text-gray-900 mb-2">Report Not Available</h2>
-          <p className="text-gray-600 mb-6">{error || 'Your report could not be loaded.'}</p>
-          <Link
-            href="/lessons"
-            className="cursor-pointer inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 font-medium"
-          >
-            <ArrowLeftIcon className="h-4 w-4" />
-            Go to Courses
-          </Link>
         </div>
       </div>
     );
   }
 
-  const performanceLevel = getPerformanceLevel(reportData.overallStats.averageScore);
+  const toRetake = reportData.quizResults.filter(
+    (r) => r.latestAttempt.passed === false
+  ).length;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 pt-20">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        
-        {/* Header */}
-        <div className="mb-8">
-          <Link
-            href="/lessons"
-            className="cursor-pointer inline-flex items-center gap-2 text-indigo-600 hover:text-indigo-700 font-medium mb-6 group"
-          >
-            <ArrowLeftIcon className="h-4 w-4 group-hover:-translate-x-1 transition-transform" />
-            Back to Courses
-          </Link>
+    <div className="ruled-page mx-auto min-h-[calc(100vh-8rem)] max-w-4xl px-5 py-10 sm:px-8 lg:py-14">
+      {/* Masthead. The mark is the one loud thing on this page. */}
+      <header className="ruled pb-6">
+        <div className="margin" aria-hidden />
+        <div className="column">
+          <h1 className="text-[30px] font-bold leading-[34px] tracking-[-0.02em] text-ink">
+            Report card
+          </h1>
+          <p className="mt-1 text-[14px] text-graphite">
+            {reportData.student.name || 'You'}
+          </p>
 
-          {/* Welcome Section */}
-          <div className="bg-white rounded-3xl shadow-lg border border-white/50 overflow-hidden mb-8">
-            <div className="bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 px-8 py-8">
-              <div className="flex flex-col sm:flex-row sm:items-center gap-6">
-                <div className="flex-shrink-0">
-                  {reportData.student.image ? (
-                    <Image
-                      src={reportData.student.image}
-                      alt={reportData.student.name || 'Student'}
-                      width={100}
-                      height={100}
-                      className="w-24 h-24 rounded-full border-4 border-white/20 object-cover shadow-xl"
-                    />
-                  ) : (
-                    <div className="w-24 h-24 rounded-full flex items-center justify-center text-white font-bold text-3xl bg-white/20 border-4 border-white/20 shadow-xl">
-                      {getStudentInitials(reportData.student.name)}
-                    </div>
-                  )}
-                </div>
-                
-                <div className="flex-1 text-white">
-                  <h1 className="text-3xl lg:text-4xl font-bold mb-2">
-                    Welcome back, {reportData.student.name?.split(' ')[0] || 'Student'}! 👋
-                  </h1>
-                  <p className="text-indigo-100 text-lg mb-4">Here&apos;s how you&apos;re performing across all your courses</p>
-                  
-                  <div className="flex flex-wrap items-center gap-4">
-                    <div className="flex items-center gap-2 bg-white/20 px-4 py-2 rounded-full backdrop-blur-sm">
-                      <span className="text-2xl">{performanceLevel.icon}</span>
-                      <span className="font-semibold">{performanceLevel.level}</span>
-                    </div>
-                    <div className="text-indigo-100">
-                      Overall Average: <span className="font-bold text-white text-xl">
-                        {reportData.overallStats.averageScore.toFixed(1)}%
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+          <div className="mt-7 flex items-baseline gap-4">
+            <span className="mark-large">
+              {Math.round(reportData.overallStats.averageScore)}%
+            </span>
+            <span className="text-[14px] text-graphite">average across all quizzes</span>
+          </div>
+
+          <div className="mt-4 h-[3px] w-full max-w-md bg-rule">
+            <div
+              className="h-full bg-mark"
+              style={{ width: `${Math.min(100, Math.max(0, reportData.overallStats.averageScore))}%` }}
+            />
+          </div>
+
+          <p className="mt-5 flex flex-wrap gap-x-8 gap-y-1 text-[14px] text-graphite tabular">
+            <span>{reportData.overallStats.totalQuizzesTaken} taken</span>
+            <span>{reportData.overallStats.passCount} passed</span>
+            {toRetake > 0 && <span>{toRetake} to retake</span>}
+            <span>Best {Math.round(reportData.overallStats.highestScore)}%</span>
+          </p>
+        </div>
+      </header>
+
+      <div className="border-t-2 border-ink" />
+
+      {/* The gradebook. Numbers right-aligned on tabular figures so the column
+          reads as a column. */}
+      <section className="pt-6">
+        <div className="ruled pb-2">
+          <div className="margin" aria-hidden />
+          <div className="column flex items-baseline justify-between gap-4 text-[11px] font-medium tracking-[0.02em] text-graphite">
+            <span>Quiz</span>
+            <span className="flex shrink-0 gap-6">
+              <span className="w-12 text-right">Tries</span>
+              <span className="w-12 text-right">Best</span>
+              <span className="w-12 text-right">Latest</span>
+            </span>
           </div>
         </div>
 
-        {/* Quick Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <div className="bg-white p-6 rounded-2xl shadow-lg border border-white/50">
-            <div className="flex items-center gap-4">
-              <div className="p-3 bg-gradient-to-br from-blue-500 to-indigo-600 text-white rounded-xl shadow-lg">
-                <AcademicCapIcon className="h-6 w-6" />
-              </div>
-              <div>
-                <p className="text-sm font-medium text-gray-600">Quizzes Completed</p>
-                <p className="text-3xl font-bold text-gray-900">{reportData.overallStats.totalQuizzesTaken}</p>
-              </div>
+        {reportData.quizResults.length === 0 ? (
+          <div className="ruled border-t border-rule pt-8">
+            <div className="margin" aria-hidden />
+            <div className="column max-w-md">
+              <h2 className="text-[17px] font-semibold text-ink">Nothing marked yet</h2>
+              <p className="mt-2 text-[15px] leading-relaxed text-graphite">
+                Once you hand in a quiz your mark appears here, with every
+                attempt listed so you can see how it changed.
+              </p>
+              <Link
+                href="/lessons"
+                className="mt-5 inline-flex h-9 items-center rounded-[4px] bg-ink px-4 text-[14px] font-medium text-white transition-colors hover:bg-[#01243a] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
+              >
+                Find a lesson
+              </Link>
             </div>
           </div>
+        ) : (
+          <div className="border-b border-rule">
+            {reportData.quizResults.map((result) => (
+              <div
+                key={result.quiz.id}
+                className="ruled row-register items-baseline border-t border-rule py-3"
+              >
+                <div className="margin flex flex-row-reverse items-center justify-end gap-2 sm:flex-row sm:justify-end sm:pt-[3px]">
+                  <span className="text-[11px] font-semibold text-graphite">
+                    {subjectCode(result.quiz.lesson.subject)}
+                  </span>
+                  <span
+                    aria-hidden
+                    className="subject-tab h-4"
+                    style={{ background: subjectTint(result.quiz.lesson.subject) }}
+                  />
+                </div>
 
-          <div className="bg-white p-6 rounded-2xl shadow-lg border border-white/50">
-            <div className="flex items-center gap-4">
-              <div className="p-3 bg-gradient-to-br from-green-500 to-emerald-600 text-white rounded-xl shadow-lg">
-                <TrophyIcon className="h-6 w-6" />
+                <div className="column flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+                  <span className="min-w-0 flex-1">
+                    <span className="block truncate text-[15px] font-medium text-ink">
+                      {result.quiz.title}
+                    </span>
+                    <span className="block truncate text-[12px] text-graphite">
+                      {result.quiz.lesson.title}
+                    </span>
+                  </span>
+
+                  <span className="flex shrink-0 gap-6 text-[14px] tabular">
+                    <span className="w-12 text-right text-graphite">
+                      {result.totalAttempts}
+                    </span>
+                    <span className="w-12 text-right text-graphite">
+                      {Math.round(result.bestScore)}%
+                    </span>
+                    <span className="w-12 text-right font-semibold text-mark">
+                      {Math.round(result.latestAttempt.percentage)}%
+                    </span>
+                  </span>
+                </div>
               </div>
-              <div>
-                <p className="text-sm font-medium text-gray-600">Best Score</p>
-                <p className="text-3xl font-bold text-gray-900">{reportData.overallStats.highestScore.toFixed(1)}%</p>
-              </div>
+            ))}
+          </div>
+        )}
+      </section>
+
+      {/* Change over time. */}
+      {progressChartData && (
+        <section className="ruled pt-10">
+          <div className="margin" aria-hidden />
+          <div className="column">
+            <h2 className="text-[15px] font-semibold text-ink">Marks in order taken</h2>
+            <p className="mt-1 text-[12px] text-graphite">
+              Each point is one quiz, oldest first.
+            </p>
+            <div className="mt-4 h-56">
+              <Line data={progressChartData} options={progressChartOptions} />
             </div>
           </div>
+        </section>
+      )}
 
-          <div className="bg-white p-6 rounded-2xl shadow-lg border border-white/50">
-            <div className="flex items-center gap-4">
-              <div className="p-3 bg-gradient-to-br from-purple-500 to-pink-600 text-white rounded-xl shadow-lg">
-                <StarIcon className="h-6 w-6" />
+      {/* Teacher notes. */}
+      {reportData.notes.length > 0 && (
+        <section className="pt-10">
+          <div className="ruled pb-2">
+            <div className="margin" aria-hidden />
+            <div className="column">
+              <h2 className="text-[15px] font-semibold text-ink">Notes from your teachers</h2>
+            </div>
+          </div>
+          {reportData.notes.map((note) => (
+            <div key={note.id} className="ruled items-start border-t border-rule py-3">
+              <div className="margin pt-[3px] text-[11px] text-graphite tabular">
+                {new Date(note.createdAt).toLocaleDateString('en-GB', {
+                  day: 'numeric',
+                  month: 'short',
+                })}
               </div>
-              <div>
-                <p className="text-sm font-medium text-gray-600">Pass Rate</p>
-                <p className="text-3xl font-bold text-gray-900">
-                  {reportData.overallStats.totalQuizzesTaken > 0 
-                    ? ((reportData.overallStats.passCount / reportData.overallStats.totalQuizzesTaken) * 100).toFixed(0)
-                    : '0'
-                  }%
+              <div className="column">
+                <p className="reading text-[15px] leading-relaxed">{note.note}</p>
+                <p className="mt-1 text-[12px] text-graphite">
+                  {note.teacher.name || 'Teacher'}
                 </p>
               </div>
             </div>
-          </div>
+          ))}
+        </section>
+      )}
 
-          <div className="bg-white p-6 rounded-2xl shadow-lg border border-white/50">
-            <div className="flex items-center gap-4">
-              <div className="p-3 bg-gradient-to-br from-orange-500 to-red-600 text-white rounded-xl shadow-lg">
-                <FireIcon className="h-6 w-6" />
-              </div>
-              <div>
-                <p className="text-sm font-medium text-gray-600">Total Points</p>
-                <p className="text-3xl font-bold text-gray-900">{reportData.overallStats.totalPointsEarned}</p>
-                <p className="text-xs text-gray-500">out of {reportData.overallStats.totalPossiblePoints}</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="grid lg:grid-cols-3 gap-8">
-          {/* Charts Section */}
-          <div className="lg:col-span-2 space-y-8">
-            
-            {/* Performance Distribution */}
-            {performanceChartData && reportData.overallStats.totalQuizzesTaken > 0 && (
-              <div className="bg-white p-6 rounded-2xl shadow-lg border border-white/50">
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="p-2 bg-gradient-to-br from-indigo-500 to-purple-600 text-white rounded-lg">
-                    <ChartBarIcon className="h-5 w-5" />
-                  </div>
-                  <h3 className="text-lg font-semibold text-gray-900">Your Performance Breakdown</h3>
-                </div>
-                <div className="h-64">
-                  <Doughnut 
-                    data={performanceChartData} 
-                    options={{
-                      responsive: true,
-                      maintainAspectRatio: false,
-                      plugins: {
-                        legend: {
-                          position: 'bottom',
-                          labels: {
-                            padding: 20,
-                            usePointStyle: true,
-                            font: {
-                              size: 12
-                            }
-                          },
-                        },
-                        tooltip: {
-                          callbacks: {
-                            label: function(context) {
-                              const total = context.dataset.data.reduce((a: number, b: number) => a + b, 0);
-                              const percentage = total > 0 ? ((context.raw as number / total) * 100).toFixed(1) : '0.0';
-                              return `${context.label}: ${context.raw} quiz${context.raw !== 1 ? 'es' : ''} (${percentage}%)`;
-                            }
-                          }
-                        }
-                      }
-                    }}
-                  />
-                </div>
-              </div>
-            )}
-
-            {/* Progress Over Time */}
-            {progressChartData && (
-              <div className="bg-white p-6 rounded-2xl shadow-lg border border-white/50">
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="p-2 bg-gradient-to-br from-green-500 to-emerald-600 text-white rounded-lg">
-                    <TrophyIcon className="h-5 w-5" />
-                  </div>
-                  <h3 className="text-lg font-semibold text-gray-900">Your Progress Journey</h3>
-                </div>
-                <div className="h-64">
-                  <Line 
-                    data={progressChartData}
-                    options={{
-                      responsive: true,
-                      maintainAspectRatio: false,
-                      plugins: {
-                        legend: {
-                          display: false,
-                        },
-                      },
-                      scales: {
-                        y: {
-                          beginAtZero: true,
-                          max: 100,
-                          ticks: {
-                            callback: function(value) {
-                              return value + '%';
-                            }
-                          },
-                          grid: {
-                            color: 'rgba(0, 0, 0, 0.05)',
-                          }
-                        },
-                        x: {
-                          grid: {
-                            color: 'rgba(0, 0, 0, 0.05)',
-                          }
-                        }
-                      }
-                    }}
-                  />
-                </div>
-              </div>
-            )}
-
-            {/* Subject Performance */}
-            {subjectChartData && (
-              <div className="bg-white p-6 rounded-2xl shadow-lg border border-white/50">
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="p-2 bg-gradient-to-br from-yellow-500 to-orange-600 text-white rounded-lg">
-                    <AcademicCapIcon className="h-5 w-5" />
-                  </div>
-                  <h3 className="text-lg font-semibold text-gray-900">Performance by Subject</h3>
-                </div>
-                <div className="h-64">
-                  <Bar 
-                    data={subjectChartData}
-                    options={{
-                      responsive: true,
-                      maintainAspectRatio: false,
-                      plugins: {
-                        legend: {
-                          display: false,
-                        },
-                      },
-                      scales: {
-                        y: {
-                          beginAtZero: true,
-                          max: 100,
-                          ticks: {
-                            callback: function(value) {
-                              return value + '%';
-                            }
-                          },
-                          grid: {
-                            color: 'rgba(0, 0, 0, 0.05)',
-                          }
-                        },
-                        x: {
-                          grid: {
-                            display: false,
-                          }
-                        }
-                      }
-                    }}
-                  />
-                </div>
-              </div>
-            )}
-
-            {/* Recent Quiz Results */}
-            <div className="bg-white rounded-2xl shadow-lg border border-white/50 overflow-hidden">
-              <div className="px-6 py-4 bg-gradient-to-r from-gray-50 to-blue-50 border-b">
-                <h3 className="text-lg font-semibold text-gray-900">Recent Quiz Results</h3>
-                <p className="text-sm text-gray-600 mt-1">Your latest quiz performances</p>
-              </div>
-              
-              {reportData.quizResults.length === 0 ? (
-                <div className="text-center py-16">
-                  <AcademicCapIcon className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">No quizzes taken yet</h3>
-                  <p className="text-gray-500 mb-6">Start taking quizzes to see your performance here!</p>
-                  <Link
-                    href="/lessons"
-                    className="cursor-pointer inline-flex items-center gap-2 px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 font-medium transition-colors"
-                  >
-                    <EyeIcon className="h-4 w-4" />
-                    Browse Courses
-                  </Link>
-                </div>
-              ) : (
-                <div className="divide-y divide-gray-100">
-                  {reportData.quizResults.slice(0, 5).map((result) => (
-                    <div key={result.quiz.id} className="p-6 hover:bg-gray-50 transition-colors">
-                      <div className="flex items-center justify-between">
-                        <div className="flex-1">
-                          <h4 className="font-semibold text-gray-900 mb-1">{result.quiz.title}</h4>
-                          <p className="text-sm text-gray-600 mb-2">
-                            {result.quiz.lesson.title} • {result.quiz.lesson.subject}
-                          </p>
-                          <div className="flex items-center gap-4 text-sm text-gray-500">
-                            <span>{result.totalAttempts} attempt{result.totalAttempts !== 1 ? 's' : ''}</span>
-                            <span>•</span>
-                            <span>
-                              {new Date(result.latestAttempt.completedAt).toLocaleDateString('en-US', {
-                                month: 'short',
-                                day: 'numeric'
-                              })}
-                            </span>
-                          </div>
-                        </div>
-                        
-                        <div className="flex items-center gap-4">
-                          <div className="text-right">
-                            <div className={`text-2xl font-bold ${getScoreColor(result.latestAttempt.percentage)}`}>
-                              {result.latestAttempt.percentage.toFixed(1)}%
-                            </div>
-                            <div className="text-sm text-gray-500">
-                              {result.latestAttempt.score}/{result.latestAttempt.totalPoints}
-                            </div>
-                          </div>
-                          
-                          {result.latestAttempt.passed !== null && (
-                            <div className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                              result.latestAttempt.passed 
-                                ? 'bg-green-100 text-green-800' 
-                                : 'bg-red-100 text-red-800'
-                            }`}>
-                              {result.latestAttempt.passed ? '✓ Passed' : '✗ Failed'}
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                  
-                  {reportData.quizResults.length > 5 && (
-                    <div className="p-4 bg-gray-50 text-center">
-                      <p className="text-sm text-gray-600">
-                        Showing 5 of {reportData.quizResults.length} quizzes
-                      </p>
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Teacher Notes & Achievements Section */}
-          <div className="lg:col-span-1 space-y-6">
-            
-            {/* Achievements/Milestones */}
-            <div className="bg-white rounded-2xl shadow-lg border border-white/50 p-6">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="p-2 bg-gradient-to-br from-yellow-500 to-orange-600 text-white rounded-lg">
-                  <TrophyIcon className="h-5 w-5" />
-                </div>
-                <h3 className="text-lg font-semibold text-gray-900">Achievements</h3>
-              </div>
-              
-              <div className="space-y-3">
-                {reportData.overallStats.totalQuizzesTaken >= 10 && (
-                  <div className="flex items-center gap-3 p-3 bg-gradient-to-r from-yellow-50 to-orange-50 rounded-lg border border-yellow-200">
-                    <span className="text-2xl">🏆</span>
-                    <div>
-                      <p className="font-semibold text-gray-900">Quiz Master</p>
-                      <p className="text-xs text-gray-600">Completed 10+ quizzes</p>
-                    </div>
-                  </div>
-                )}
-                
-                {reportData.overallStats.highestScore >= 95 && (
-                  <div className="flex items-center gap-3 p-3 bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg border border-green-200">
-                    <span className="text-2xl">⭐</span>
-                    <div>
-                      <p className="font-semibold text-gray-900">Perfect Score</p>
-                      <p className="text-xs text-gray-600">Achieved 95%+ score</p>
-                    </div>
-                  </div>
-                )}
-                
-                {reportData.overallStats.averageScore >= 85 && (
-                  <div className="flex items-center gap-3 p-3 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-200">
-                    <span className="text-2xl">🎯</span>
-                    <div>
-                      <p className="font-semibold text-gray-900">Consistent Performer</p>
-                      <p className="text-xs text-gray-600">85%+ average score</p>
-                    </div>
-                  </div>
-                )}
-                
-                {reportData.overallStats.passCount > 0 && reportData.overallStats.failCount === 0 && (
-                  <div className="flex items-center gap-3 p-3 bg-gradient-to-r from-purple-50 to-pink-50 rounded-lg border border-purple-200">
-                    <span className="text-2xl">🔥</span>
-                    <div>
-                      <p className="font-semibold text-gray-900">Perfect Record</p>
-                      <p className="text-xs text-gray-600">No failed attempts</p>
-                    </div>
-                  </div>
-                )}
-                
-                {(reportData.overallStats.totalQuizzesTaken < 10 && 
-                  reportData.overallStats.highestScore < 95 && 
-                  reportData.overallStats.averageScore < 85) && (
-                  <div className="text-center py-6">
-                    <span className="text-4xl mb-2 block">🌟</span>
-                    <p className="text-sm text-gray-600">Complete more quizzes to unlock achievements!</p>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Teacher Notes */}
-            <div className="bg-white rounded-2xl shadow-lg border border-white/50 p-6">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="p-2 bg-gradient-to-br from-indigo-500 to-purple-600 text-white rounded-lg">
-                  <CalendarIcon className="h-5 w-5" />
-                </div>
-                <h3 className="text-lg font-semibold text-gray-900">Teacher Notes</h3>
-              </div>
-              
-              {reportData.notes.length === 0 ? (
-                <div className="text-center py-8">
-                  <span className="text-4xl mb-3 block">📝</span>
-                  <p className="text-gray-500 text-sm">No teacher notes yet</p>
-                  <p className="text-xs text-gray-400 mt-1">Your teachers will add notes about your progress here</p>
-                </div>
-              ) : (
-                <div className="space-y-4 max-h-80 overflow-y-auto">
-                  {reportData.notes.map((note) => (
-                    <div key={note.id} className="p-4 bg-gradient-to-r from-gray-50 to-blue-50 rounded-lg border border-gray-100">
-                      <div className="flex items-start gap-3 mb-2">
-                        {note.teacher.image ? (
-                          <Image
-                            src={note.teacher.image}
-                            alt={note.teacher.name || 'Teacher'}
-                            width={32}
-                            height={32}
-                            className="w-8 h-8 rounded-full object-cover border-2 border-white shadow-sm"
-                          />
-                        ) : (
-                          <div className="w-8 h-8 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center">
-                            <span className="text-white text-xs font-bold">
-                              {note.teacher.name?.[0]?.toUpperCase() || 'T'}
-                            </span>
-                          </div>
-                        )}
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-semibold text-gray-900">
-                            {note.teacher.name || 'Teacher'}
-                          </p>
-                          <p className="text-xs text-gray-500">
-                            {new Date(note.createdAt).toLocaleDateString('en-US', {
-                              month: 'short',
-                              day: 'numeric',
-                              year: 'numeric'
-                            })}
-                          </p>
-                        </div>
-                      </div>
-                      <p className="text-sm text-gray-700 leading-relaxed pl-11">{note.note}</p>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            {/* Quick Actions */}
-            <div className="bg-white rounded-2xl shadow-lg border border-white/50 p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
-              <div className="space-y-3">
-                <Link
-                  href="/lessons"
-                  className="cursor-pointer w-full inline-flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-medium rounded-lg hover:from-indigo-700 hover:to-purple-700 transition-all transform hover:scale-105 shadow-lg"
-                >
-                  <EyeIcon className="h-4 w-4" />
-                  Browse All Courses
-                </Link>
-                
-              </div>
-            </div>
-          </div>
+      <div className="ruled pt-8">
+        <div className="margin" aria-hidden />
+        <div className="column">
+          <Link
+            href="/lessons"
+            className="text-[14px] text-ink underline decoration-rule underline-offset-[3px] transition-colors hover:decoration-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
+          >
+            Back to lessons
+          </Link>
         </div>
       </div>
     </div>
