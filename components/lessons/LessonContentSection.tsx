@@ -163,17 +163,17 @@ export default function LessonContentSection({
   const getContentIcon = (type: string) => {
     switch (type) {
       case "MARKDOWN":
-        return <FileText className="h-5 w-5 text-blue-600" />;
+        return <FileText className="h-5 w-5 text-ink" />;
       case "PDF":
-        return <FileText className="h-5 w-5 text-red-600" />;
+        return <FileText className="h-5 w-5 text-mark" />;
       case "DOC":
-        return <FileIcon className="h-5 w-5 text-blue-700" />;
+        return <FileIcon className="h-5 w-5 text-ink" />;
       case "PPT":
-        return <Presentation className="h-5 w-5 text-orange-600" />;
+        return <Presentation className="h-5 w-5 text-mark" />;
       case "IMAGE":
-        return <ImageIcon className="h-5 w-5 text-green-600" />;
+        return <ImageIcon className="h-5 w-5 text-ink" />;
       default:
-        return <FileIcon className="h-5 w-5 text-gray-600" />;
+        return <FileIcon className="h-5 w-5 text-graphite" />;
     }
   };
 
@@ -187,38 +187,38 @@ export default function LessonContentSection({
 
   if (loading) {
     return (
-      <section className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-        <div className="bg-gradient-to-r from-gray-50 via-white to-gray-50 border-b border-gray-100 px-8 py-8">
+      <section className="bg-white rounded-[4px] border border-rule overflow-hidden">
+        <div className="bg-sheet border-b border-rule px-8 py-8">
           <div className="flex items-center gap-4">
-            <div className="p-3 bg-indigo-100 rounded-xl">
-              <BookOpen size={28} className="text-indigo-600" />
+            <div className="p-3 bg-[#edf2f5] rounded-[4px]">
+              <BookOpen size={28} className="text-ink" />
             </div>
             <div>
-              <h2 className="text-2xl lg:text-3xl font-bold text-gray-900">Lesson Content</h2>
-              <p className="text-gray-600 mt-1">Loading content...</p>
+              <h2 className="text-2xl lg:text-3xl font-bold text-ink">Lesson Content</h2>
+              <p className="text-graphite mt-1">Loading content...</p>
             </div>
           </div>
         </div>
         <div className="p-8 flex items-center justify-center">
-          <Loader2 className="h-6 w-6 animate-spin text-indigo-600" />
-          <span className="ml-2 text-gray-600">Loading content...</span>
+          <Loader2 className="h-6 w-6 animate-spin text-ink" />
+          <span className="ml-2 text-graphite">Loading content...</span>
         </div>
       </section>
     );
   }
 
   return (
-    <section className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+    <section className="bg-white rounded-[4px] border border-rule overflow-hidden">
       {/* Section Header */}
-      <div className="bg-gradient-to-r from-gray-50 via-white to-gray-50 border-b border-gray-100 px-8 py-8">
+      <div className="bg-sheet border-b border-rule px-8 py-8">
         <div className="flex items-center gap-4 justify-between">
           <div className="flex items-center gap-4">
-            <div className="p-3 bg-indigo-100 rounded-xl border border-indigo-200">
-              <BookOpen size={28} className="text-indigo-600" />
+            <div className="p-3 bg-[#edf2f5] rounded-[4px] border border-ink">
+              <BookOpen size={28} className="text-ink" />
             </div>
             <div>
-              <h2 className="text-2xl lg:text-3xl font-bold text-gray-900">Lesson Content</h2>
-              <p className="text-gray-600 mt-1">
+              <h2 className="text-2xl lg:text-3xl font-bold text-ink">Lesson Content</h2>
+              <p className="text-graphite mt-1">
                 {contents.length === 0
                   ? "No content available yet"
                   : `${contents.length} content item${contents.length === 1 ? "" : "s"} available`}
@@ -230,7 +230,7 @@ export default function LessonContentSection({
           {isAuthor && isTeacher && (
             <Link
               href={`/lessons/${lessonId}/add-content`}
-              className="cursor-pointer inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition-all duration-200"
+              className="cursor-pointer inline-flex items-center gap-2 px-4 py-2 bg-ink text-white font-semibold rounded-[4px] hover:bg-ink transition-colors"
             >
               <Plus size={16} />
               <span>Add Content</span>
@@ -242,27 +242,27 @@ export default function LessonContentSection({
       {/* Content */}
       <div className="p-8">
         {error && (
-          <div className="mb-6 bg-red-50 border border-red-200 rounded-lg p-4">
+          <div className="mb-6 bg-[#fdf3f2] border border-mark rounded-[4px] p-4">
             <div className="flex items-center gap-3">
-              <AlertCircle className="h-5 w-5 text-red-600 flex-shrink-0" />
-              <p className="text-red-700">{error}</p>
+              <AlertCircle className="h-5 w-5 text-mark flex-shrink-0" />
+              <p className="text-mark">{error}</p>
             </div>
           </div>
         )}
 
         {contents.length === 0 ? (
           <div className="text-center py-16">
-            <div className="w-24 h-24 mx-auto mb-6 bg-gradient-to-br from-gray-100 to-gray-200 rounded-2xl flex items-center justify-center">
-              <BookOpen size={36} className="text-gray-400" />
+            <div className="w-24 h-24 mx-auto mb-6 bg-sheet rounded-[4px] flex items-center justify-center">
+              <BookOpen size={36} className="text-graphite" />
             </div>
-            <h3 className="text-xl font-bold text-gray-900 mb-3">No Content Available</h3>
-            <p className="text-gray-600 mb-8 max-w-lg mx-auto leading-relaxed">
+            <h3 className="text-xl font-bold text-ink mb-3">No Content Available</h3>
+            <p className="text-graphite mb-8 max-w-lg mx-auto leading-relaxed">
               Additional lesson content hasn&apos;t been added yet. {isAuthor && isTeacher ? "Click the 'Add Content' button above to get started." : "Check back later for materials and resources."}
             </p>
             {!isAuthor || !isTeacher ? (
               <Link
                 href="/lessons"
-                className="cursor-pointer inline-flex items-center gap-2 px-6 py-3 text-indigo-600 hover:text-white bg-indigo-50 hover:bg-indigo-600 font-semibold rounded-xl transition-all duration-300 border border-indigo-200 hover:border-indigo-600"
+                className="cursor-pointer inline-flex items-center gap-2 px-6 py-3 text-ink hover:text-white bg-[#edf2f5] hover:bg-ink font-semibold rounded-[4px] transition-colors border border-ink hover:border-ink"
               >
                 <BookOpen size={18} />
                 Browse Other Lessons
@@ -275,7 +275,7 @@ export default function LessonContentSection({
               {contents.slice(0, 3).map((content) => (
                 <div
                   key={content.id}
-                  className="bg-gray-50 rounded-xl p-6 border border-gray-200 hover:shadow-md transition-all duration-200 group"
+                  className="bg-[#edf2f5] rounded-[4px] p-6 border border-rule transition-colors group"
                 >
                   {editingId === content.id ? (
                     // Edit Mode
@@ -284,27 +284,27 @@ export default function LessonContentSection({
                         type="text"
                         value={editTitle}
                         onChange={(e) => setEditTitle(e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                        className="w-full px-3 py-2 border border-rule rounded-[4px] focus:ring-2 focus:ring-ink focus:border-ink"
                         placeholder="Content title"
                       />
                       <textarea
                         value={editMarkdown}
                         onChange={(e) => setEditMarkdown(e.target.value)}
                         rows={8}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 resize-none"
+                        className="w-full px-3 py-2 border border-rule rounded-[4px] focus:ring-2 focus:ring-ink focus:border-ink resize-none"
                         placeholder="Content markdown"
                       />
                       <div className="flex justify-end gap-2">
                         <button
                           onClick={handleCancelEdit}
-                          className="cursor-pointer px-3 py-1.5 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                          className="cursor-pointer px-3 py-1.5 text-graphite border border-rule rounded-[4px] hover:bg-[#edf2f5] transition-colors"
                         >
                           <X size={16} />
                         </button>
                         <button
                           onClick={handleSaveEdit}
                           disabled={saving}
-                          className="cursor-pointer inline-flex items-center gap-1 px-3 py-1.5 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50 transition-colors"
+                          className="cursor-pointer inline-flex items-center gap-1 px-3 py-1.5 bg-ink text-white rounded-[4px] hover:bg-ink disabled:opacity-50 transition-colors"
                         >
                           {saving ? (
                             <Loader2 size={16} className="animate-spin" />
@@ -318,36 +318,36 @@ export default function LessonContentSection({
                     // View Mode
                     <div className="flex items-start justify-between">
                       <div className="flex items-start gap-4 flex-1">
-                        <div className="p-2 bg-white rounded-lg border border-gray-200">
+                        <div className="p-2 bg-white rounded-[4px] border border-rule">
                           {getContentIcon(content.type)}
                         </div>
                         <div className="flex-1 min-w-0">
-                          <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                          <h3 className="text-lg font-semibold text-ink mb-2">
                             {content.title}
                           </h3>
                           
                           {content.type === "MARKDOWN" && content.markdown ? (
-                            <div className="prose prose-sm max-w-none text-gray-700 mb-3">
+                            <div className="prose prose-sm max-w-none text-ink mb-3">
                               {content.markdown.split('\n').slice(0, 3).map((line, i) => (
                                 <p key={i} className="mb-1">
                                   {line || '\u00A0'}
                                 </p>
                               ))}
                               {content.markdown.split('\n').length > 3 && (
-                                <p className="text-gray-500 italic">...</p>
+                                <p className="text-graphite italic">...</p>
                               )}
                             </div>
                           ) : content.fileName ? (
-                            <p className="text-gray-600 mb-3">
+                            <p className="text-graphite mb-3">
                               📎 {content.fileName}
                             </p>
                           ) : null}
 
-                          <div className="flex items-center gap-4 text-sm text-gray-500">
+                          <div className="flex items-center gap-4 text-sm text-graphite">
                             <span>By {content.author.name || "Unknown"}</span>
                             <span>•</span>
                             <span>{formatDate(content.createdAt)}</span>
-                            <span className="px-2 py-1 bg-gray-200 text-gray-700 rounded text-xs font-medium">
+                            <span className="px-2 py-1 bg-[#edf2f5] text-ink rounded text-xs font-medium">
                               {content.type}
                             </span>
                           </div>
@@ -360,7 +360,7 @@ export default function LessonContentSection({
                         {content.type === "MARKDOWN" && (
                           <Link
                             href={`/lessons/${lessonId}/content/${content.id}`}
-                            className="cursor-pointer p-2 text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
+                            className="cursor-pointer p-2 text-graphite hover:text-ink hover:bg-[#edf2f5] rounded-[4px] transition-colors"
                             title="View content"
                           >
                             <Eye size={16} />
@@ -371,7 +371,7 @@ export default function LessonContentSection({
                         {content.type !== "MARKDOWN" && content.fileUrl && (
                           <button
                             onClick={() => handleDownload(content)}
-                            className="cursor-pointer p-2 text-gray-500 hover:text-green-600 hover:bg-green-50 rounded-lg transition-colors"
+                            className="cursor-pointer p-2 text-graphite hover:text-ink hover:bg-[#edf2f5] rounded-[4px] transition-colors"
                             title="Download file"
                           >
                             <Download size={16} />
@@ -384,7 +384,7 @@ export default function LessonContentSection({
                             {content.type === "MARKDOWN" && (
                               <button
                                 onClick={() => handleEdit(content)}
-                                className="cursor-pointer p-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                                className="cursor-pointer p-2 text-graphite hover:text-ink hover:bg-[#edf2f5] rounded-[4px] transition-colors"
                                 title="Edit content"
                               >
                                 <Edit size={16} />
@@ -393,7 +393,7 @@ export default function LessonContentSection({
                             <button
                               onClick={() => handleDelete(content.id)}
                               disabled={deletingId === content.id}
-                              className="cursor-pointer p-2 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50"
+                              className="cursor-pointer p-2 text-graphite hover:text-mark hover:bg-[#fdf3f2] rounded-[4px] transition-colors disabled:opacity-50"
                               title="Delete content"
                             >
                               {deletingId === content.id ? (
@@ -413,10 +413,10 @@ export default function LessonContentSection({
 
             {/* View All Content Button - Show when more than 3 items */}
             {contents.length > 3 && (
-              <div className="text-center pt-6 border-t border-gray-200">
+              <div className="text-center pt-6 border-t border-rule">
                 <Link
                   href={`/lessons/${lessonId}/content`}
-                  className="cursor-pointer inline-flex items-center gap-2 px-6 py-3 bg-indigo-600 text-white font-semibold rounded-xl hover:bg-indigo-700 transition-all duration-300 shadow-md hover:shadow-lg"
+                  className="cursor-pointer inline-flex items-center gap-2 px-6 py-3 bg-ink text-white font-semibold rounded-[4px] hover:bg-ink transition-colors"
                 >
                   <BookOpen size={18} />
                   View All Content ({contents.length})

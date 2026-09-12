@@ -37,12 +37,12 @@ function Toast({ message, type, onClose }: ToastProps) {
       }`}>
         <div className="flex-shrink-0">
           {type === 'success' ? (
-            <div className={`p-1 rounded-full ${isDeleteSuccess ? 'bg-green-200' : 'bg-green-100'}`}>
-              <Check size={14} className="text-green-600" />
+            <div className={`p-1 rounded-full ${isDeleteSuccess ? 'bg-[#edf2f5]' : 'bg-[#edf2f5]'}`}>
+              <Check size={14} className="text-ink" />
             </div>
           ) : (
-            <div className="p-1 bg-red-100 rounded-full">
-              <X size={14} className="text-red-600" />
+            <div className="p-1 bg-[#fdf3f2] rounded-full">
+              <X size={14} className="text-mark" />
             </div>
           )}
         </div>
@@ -72,16 +72,16 @@ function DeleteConfirmModal({ isOpen, onConfirm, onCancel, loading }: DeleteConf
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-xl shadow-2xl max-w-md w-full mx-4 animate-in fade-in zoom-in-95 duration-200">
+      <div className="bg-white rounded-[4px] max-w-md w-full mx-4 animate-in fade-in zoom-in-95 duration-200">
         <div className="p-6">
           <div className="flex items-center gap-3 mb-4">
-            <div className="p-2 bg-red-100 rounded-full">
-              <Trash2 size={20} className="text-red-600" />
+            <div className="p-2 bg-[#fdf3f2] rounded-full">
+              <Trash2 size={20} className="text-mark" />
             </div>
-            <h3 className="text-lg font-semibold text-gray-900">Delete Video</h3>
+            <h3 className="text-lg font-semibold text-ink">Delete Video</h3>
           </div>
           
-          <p className="text-gray-600 mb-6">
+          <p className="text-graphite mb-6">
             Are you sure you want to delete this video? This action cannot be undone and the video file will be permanently removed from storage.
           </p>
           
@@ -89,14 +89,14 @@ function DeleteConfirmModal({ isOpen, onConfirm, onCancel, loading }: DeleteConf
             <button
               onClick={onConfirm}
               disabled={loading}
-              className="cursor-pointer flex-1 bg-red-600 text-white font-medium py-2.5 px-4 rounded-lg hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="cursor-pointer flex-1 bg-mark text-white font-medium py-2.5 px-4 rounded-[4px] hover:bg-mark disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               {loading ? 'Deleting...' : 'Delete Video'}
             </button>
             <button
               onClick={onCancel}
               disabled={loading}
-              className="cursor-pointer flex-1 bg-gray-100 text-gray-700 font-medium py-2.5 px-4 rounded-lg hover:bg-gray-200 disabled:opacity-50 transition-colors"
+              className="cursor-pointer flex-1 bg-[#edf2f5] text-ink font-medium py-2.5 px-4 rounded-[4px] hover:bg-[#edf2f5] disabled:opacity-50 transition-colors"
             >
               Cancel
             </button>
@@ -217,7 +217,7 @@ export default function VideoCard({ video, lessonId, isAuthor, onUpdate }: Video
 
   return (
     <>
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-lg transition-all duration-300 transform hover:scale-[1.02]">
+      <div className="bg-white rounded-[4px] border border-rule overflow-hidden transition-colors">
         {/* Video Player */}
         <div className="relative bg-black">
           <video
@@ -240,14 +240,14 @@ export default function VideoCard({ video, lessonId, isAuthor, onUpdate }: Video
                     type="text"
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
-                    className="w-full text-lg font-bold border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                    className="w-full text-lg font-bold border border-rule rounded-[4px] px-3 py-2 focus:outline-none focus:ring-2 focus:ring-ink focus:border-ink transition-colors"
                     placeholder="Video title"
                     maxLength={100}
                   />
                   <textarea
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none transition-colors"
+                    className="w-full border border-rule rounded-[4px] px-3 py-2 focus:outline-none focus:ring-2 focus:ring-ink focus:border-ink resize-none transition-colors"
                     rows={3}
                     placeholder="Video description (optional)"
                     maxLength={500}
@@ -256,7 +256,7 @@ export default function VideoCard({ video, lessonId, isAuthor, onUpdate }: Video
                     <button
                       onClick={handleSave}
                       disabled={loading || !title.trim()}
-                      className="cursor-pointer flex-1 sm:flex-none px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium"
+                      className="cursor-pointer flex-1 sm:flex-none px-4 py-2 bg-ink text-white rounded-[4px] hover:bg-ink disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium"
                     >
                       {loading ? 'Saving...' : 'Save'}
                     </button>
@@ -267,7 +267,7 @@ export default function VideoCard({ video, lessonId, isAuthor, onUpdate }: Video
                         setDescription(video.description || '');
                       }}
                       disabled={loading}
-                      className="cursor-pointer flex-1 sm:flex-none px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors font-medium"
+                      className="cursor-pointer flex-1 sm:flex-none px-4 py-2 bg-gray-500 text-white rounded-[4px] hover:bg-gray-600 transition-colors font-medium"
                     >
                       Cancel
                     </button>
@@ -275,11 +275,11 @@ export default function VideoCard({ video, lessonId, isAuthor, onUpdate }: Video
                 </div>
               ) : (
                 <div>
-                  <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2 line-clamp-2">
+                  <h3 className="text-lg sm:text-xl font-bold text-ink mb-2 line-clamp-2">
                     {video.title}
                   </h3>
                   {video.description && (
-                    <p className="text-gray-600 leading-relaxed text-sm sm:text-base line-clamp-3">
+                    <p className="text-graphite leading-relaxed text-sm sm:text-base line-clamp-3">
                       {video.description}
                     </p>
                   )}
@@ -292,7 +292,7 @@ export default function VideoCard({ video, lessonId, isAuthor, onUpdate }: Video
               <div className="flex gap-2 flex-shrink-0">
                 <button
                   onClick={() => setIsEditing(true)}
-                  className="cursor-pointer p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                  className="cursor-pointer p-2 text-ink hover:bg-[#edf2f5] rounded-[4px] transition-colors"
                   title="Edit video"
                 >
                   <Edit size={18} />
@@ -300,7 +300,7 @@ export default function VideoCard({ video, lessonId, isAuthor, onUpdate }: Video
                 <button
                   onClick={() => setShowDeleteModal(true)}
                   disabled={loading}
-                  className="cursor-pointer p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50"
+                  className="cursor-pointer p-2 text-mark hover:bg-[#fdf3f2] rounded-[4px] transition-colors disabled:opacity-50"
                   title="Delete video"
                 >
                   <Trash2 size={18} />
@@ -311,7 +311,7 @@ export default function VideoCard({ video, lessonId, isAuthor, onUpdate }: Video
 
           {/* Video Info */}
           {!isEditing && (
-            <div className="flex flex-wrap items-center gap-3 sm:gap-4 text-xs sm:text-sm text-gray-500 mb-4">
+            <div className="flex flex-wrap items-center gap-3 sm:gap-4 text-xs sm:text-sm text-graphite mb-4">
               <div className="flex items-center gap-1">
                 <Calendar size={14} />
                 <span>{formatDate(video.createdAt)}</span>
@@ -335,7 +335,7 @@ export default function VideoCard({ video, lessonId, isAuthor, onUpdate }: Video
                 href={video.blobUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium text-sm"
+                className="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-ink text-white rounded-[4px] hover:bg-ink transition-colors font-medium text-sm"
               >
                 <Play size={16} />
                 <span>Open in new tab</span>
@@ -345,7 +345,7 @@ export default function VideoCard({ video, lessonId, isAuthor, onUpdate }: Video
                 download
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium text-sm"
+                className="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-ink text-white rounded-[4px] hover:bg-ink transition-colors font-medium text-sm"
               >
                 <Download size={16} />
                 <span>Download MP4</span>

@@ -83,11 +83,7 @@ export default function QuizDeleteActions({
         <button
           onClick={handleDelete}
           disabled={isDeleting}
-          className={`cursor-pointer inline-flex items-center gap-2 px-3 py-2 rounded-lg transition-all duration-200 font-medium focus:outline-none focus:ring-2 focus:ring-red-500/50 ${
-            variant === 'single'
-              ? 'text-red-600 hover:text-red-700 hover:bg-red-50 text-sm'
-              : 'bg-red-600 text-white hover:bg-red-700 shadow-md hover:shadow-lg'
-          }`}
+          className={`cursor-pointer inline-flex items-center gap-2 px-3 py-2 rounded-[4px] transition-colors font-medium focus:outline-none focus:ring-2 focus:ring-ink/50 ${ variant === 'single' ? 'text-mark hover:text-mark hover:bg-[#fdf3f2] text-sm' : 'bg-mark text-white hover:bg-mark ' }`}
           title={variant === 'single' ? `Delete "${quizTitle}"` : `Delete all ${quizCount} quizzes`}
         >
           {isDeleting ? (
@@ -100,14 +96,14 @@ export default function QuizDeleteActions({
           </span>
         </button>
       ) : (
-        <div className={`${variant === 'single' ? 'absolute top-0 right-0 z-50' : ''} bg-white border border-red-200 rounded-lg p-3 shadow-lg`}>
+        <div className={`${variant === 'single' ? 'absolute top-0 right-0 z-50' : ''} bg-white border border-mark rounded-[4px] p-3`}>
           <div className="flex items-center gap-2 mb-3">
-            <AlertTriangle size={16} className="text-red-600" />
-            <span className="text-sm font-medium text-gray-900">
+            <AlertTriangle size={16} className="text-mark" />
+            <span className="text-sm font-medium text-ink">
               {variant === 'single' ? 'Delete Quiz?' : 'Delete All Quizzes?'}
             </span>
           </div>
-          <p className="text-xs text-gray-600 mb-3">
+          <p className="text-xs text-graphite mb-3">
             {variant === 'single' 
               ? 'This action cannot be undone.'
               : `This will permanently delete all ${quizCount} quizzes and their data.`
@@ -117,14 +113,14 @@ export default function QuizDeleteActions({
             <button
               onClick={handleDelete}
               disabled={isDeleting}
-              className="cursor-pointer flex items-center gap-1 px-3 py-1.5 bg-red-600 text-white text-xs font-medium rounded hover:bg-red-700 disabled:opacity-50"
+              className="cursor-pointer flex items-center gap-1 px-3 py-1.5 bg-mark text-white text-xs font-medium rounded hover:bg-mark disabled:opacity-50"
             >
               {isDeleting ? <Loader2 size={12} className="animate-spin" /> : <Trash2 size={12} />}
               Delete
             </button>
             <button
               onClick={handleCancel}
-              className="cursor-pointer px-3 py-1.5 bg-gray-100 text-gray-700 text-xs font-medium rounded hover:bg-gray-200"
+              className="cursor-pointer px-3 py-1.5 bg-[#edf2f5] text-ink text-xs font-medium rounded hover:bg-[#edf2f5]"
             >
               Cancel
             </button>

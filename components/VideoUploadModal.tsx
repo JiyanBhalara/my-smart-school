@@ -102,21 +102,21 @@ export default function VideoUploadModal({ lessonId, onClose, onUploaded }: Vide
 
   return (
     /* FIXED: Responsive container with proper scrolling */
-    <div className="bg-white rounded-xl shadow-2xl w-full max-w-sm sm:max-w-md lg:max-w-lg mx-4 my-4 sm:my-8 overflow-hidden max-h-[90vh] flex flex-col">
+    <div className="bg-white rounded-[4px] w-full max-w-sm sm:max-w-md lg:max-w-lg mx-4 my-4 sm:my-8 overflow-hidden max-h-[90vh] flex flex-col">
       {/* Header */}
-      <div className="flex items-center justify-between p-4 sm:p-6 border-b border-gray-200 bg-purple-50 flex-shrink-0">
+      <div className="flex items-center justify-between p-4 sm:p-6 border-b border-rule bg-[#edf2f5] flex-shrink-0">
         <div className="flex items-center gap-3">
-          <div className="p-2 bg-purple-600 rounded-lg">
+          <div className="p-2 bg-ink rounded-[4px]">
             <Upload size={20} className="text-white" />
           </div>
-          <h2 className="text-lg font-bold text-gray-900">Upload Video</h2>
+          <h2 className="text-lg font-bold text-ink">Upload Video</h2>
         </div>
         <button
           onClick={onClose}
           disabled={uploading}
-          className="cursor-pointer p-2 hover:bg-purple-100 rounded-lg transition-colors disabled:opacity-50"
+          className="cursor-pointer p-2 hover:bg-[#edf2f5] rounded-[4px] transition-colors disabled:opacity-50"
         >
-          <X size={20} className="text-gray-500" />
+          <X size={20} className="text-graphite" />
         </button>
       </div>
 
@@ -125,7 +125,7 @@ export default function VideoUploadModal({ lessonId, onClose, onUploaded }: Vide
         <form onSubmit={handleSubmit} className="p-4 sm:p-6 space-y-4">
           {/* File Input */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-ink mb-2">
               Video File (MP4 only, max 750MB)
             </label>
             <input
@@ -133,10 +133,10 @@ export default function VideoUploadModal({ lessonId, onClose, onUploaded }: Vide
               accept="video/mp4"
               onChange={handleFile}
               disabled={uploading}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 disabled:opacity-50"
+              className="w-full border border-rule rounded-[4px] px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ink disabled:opacity-50"
             />
             {file && (
-              <div className="mt-2 text-sm text-gray-600 bg-gray-50 p-3 rounded-lg">
+              <div className="mt-2 text-sm text-graphite bg-[#edf2f5] p-3 rounded-[4px]">
                 <div className="font-medium truncate" title={file.name}>{file.name}</div>
                 <div>Size: {formatFileSize(file.size)}</div>
               </div>
@@ -145,7 +145,7 @@ export default function VideoUploadModal({ lessonId, onClose, onUploaded }: Vide
 
           {/* Title Input */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-ink mb-2">
               Title *
             </label>
             <input
@@ -153,7 +153,7 @@ export default function VideoUploadModal({ lessonId, onClose, onUploaded }: Vide
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               disabled={uploading}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 disabled:opacity-50"
+              className="w-full border border-rule rounded-[4px] px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ink disabled:opacity-50"
               placeholder="Enter video title"
               maxLength={100}
             />
@@ -161,14 +161,14 @@ export default function VideoUploadModal({ lessonId, onClose, onUploaded }: Vide
 
           {/* Description Input */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-ink mb-2">
               Description
             </label>
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               disabled={uploading}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 disabled:opacity-50 resize-none"
+              className="w-full border border-rule rounded-[4px] px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ink disabled:opacity-50 resize-none"
               rows={3}
               placeholder="Enter video description (optional)"
               maxLength={500}
@@ -177,28 +177,28 @@ export default function VideoUploadModal({ lessonId, onClose, onUploaded }: Vide
 
           {/* Error Message */}
           {error && (
-            <div className="flex items-start gap-2 p-3 bg-red-50 border border-red-200 rounded-lg">
-              <AlertCircle size={16} className="text-red-500 mt-0.5 flex-shrink-0" />
-              <span className="text-sm text-red-700">{error}</span>
+            <div className="flex items-start gap-2 p-3 bg-[#fdf3f2] border border-mark rounded-[4px]">
+              <AlertCircle size={16} className="text-mark mt-0.5 flex-shrink-0" />
+              <span className="text-sm text-mark">{error}</span>
             </div>
           )}
 
           {/* Live upload progress */}
           {uploading && (
-            <div className="bg-purple-50 border border-purple-200 rounded-lg p-3">
-              <div className="flex items-center justify-between text-sm text-purple-800 mb-2">
+            <div className="bg-[#edf2f5] border border-ink rounded-[4px] p-3">
+              <div className="flex items-center justify-between text-sm text-ink mb-2">
                 <span className="font-medium">Uploading…</span>
                 <span className="tabular-nums">{Math.round(progress)}%</span>
               </div>
               <div
-                className="h-2 w-full bg-purple-100 rounded-full overflow-hidden"
+                className="h-2 w-full bg-[#edf2f5] rounded-full overflow-hidden"
                 role="progressbar"
                 aria-valuenow={Math.round(progress)}
                 aria-valuemin={0}
                 aria-valuemax={100}
               >
                 <div
-                  className="h-full bg-purple-600 transition-[width] duration-200"
+                  className="h-full bg-ink transition-[width] duration-200"
                   style={{ width: `${progress}%` }}
                 />
               </div>
@@ -207,8 +207,8 @@ export default function VideoUploadModal({ lessonId, onClose, onUploaded }: Vide
 
           {/* Upload Info */}
           {!error && !uploading && (
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-              <div className="text-sm text-blue-700">
+            <div className="bg-[#edf2f5] border border-ink rounded-[4px] p-3">
+              <div className="text-sm text-ink">
                 <div className="font-medium mb-1">Upload Process:</div>
                 <ul className="text-xs space-y-1 list-disc list-inside ml-2">
                   <li>Video uploads straight to storage from your browser</li>
@@ -224,7 +224,7 @@ export default function VideoUploadModal({ lessonId, onClose, onUploaded }: Vide
             <button
               type="submit"
               disabled={!file || !title.trim() || uploading}
-              className="cursor-pointer flex-1 bg-purple-600 text-white font-semibold py-2.5 px-4 rounded-lg hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm"
+              className="cursor-pointer flex-1 bg-ink text-white font-semibold py-2.5 px-4 rounded-[4px] hover:bg-ink disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm"
             >
               {uploading ? `Uploading… ${Math.round(progress)}%` : 'Upload Video'}
             </button>
@@ -232,7 +232,7 @@ export default function VideoUploadModal({ lessonId, onClose, onUploaded }: Vide
               type="button"
               onClick={onClose}
               disabled={uploading}
-              className="cursor-pointer sm:flex-none px-4 py-2.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50 text-sm"
+              className="cursor-pointer sm:flex-none px-4 py-2.5 border border-rule text-ink rounded-[4px] hover:bg-[#edf2f5] transition-colors disabled:opacity-50 text-sm"
             >
               Cancel
             </button>
