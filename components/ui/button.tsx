@@ -4,26 +4,31 @@ import { cva, type VariantProps } from "class-variance-authority"
 
 import { cn } from "@/lib/utils"
 
+// Buttons are pressed ink, not floating cards: no shadow, 4px corners, and a
+// 2px ink focus ring. `destructive` is the one place mark-red appears on a
+// control -- mark otherwise means assessment, not danger.
 const buttonVariants = cva(
-  "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50",
+  "inline-flex items-center justify-center whitespace-nowrap rounded-[4px] text-[14px] font-medium tracking-[-0.005em] transition-colors duration-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink disabled:pointer-events-none disabled:opacity-45",
   {
     variants: {
       variant: {
         default:
-          "bg-primary text-primary-foreground shadow hover:bg-primary/90",
+          "bg-ink text-white hover:bg-[#01243a]",
         destructive:
-          "bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90",
+          "bg-mark text-white hover:bg-[#8f1e18]",
         outline:
-          "border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground",
+          "border border-ink text-ink bg-transparent hover:bg-ink hover:text-white",
         secondary:
-          "bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80",
-        ghost: "hover:bg-accent hover:text-accent-foreground",
-        link: "text-primary underline-offset-4 hover:underline",
+          "border border-rule bg-sheet text-ink hover:border-ink",
+        ghost:
+          "text-ink hover:bg-[#edf2f5]",
+        link:
+          "text-ink underline underline-offset-[3px] decoration-rule hover:decoration-ink",
       },
       size: {
-        default: "h-9 px-4 py-2",
-        sm: "h-8 rounded-md px-3 text-xs",
-        lg: "h-10 rounded-md px-8",
+        default: "h-9 px-4",
+        sm: "h-8 px-3 text-[13px]",
+        lg: "h-11 px-6 text-[15px]",
         icon: "h-9 w-9",
       },
     },

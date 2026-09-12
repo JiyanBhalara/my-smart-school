@@ -9,7 +9,8 @@ const Card = React.forwardRef<
   <div
     ref={ref}
     className={cn(
-      "rounded-xl border bg-card text-card-foreground shadow",
+      // A sheet is separated from the page by a rule, never by elevation.
+      "rounded-[4px] border border-rule bg-sheet text-ink",
       className
     )}
     {...props}

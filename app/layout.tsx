@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Libre_Franklin, Newsreader } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/lib/provider";
 import { getServerSession } from 'next-auth';
@@ -10,14 +10,23 @@ import Footer from "@/components/Footer";
 import { UploadProvider } from "@/contexts/UploadContext";
 import UploadToast from "@/components/UploadToast";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+// Chrome and data: a Franklin Gothic revival, the type of civic and
+// institutional printing. Carries real tabular figures, which the gradebook
+// columns depend on.
+const franklin = Libre_Franklin({
+  variable: "--font-franklin",
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  display: "swap",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+// Reading only: lesson content and quiz questions, inside a ruled page block.
+const newsreader = Newsreader({
+  variable: "--font-newsreader",
   subsets: ["latin"],
+  weight: ["400", "500"],
+  style: ["normal", "italic"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -38,7 +47,7 @@ export default async function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${franklin.variable} ${newsreader.variable} antialiased`}
         suppressHydrationWarning
       >
         <Providers session={session}>
