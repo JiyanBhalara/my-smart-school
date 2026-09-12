@@ -200,8 +200,8 @@ export default function Header() {
                 {showChatDropdown && (
                   <div className="absolute top-full left-0 mt-2 w-64 bg-white rounded-[4px] border border-rule py-2 z-[60] animate-in slide-in- duration-200">
                     <div className="px-4 py-3 border-b border-rule">
-                      <h3 className="text-sm font-semibold text-gray-900">Communication</h3>
-                      <p className="text-xs text-gray-500">Stay connected with your peers</p>
+                      <h3 className="text-[13px] font-semibold text-ink">Communication</h3>
+                      <p className="text-[12px] text-graphite">Stay connected with your peers</p>
                     </div>
                     
                     {isTeacher && (
@@ -216,8 +216,8 @@ export default function Header() {
                           </svg>
                         </div>
                         <div className="flex-1">
-                          <p className="text-sm font-medium text-gray-900">Student List</p>
-                          <p className="text-xs text-gray-500">Chat with students</p>
+                          <p className="text-[14px] font-medium text-ink">Student List</p>
+                          <p className="text-[12px] text-graphite">Chat with students</p>
                         </div>
                         {unreadData.totalUnread > 0 && (
                           <div className="flex-shrink-0">
@@ -241,8 +241,8 @@ export default function Header() {
                           </svg>
                         </div>
                         <div className="flex-1">
-                          <p className="text-sm font-medium text-gray-900">Teacher List</p>
-                          <p className="text-xs text-gray-500">Chat with teachers</p>
+                          <p className="text-[14px] font-medium text-ink">Teacher List</p>
+                          <p className="text-[12px] text-graphite">Chat with teachers</p>
                         </div>
                         {unreadData.totalUnread > 0 && (
                           <div className="flex-shrink-0">
@@ -265,8 +265,8 @@ export default function Header() {
                         </svg>
                       </div>
                       <div className="flex-1">
-                        <p className="text-sm font-medium text-gray-900">Groups</p>
-                        <p className="text-xs text-gray-500">Join group discussions</p>
+                        <p className="text-[14px] font-medium text-ink">Groups</p>
+                        <p className="text-[12px] text-graphite">Join group discussions</p>
                       </div>
                       {groupUnreadData.totalUnread > 0 && (
                         <div className="flex-shrink-0">
@@ -295,7 +295,7 @@ export default function Header() {
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                   </svg>
-                  <span>Courses</span>
+                  <span>Lessons</span>
                   <svg 
                     className={`w-4 h-4 transition-transform duration-200 ${showCoursesDropdown ? 'rotate-180' : ''}`} 
                     fill="none" 
@@ -310,8 +310,8 @@ export default function Header() {
                 {showCoursesDropdown && (
                   <div className="absolute top-full left-0 mt-2 w-64 bg-white rounded-[4px] border border-rule py-2 z-[60] animate-in slide-in- duration-200">
                     <div className="px-4 py-3 border-b border-rule">
-                      <h3 className="text-sm font-semibold text-gray-900">Learning</h3>
-                      <p className="text-xs text-gray-500">Explore and manage courses</p>
+                      <h3 className="text-[13px] font-semibold text-ink">Lessons</h3>
+                      <p className="text-[12px] text-graphite">Browse and manage lessons</p>
                     </div>
                     
                     <Link
@@ -325,8 +325,8 @@ export default function Header() {
                         </svg>
                       </div>
                       <div>
-                        <p className="text-sm font-medium text-gray-900">All Courses</p>
-                        <p className="text-xs text-gray-500">Browse available courses</p>
+                        <p className="text-[14px] font-medium text-ink">All lessons</p>
+                        <p className="text-[12px] text-graphite">Every published lesson</p>
                       </div>
                     </Link>
 
@@ -342,8 +342,8 @@ export default function Header() {
                           </svg>
                         </div>
                         <div>
-                          <p className="text-sm font-medium text-gray-900">Create Course</p>
-                          <p className="text-xs text-gray-500">Add new lesson content</p>
+                          <p className="text-[14px] font-medium text-ink">Create Course</p>
+                          <p className="text-[12px] text-graphite">Add new lesson content</p>
                         </div>
                       </Link>
                     )}
@@ -372,7 +372,7 @@ export default function Header() {
               <>
                 <Link
                   href="/login"
-                  className="cursor-pointer text-gray-600 hover:text-gray-900 font-medium transition-colors duration-200"
+                  className="cursor-pointer text-graphite hover:text-ink font-medium transition-colors duration-200"
                 >
                   Sign in
                 </Link>
@@ -403,10 +403,10 @@ export default function Header() {
                     )}
                   </div>
                   <div className="hidden xl:block">
-                    <p className="text-sm font-medium text-gray-900">
+                    <p className="text-[14px] font-medium text-ink">
                       {session.user?.name ? `${session.user.name.split(' ')[0]}` : 'User'}
                     </p>
-                    <p className="text-xs text-gray-500">
+                    <p className="text-[12px] text-graphite">
                       {isTeacher ? 'Teacher' : 'Student'}
                     </p>
                   </div>
@@ -415,7 +415,7 @@ export default function Header() {
                 {/* Logout */}
                 <button
                   onClick={() => signOut({ callbackUrl: '/' })}
-                  className="cursor-pointer flex items-center space-x-2 text-gray-600 hover:text-red-600 transition-colors duration-300 font-medium px-3 py-2 rounded-[4px] hover:bg-red-50"
+                  className="cursor-pointer flex items-center space-x-2 text-graphite hover:text-red-600 transition-colors duration-300 font-medium px-3 py-2 rounded-[4px] hover:bg-red-50"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
@@ -433,11 +433,11 @@ export default function Header() {
             aria-label="Toggle mobile menu"
           >
             {isMobileMenuOpen ? (
-              <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-6 h-6 text-graphite" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
             ) : (
-              <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-6 h-6 text-graphite" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
               </svg>
             )}
@@ -454,7 +454,7 @@ export default function Header() {
               <>
                 {/* Mobile Chat Section */}
                 <div className="space-y-3">
-                  <h3 className="text-sm font-semibold text-gray-900 tracking-[0.02em] flex items-center">
+                  <h3 className="text-[13px] font-semibold text-ink tracking-[0.02em] flex items-center">
                     <svg className="w-4 h-4 mr-2 text-ink" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
                     </svg>
@@ -471,8 +471,8 @@ export default function Header() {
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
                       </svg>
                       <div className="flex-1">
-                        <span className="font-medium text-gray-900">Student List</span>
-                        <p className="text-xs text-gray-500">Chat with your students</p>
+                        <span className="font-medium text-ink">Student List</span>
+                        <p className="text-[12px] text-graphite">Chat with your students</p>
                       </div>
                       {unreadData.totalUnread > 0 && (
                         <NotificationBadge count={unreadData.totalUnread} />
@@ -490,8 +490,8 @@ export default function Header() {
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
                       </svg>
                       <div className="flex-1">
-                        <span className="font-medium text-gray-900">Teacher List</span>
-                        <p className="text-xs text-gray-500">Chat with your teachers</p>
+                        <span className="font-medium text-ink">Teacher List</span>
+                        <p className="text-[12px] text-graphite">Chat with your teachers</p>
                       </div>
                       {unreadData.totalUnread > 0 && (
                         <NotificationBadge count={unreadData.totalUnread} />
@@ -508,8 +508,8 @@ export default function Header() {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                     </svg>
                     <div className="flex-1">
-                      <span className="font-medium text-gray-900">Groups</span>
-                      <p className="text-xs text-gray-500">Join group discussions</p>
+                      <span className="font-medium text-ink">Groups</span>
+                      <p className="text-[12px] text-graphite">Join group discussions</p>
                     </div>
                     {groupUnreadData.totalUnread > 0 && (
                       <NotificationBadge count={groupUnreadData.totalUnread} />
@@ -519,11 +519,11 @@ export default function Header() {
 
                 {/* Mobile Courses Section */}
                 <div className="space-y-3">
-                  <h3 className="text-sm font-semibold text-gray-900 tracking-[0.02em] flex items-center">
+                  <h3 className="text-[13px] font-semibold text-ink tracking-[0.02em] flex items-center">
                     <svg className="w-4 h-4 mr-2 text-ink" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                     </svg>
-                    Courses
+                    Lessons
                   </h3>
                   
                   <Link
@@ -535,8 +535,8 @@ export default function Header() {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
                     </svg>
                     <div className="flex-1">
-                      <span className="font-medium text-gray-900">All Courses</span>
-                      <p className="text-xs text-gray-500">Browse available courses</p>
+                      <span className="font-medium text-ink">All lessons</span>
+                      <p className="text-[12px] text-graphite">Every published lesson</p>
                     </div>
                   </Link>
                   
@@ -550,8 +550,8 @@ export default function Header() {
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                       </svg>
                       <div className="flex-1">
-                        <span className="font-medium text-gray-900">Create Course</span>
-                        <p className="text-xs text-gray-500">Add new lesson content</p>
+                        <span className="font-medium text-ink">Create Course</span>
+                        <p className="text-[12px] text-graphite">Add new lesson content</p>
                       </div>
                     </Link>
                   )}
@@ -559,7 +559,7 @@ export default function Header() {
 
                 {/* Mobile Reports Section */}
                 <div className="space-y-3">
-                  <h3 className="text-sm font-semibold text-gray-900 tracking-[0.02em] flex items-center">
+                  <h3 className="text-[13px] font-semibold text-ink tracking-[0.02em] flex items-center">
                     <svg className="w-4 h-4 mr-2 text-ink" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                     </svg>
@@ -575,8 +575,8 @@ export default function Header() {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                     </svg>
                     <div className="flex-1">
-                      <span className="font-medium text-gray-900">{isTeacher ? 'Student Reports' : 'My Report'}</span>
-                      <p className="text-xs text-gray-500">View performance analytics</p>
+                      <span className="font-medium text-ink">{isTeacher ? 'Student Reports' : 'My Report'}</span>
+                      <p className="text-[12px] text-graphite">View performance analytics</p>
                     </div>
                   </Link>
                 </div>
@@ -589,7 +589,7 @@ export default function Header() {
                 <Link
                   href="/login"
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="cursor-pointer block w-full text-center py-3 text-gray-600 hover:text-gray-900 font-medium rounded-[4px] hover:bg-gray-50 transition-colors"
+                  className="cursor-pointer block w-full text-center py-3 text-graphite hover:text-ink font-medium rounded-[4px] hover:bg-gray-50 transition-colors"
                 >
                   Sign in to your account
                 </Link>
@@ -618,10 +618,10 @@ export default function Header() {
                     </div>
                   )}
                   <div>
-                    <p className="font-semibold text-gray-900">
+                    <p className="font-semibold text-ink">
                       {session.user?.name || 'User'}
                     </p>
-                    <p className="text-sm text-gray-600">
+                    <p className="text-sm text-graphite">
                       {isTeacher ? 'Teacher Account' : 'Student Account'}
                     </p>
                   </div>
